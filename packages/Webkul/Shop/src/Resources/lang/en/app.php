@@ -518,7 +518,8 @@ return [
                 'already-in-compare'     => 'Item is already added to compare list.',
                 'new'                    => 'New',
                 'review-description'     => 'Be the first to review this product',
-                'sale'                   => 'Sale',
+                'in-stock'               => 'In Stock',
+                'out-of-stock'           => 'Out of Stock',
             ],
 
             'carousel' => [
@@ -620,6 +621,11 @@ return [
             'buy-now'                => 'Buy Now',
             'compare'                => 'Compare',
             'description'            => 'Description',
+            'in-stock'               => 'In Stock',
+            'left'                   => 'left',
+            'low-stock'              => 'Low Stock',
+            'out-of-stock'           => 'Out of Stock',
+            'out-of-stock-message'   => 'Sorry, this product is currently out of stock.',
             'related-product-title'  => 'Related Products',
             'review'                 => 'Reviews',
             'tax-inclusive'          => 'Inclusive of all taxes',

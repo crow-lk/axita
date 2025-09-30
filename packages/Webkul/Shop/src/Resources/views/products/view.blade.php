@@ -118,7 +118,7 @@
                                                 href="{{ Storage::url($product[$customAttributeValue['code']]) }}" 
                                                 download="{{ $customAttributeValue['label'] }}"
                                             >
-                                                <span class="icon-download text-2xl"></span>
+                                                <span class="text-2xl icon-download"></span>
                                             </a>
                                         @elseif ($customAttributeValue['type'] == 'image')
                                             <a 
@@ -126,7 +126,7 @@
                                                 download="{{ $customAttributeValue['label'] }}"
                                             >
                                                 <img 
-                                                    class="h-5 min-h-5 w-5 min-w-5" 
+                                                    class="w-5 h-5 min-h-5 min-w-5" 
                                                     src="{{ Storage::url($customAttributeValue['value']) }}" 
                                                 />
                                             </a>
@@ -205,7 +205,7 @@
                                             href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
                                             download="{{ $customAttributeValue['label'] }}"
                                         >
-                                            <span class="icon-download text-2xl"></span>
+                                            <span class="text-2xl icon-download"></span>
                                         </a>
                                     @elseif ($customAttributeValue['type'] == 'image')
                                         <a
@@ -213,7 +213,7 @@
                                             download="{{ $customAttributeValue['label'] }}"
                                         >
                                             <img
-                                                class="h-5 min-h-5 w-5 min-w-5"
+                                                class="w-5 h-5 min-h-5 min-w-5"
                                                 src="{{ Storage::url($customAttributeValue['value']) }}"
                                                 alt="Product Image"
                                             />
@@ -293,7 +293,7 @@
                     >
 
                     <div class="container px-[60px] max-1180:px-0">
-                        <div class="mt-12 flex gap-9 max-1180:flex-wrap max-lg:mt-0 max-sm:gap-y-4">
+                        <div class="flex mt-12 gap-9 max-1180:flex-wrap max-lg:mt-0 max-sm:gap-y-4">
                             <!-- Gallery Blade Inclusion -->
                             @include('shop::products.view.gallery')
 
@@ -302,7 +302,7 @@
                                 {!! view_render_event('bagisto.shop.products.name.before', ['product' => $product]) !!}
 
                                 <div class="flex justify-between gap-4">
-                                    <h1 class="break-all text-3xl font-medium max-sm:text-xl">
+                                    <h1 class="text-3xl font-medium break-all max-sm:text-xl">
                                         {{ $product->name }}
                                     </h1>
 
@@ -368,6 +368,26 @@
 
                                 {!! view_render_event('bagisto.shop.products.price.after', ['product' => $product]) !!}
 
+                                <!-- Stock Status -->
+                                <div class="flex items-center gap-2 mt-4">
+                                    @if($product->inventories->sum('qty') <= 0)
+                                        <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">
+                                            <span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>
+                                            @lang('shop::app.components.products.card.out-of-stock')
+                                        </span>
+                                    @elseif($product->inventories->sum('qty') <= 5)
+                                        <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-orange-800 bg-orange-100 rounded-full">
+                                            <span class="w-2 h-2 mr-2 bg-orange-500 rounded-full"></span>
+                                            Low Stock ({{ $product->inventories->sum('qty') }} left)
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                                            <span class="w-2 h-2 mr-2 bg-green-500 rounded-full"></span>
+                                            @lang('shop::app.components.products.card.in-stock')
+                                        </span>
+                                    @endif
+                                </div>
+
                                 {!! view_render_event('bagisto.shop.products.short_description.before', ['product' => $product]) !!}
 
                                 <p class="mt-6 text-lg text-zinc-500 max-sm:mt-1.5 max-sm:text-sm">
@@ -407,12 +427,12 @@
                                         <x-shop::button
                                             type="submit"
                                             class="secondary-button w-full max-w-full max-md:py-3 max-sm:rounded-lg max-sm:py-1.5"
+                                            ::class="getAddToCartButtonClass()"
                                             button-type="secondary-button"
                                             :loading="false"
-                                            :title="trans('shop::app.products.view.add-to-cart')"
-                                            :disabled="! $product->isSaleable(1)"
+                                            ::title="getAddToCartButtonTitle()"
                                             ::loading="isStoring.addToCart"
-                                            ::disabled="isStoring.addToCart"
+                                            ::disabled="isStoring.addToCart || isProductOutOfStock()"
                                             @click="is_buy_now=0;"
                                         />
 
@@ -428,12 +448,12 @@
                                         <x-shop::button
                                             type="submit"
                                             class="primary-button mt-5 w-full max-w-[470px] max-md:py-3 max-sm:mt-3 max-sm:rounded-lg max-sm:py-1.5"
+                                            ::class="getAddToCartButtonClass()"
                                             button-type="primary-button"
-                                            :title="trans('shop::app.products.view.buy-now')"
-                                            :disabled="! $product->isSaleable(1)"
+                                            ::title="getBuyNowButtonTitle()"
                                             ::loading="isStoring.buyNow"
                                             @click="is_buy_now=1;"
-                                            ::disabled="isStoring.buyNow"
+                                            ::disabled="isStoring.buyNow || isProductOutOfStock()"
                                         />
                                     @endif
 
@@ -443,7 +463,7 @@
                                 {!! view_render_event('bagisto.shop.products.view.additional_actions.before', ['product' => $product]) !!}
 
                                 <!-- Share Buttons -->
-                                <div class="mt-10 flex gap-9 max-md:mt-4 max-md:flex-wrap max-sm:justify-center max-sm:gap-3">
+                                <div class="flex mt-10 gap-9 max-md:mt-4 max-md:flex-wrap max-sm:justify-center max-sm:gap-3">
                                     {!! view_render_event('bagisto.shop.products.view.compare.before', ['product' => $product]) !!}
 
                                     <div
@@ -454,7 +474,7 @@
                                     >
                                         @if (core()->getConfigData('catalog.products.settings.compare_option'))
                                             <span
-                                                class="icon-compare text-2xl"
+                                                class="text-2xl icon-compare"
                                                 role="presentation"
                                             ></span>
 
@@ -485,6 +505,8 @@
 
                         is_buy_now: 0,
 
+                        productQuantity: {{ $product->inventories->sum('qty') }},
+
                         isStoring: {
                             addToCart: false,
 
@@ -494,7 +516,37 @@
                 },
 
                 methods: {
+                    isProductOutOfStock() {
+                        return this.productQuantity <= 0;
+                    },
+
+                    getAddToCartButtonClass() {
+                        if (this.isProductOutOfStock()) {
+                            return 'opacity-50 cursor-not-allowed bg-gray-400 border-gray-400';
+                        }
+                        return '';
+                    },
+
+                    getAddToCartButtonTitle() {
+                        if (this.isProductOutOfStock()) {
+                            return '@lang('shop::app.components.products.card.out-of-stock')';
+                        }
+                        return '@lang('shop::app.products.view.add-to-cart')';
+                    },
+
+                    getBuyNowButtonTitle() {
+                        if (this.isProductOutOfStock()) {
+                            return '@lang('shop::app.components.products.card.out-of-stock')';
+                        }
+                        return '@lang('shop::app.products.view.buy-now')';
+                    },
+
                     addToCart(params) {
+                        if (this.isProductOutOfStock()) {
+                            this.$emitter.emit('add-flash', { type: 'warning', message: 'Sorry, this product is currently out of stock.' });
+                            return;
+                        }
+
                         const operation = this.is_buy_now ? 'buyNow' : 'addToCart';
 
                         this.isStoring[operation] = true;

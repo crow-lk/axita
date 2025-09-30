@@ -58,25 +58,24 @@
 
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.after') !!}
 
-                <div class="action-items bg-black">
-                    <!-- Product Sale Badge -->
+                <div class="action-items">
+                    <!-- Product Stock Badge with Quantity Info -->
                     <p
-                        class="absolute top-1.5 inline-block rounded-[44px] bg-red-600 px-2.5 text-sm text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-xs ltr:left-1.5 max-sm:ltr:left-0 rtl:right-5 max-sm:rtl:right-0"
-                        v-if="product.on_sale"
+                        class="absolute top-1.5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-sm ltr:left-1.5 max-sm:ltr:left-0 rtl:right-5 max-sm:rtl:right-0 transform -rotate-45 origin-center"
+                        :style="getStockBadgeStyle()"
                     >
-                        @lang('shop::app.components.products.card.sale')
+                        <span v-text="getStockBadgeText()"></span>
                     </p>
 
                     <!-- Product New Badge -->
                     <p
-                        class="absolute top-1.5 inline-block rounded-[44px] bg-navyBlue px-2.5 text-sm text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-xs ltr:left-1.5 max-sm:ltr:left-0 rtl:right-1.5 max-sm:rtl:right-0"
-                        v-else-if="product.is_new"
+                        class="absolute top-12 inline-block rounded-[44px] bg-navyBlue px-2.5 text-sm text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-xs ltr:left-1.5 max-sm:ltr:left-0 rtl:right-1.5 max-sm:rtl:right-0"
+                        v-if="product.is_new"
                     >
                         @lang('shop::app.components.products.card.new')
                     </p>
 
-                    <div class="opacity-0 transition-all duration-300 group-hover:bottom-0 group-hover:opacity-100 max-lg:opacity-100 max-sm:opacity-100">
-
+                    <div class="transition-all duration-300 opacity-0 group-hover:bottom-0 group-hover:opacity-100 max-lg:opacity-100 max-sm:opacity-100">
                         {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.before') !!}
 
                         @if (core()->getConfigData('customer.settings.wishlist.wishlist_option'))
@@ -107,7 +106,6 @@
                         @endif
 
                         {!! view_render_event('bagisto.shop.components.products.card.compare_option.after') !!}
-
                     </div>
                 </div>
             </div>
@@ -135,16 +133,17 @@
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
 
                 <!-- Product Actions Section -->
-                <div class="action-items flex items-center justify-between opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100 max-md:hidden">
+                <div class="flex items-center justify-between transition-all duration-300 ease-in-out opacity-0 action-items group-hover:opacity-100 max-md:hidden">
                     @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
 
                         <button
                             class="secondary-button w-full max-w-full p-2.5 text-sm font-medium max-sm:rounded-xl max-sm:p-2"
-                            :disabled="! product.is_saleable || isAddingToCart"
+                            :class="getAddToCartButtonClass()"
+                            :disabled="isProductOutOfStock() || isAddingToCart"
                             @click="addToCart()"
                         >
-                            @lang('shop::app.components.products.card.add-to-cart')
+                            <span v-text="getAddToCartButtonText()"></span>
                         </button>
 
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.after') !!}
@@ -186,7 +185,7 @@
 
         <!-- List Card -->
         <div
-            class="relative flex max-w-max grid-cols-2 gap-4 overflow-hidden rounded max-sm:flex-wrap"
+            class="relative flex grid-cols-2 gap-4 overflow-hidden rounded max-w-max max-sm:flex-wrap"
             v-else
         >
             <div class="group relative max-h-[258px] max-w-[250px] overflow-hidden"> 
@@ -207,23 +206,24 @@
 
                 {!! view_render_event('bagisto.shop.components.products.card.image.after') !!}
 
-                <div class="action-items bg-black">
+                <div class="action-items">
+                    <!-- Product Stock Badge for List View with Quantity Info -->
                     <p
-                        class="absolute top-5 inline-block rounded-[44px] bg-red-500 px-2.5 text-sm text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5"
-                        v-if="product.on_sale"
+                        class="absolute top-5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5 transform -rotate-45 origin-center"
+                        :style="getStockBadgeStyle()"
                     >
-                        @lang('shop::app.components.products.card.sale')
+                        <span v-text="getStockBadgeText()"></span>
                     </p>
 
+                    <!-- Product New Badge for List View -->
                     <p
-                        class="absolute top-5 inline-block rounded-[44px] bg-navyBlue px-2.5 text-sm text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5"
-                        v-else-if="product.is_new"
+                        class="absolute top-16 inline-block rounded-[44px] bg-navyBlue px-2.5 text-sm text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5"
+                        v-if="product.is_new"
                     >
                         @lang('shop::app.components.products.card.new')
                     </p>
 
-                    <div class="opacity-0 transition-all duration-300 group-hover:bottom-0 group-hover:opacity-100 max-sm:opacity-100">
-
+                    <div class="transition-all duration-300 opacity-0 group-hover:bottom-0 group-hover:opacity-100 max-sm:opacity-100">
                         {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.before') !!}
 
                         @if (core()->getConfigData('customer.settings.wishlist.wishlist_option'))
@@ -259,7 +259,6 @@
             </div>
 
             <div class="grid content-start gap-4">
-
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
                 <p class="text-base">
@@ -290,7 +289,7 @@
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.before') !!}
 
                 <p class="text-sm text-zinc-500">
-                    <template  v-if="! product.ratings.total">
+                    <template v-if="! product.ratings.total">
                         <p class="text-sm text-zinc-500">
                             @lang('shop::app.components.products.card.review-description')
                         </p>
@@ -321,9 +320,10 @@
 
                     <x-shop::button
                         class="primary-button whitespace-nowrap px-8 py-2.5"
-                        :title="trans('shop::app.components.products.card.add-to-cart')"
+                        ::class="getAddToCartButtonClass()"
+                        ::title="getAddToCartButtonText()"
                         ::loading="isAddingToCart"
-                        ::disabled="! product.is_saleable || isAddingToCart"
+                        ::disabled="isProductOutOfStock() || isAddingToCart"
                         @click="addToCart()"
                     />
 
@@ -349,6 +349,67 @@
             },
 
             methods: {
+                getStockBadgeStyle() {
+                    // Check if product has quantity information
+                    if (this.product.quantity !== undefined) {
+                        if (this.product.quantity <= 0) {
+                            return 'background-color:#dc2626'; // Red for out of stock
+                        } else if (this.product.quantity <= 5) {
+                            return 'background-color:#f59e0b'; // Orange for low stock
+                        } else {
+                            return 'background-color:#16a34a'; // Green for in stock
+                        }
+                    }
+                    
+                    // Fallback to is_saleable check
+                    return (this.product.is_saleable !== undefined ? this.product.is_saleable : true) 
+                        ? 'background-color:#16a34a' 
+                        : 'background-color:#dc2626';
+                },
+
+                getStockBadgeText() {
+                    // Check if product has quantity information
+                    if (this.product.quantity !== undefined) {
+                        if (this.product.quantity <= 0) {
+                            return '@lang('shop::app.components.products.card.out-of-stock')';
+                        } else if (this.product.quantity <= 5) {
+                            return `Low Stock (${this.product.quantity})`;
+                        } else {
+                            return '@lang('shop::app.components.products.card.in-stock')';
+                        }
+                    }
+                    
+                    // Fallback to is_saleable check
+                    if (this.product.is_saleable !== undefined ? this.product.is_saleable : true) {
+                        return '@lang('shop::app.components.products.card.in-stock')';
+                    } else {
+                        return '@lang('shop::app.components.products.card.out-of-stock')';
+                    }
+                },
+
+                isProductOutOfStock() {
+                    // Check if product has quantity information and is out of stock
+                    if (this.product.quantity !== undefined) {
+                        return this.product.quantity <= 0;
+                    }
+                    // Fallback to is_saleable check
+                    return !(this.product.is_saleable !== undefined ? this.product.is_saleable : true);
+                },
+
+                getAddToCartButtonClass() {
+                    if (this.isProductOutOfStock()) {
+                        return 'opacity-50 cursor-not-allowed bg-gray-400 border-gray-400';
+                    }
+                    return '';
+                },
+
+                getAddToCartButtonText() {
+                    if (this.isProductOutOfStock()) {
+                        return '@lang('shop::app.components.products.card.out-of-stock')';
+                    }
+                    return '@lang('shop::app.components.products.card.add-to-cart')';
+                },
+
                 addToWishlist() {
                     if (this.isCustomer) {
                         this.$axios.post(`{{ route('shop.api.customers.account.wishlist.store') }}`, {

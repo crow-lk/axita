@@ -55,6 +55,20 @@ class ProductResource extends JsonResource
             'reviews'     => [
                 'total'   => $this->reviewHelper->getTotalReviews($this),
             ],
+            'quantity'    => $this->getInventoryQuantity(),
         ];
+    }
+
+    /**
+     * Get the total inventory quantity for the product.
+     *
+     * @return int
+     */
+    protected function getInventoryQuantity()
+    {
+        // Get the total quantity from product inventories
+        $totalQuantity = $this->inventories()->sum('qty');
+        
+        return (int) $totalQuantity;
     }
 }
