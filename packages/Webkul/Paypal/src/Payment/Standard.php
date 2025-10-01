@@ -2,12 +2,12 @@
 
 namespace Webkul\Paypal\Payment;
 
+use Illuminate\Support\Facades\Log;
+
 class Standard extends Paypal
 {
     protected $code = 'paypal_standard'; // keep same
 
-    protected $merchantId = '1230220'; // Set your PayHere Merchant ID
-    protected $merchantSecret = 'NTU1MTcxOTU2MzU4MzQ3MTQ1NzI4NDE3NTQ2NTczNTMxNTE3MDAz'; // Set your PayHere Secret
 
     public function getRedirectUrl()
     {
@@ -19,24 +19,34 @@ class Standard extends Paypal
         // return route('paypal.standard.ipn'); // keep same
     }
 
+    protected function getMerchantId()
+    {
+        return config('services.payhere.merchant_id');
+    }
+
+    protected function getMerchantSecret()
+    {
+        return config('services.payhere.merchant_secret');
+    }
+
     public function getFormFields()
     {
         $cart = $this->getCart();
         $amount = $this->formatCurrencyValue($cart->grand_total);
         $orderId = 'axita'.$cart->id;
         $currency = 'LKR';
-        $hash = $this->generateHash($this->merchantId, $orderId, $amount, $currency, $this->merchantSecret);
+        $hash = $this->generateHash($this->getMerchantId(), $orderId, $amount, $currency, $this->getMerchantSecret());
 
         $billingAddress = $cart->billing_address;
         $formFields = [
-            'merchant_id' => $this->merchantId,
-            'return_url'  => 'https://axita.lk',
-            'cancel_url'  => 'https://axita.lk',
-            'notify_url'  => 'https://axita.lk/api/payhere',
+            'merchant_id' => $this->getMerchantId(),
+            'return_url'  => route('paypal.standard.success'),
+            'cancel_url'  => route('paypal.standard.cancel'),
+            'notify_url'  => url('/api/payhere'),
             'order_id'    => $orderId,
             'items'       => 'Order #' . $orderId,
             'currency'    => $currency,
-            'amount'      =>         number_format($amount, 2, '.', '') ,
+            'amount'      => number_format($amount, 2, '.', ''),
             'first_name'  => $billingAddress->first_name ?? 'Guest',
             'last_name'   => $billingAddress->last_name ?? '',
             'email'       => $billingAddress->email ?? '',
@@ -47,19 +57,19 @@ class Standard extends Paypal
             'hash'        => $hash,
         ];
 
-        \Log::info('PayHere Form Fields:', $formFields);
+        Log::info('PayHere Form Fields:', $formFields);
 
         return $formFields;
     }
 
     protected function generateHash($merchantId, $orderId, $amount, $currency, $merchantSecret)
     {
-        \Log::debug('Generating hash with parameters:', [
+        Log::debug('Generating hash with parameters:', [
             'merchantId' => $merchantId,
             'orderId'    => $orderId,
             'amount'     => number_format($amount, 2, '.', ''),
             'currency'   => $currency,
-            'merchantSecret' => $merchantSecret,
+            'merchantSecret' => '[hidden]',
         ]);
         return strtoupper(
             md5(
@@ -74,12 +84,12 @@ class Standard extends Paypal
 
     public function getSuccessUrl()
     {
-        // return route('paypal.standard.success');
+        return route('paypal.standard.success');
     }
 
     public function getCancelUrl()
     {
-        // return route('paypal.standard.cancel');
+        return route('paypal.standard.cancel');
     }
 
     public function getCart()

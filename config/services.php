@@ -79,4 +79,9 @@ return [
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'redirect'      => env('GITHUB_CALLBACK_URL'),
     ],
+
+    'payhere' => [
+        'merchant_id'     => env('PAYHERE_MERCHANT_ID'),
+        'merchant_secret' => env('PAYHERE_MERCHANT_SECRET'),
+    ],
 ];

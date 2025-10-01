@@ -41,11 +41,23 @@ class InvoiceItemRepository extends Repository
             $orderedInventory->update(['qty' => $orderedQty]);
         }
 
+        $sourceIds = $data['invoice']->order->channel->inventory_sources()->pluck('id');
+
         $inventories = $data['product']->inventories()
             ->where('vendor_id', $data['vendor_id'])
-            ->whereIn('inventory_source_id', $data['invoice']->order->channel->inventory_sources()->pluck('id'))
+            ->when($sourceIds && $sourceIds->count() > 0, function ($q) use ($sourceIds) {
+                $q->whereIn('inventory_source_id', $sourceIds);
+            })
             ->orderBy('qty', 'desc')
             ->get();
+
+        // Fallback: if channel has no sources or none found, use all inventories for the product/vendor
+        if ($inventories->isEmpty()) {
+            $inventories = $data['product']->inventories()
+                ->where('vendor_id', $data['vendor_id'])
+                ->orderBy('qty', 'desc')
+                ->get();
+        }
 
         foreach ($inventories as $inventory) {
             if ($inventory->qty >= $data['qty']) {
