@@ -624,6 +624,7 @@ return [
             'in-stock'               => 'In Stock',
             'left'                   => 'left',
             'low-stock'              => 'Low Stock',
+            
             'out-of-stock'           => 'Out of Stock',
             'out-of-stock-message'   => 'Sorry, this product is currently out of stock.',
             'related-product-title'  => 'Related Products',

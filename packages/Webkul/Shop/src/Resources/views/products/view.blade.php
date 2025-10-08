@@ -21,6 +21,7 @@
         <script type="application/ld+json">
             {!! app('Webkul\Product\Helpers\SEO')->getProductJsonLd($product) !!}
         </script>
+        
     @endif
 
     <?php $productBaseImage = product_image()->getProductBaseImage($product); ?>
@@ -368,17 +369,12 @@
 
                                 {!! view_render_event('bagisto.shop.products.price.after', ['product' => $product]) !!}
 
-                                <!-- Stock Status -->
+                                <!-- Stock Status (Low Stock removed) -->
                                 <div class="flex items-center gap-2 mt-4">
                                     @if($product->inventories->sum('qty') <= 0)
                                         <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">
                                             <span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>
                                             @lang('shop::app.components.products.card.out-of-stock')
-                                        </span>
-                                    @elseif($product->inventories->sum('qty') <= 5)
-                                        <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-orange-800 bg-orange-100 rounded-full">
-                                            <span class="w-2 h-2 mr-2 bg-orange-500 rounded-full"></span>
-                                            Low Stock ({{ $product->inventories->sum('qty') }} left)
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
