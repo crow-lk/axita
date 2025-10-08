@@ -51,3 +51,4 @@ coverage/
 deploy.sh
 deploy.php
 *.csv
+.env
