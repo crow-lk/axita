@@ -15,8 +15,9 @@ img.lazy {
 }
 
 @layer components {
-    ::selection {
-        background-color: #000000;
+    ::selection, ::-moz-selection {
+        background-color: #ffa500;
+        color: #ffa500;
     }
 
     input {
