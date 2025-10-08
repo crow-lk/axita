@@ -62,7 +62,7 @@
                 <div class="action-items">
                     <!-- Product Stock Badge with Quantity Info (Low Stock removed) -->
                     <p
-                        class="absolute top-1.5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-sm ltr:left-1.5 max-sm:ltr:left-0 rtl:right-5 max-sm:rtl:right-0 transform -rotate-45 origin-center"
+                        class="absolute top-1.5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-sm ltr:left-1.5 max-sm:ltr:left-0 rtl:right-5 max-sm:rtl:right-0 origin-center"
                         :style="product.quantity !== undefined ? (product.quantity <= 0 ? 'background-color:#dc2626' : 'background-color:#16a34a') : ((product.is_saleable !== undefined ? product.is_saleable : true) ? 'background-color:#16a34a' : 'background-color:#dc2626')"
                     >
                         <span>
@@ -219,7 +219,7 @@
                 <div class="action-items">
                     <!-- Product Stock Badge for List View with Quantity Info (Low Stock removed) -->
                     <p
-                        class="absolute top-5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5 transform -rotate-45 origin-center"
+                        class="absolute top-5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5 origin-center"
                         :style="product.quantity !== undefined ? (product.quantity <= 0 ? 'background-color:#dc2626' : 'background-color:#16a34a') : ((product.is_saleable !== undefined ? product.is_saleable : true) ? 'background-color:#16a34a' : 'background-color:#dc2626')"
                     >
                         <span>
