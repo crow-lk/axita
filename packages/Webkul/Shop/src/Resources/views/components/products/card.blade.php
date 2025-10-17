@@ -12,10 +12,10 @@
     >
         <!-- Grid Card -->
         <div
-            class="1180:transtion-all group w-full rounded-md 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)]"
+            class="1180:transtion-all group w-full max-w-[380px] rounded-md 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)]"
             v-if="mode != 'list'"
         >
-            <div class="relative max-h-[300px] max-w-[291px] overflow-hidden max-md:max-h-60 max-md:max-w-full max-md:rounded-lg max-sm:max-h-[200px] max-sm:max-w-full">
+            <div class="relative w-full aspect-square overflow-hidden max-md:rounded-lg">
                 {!! view_render_event('bagisto.shop.components.products.card.image.before') !!}
 
                 <!-- Product Image -->
@@ -24,12 +24,12 @@
                     :aria-label="product.name + ' '"
                 >
                     <x-shop::media.images.lazy
-                        class="after:content-[' '] relative bg-zinc-100 transition-all duration-300 after:block after:pb-[calc(100%+9px)] group-hover:scale-105"
+                        class="w-full h-full object-cover bg-zinc-100 transition-all duration-300 group-hover:scale-105"
                         ::src="product.base_image.medium_image_url"
                         ::key="product.id"
                         ::index="product.id"
-                        width="291"
-                        height="300"
+                        width="380"
+                        height="400"
                         ::alt="product.name"
                     />
                 </a>
@@ -113,7 +113,7 @@
             </div>
 
             <!-- Product Information Section -->
-            <div class="-mt-9 grid max-w-[291px] translate-y-9 content-start gap-2.5 bg-white p-2.5 transition-transform duration-300 ease-out group-hover:-translate-y-0 group-hover:rounded-t-lg max-md:relative max-md:mt-0 max-md:translate-y-0 max-md:gap-0 max-md:px-0 max-md:py-1.5 max-sm:min-w-[170px] max-sm:max-w-[192px]">
+            <div class="-mt-9 grid max-w-[380px] translate-y-9 content-start gap-2.5 bg-white p-2.5 transition-transform duration-300 ease-out group-hover:-translate-y-0 group-hover:rounded-t-lg max-md:relative max-md:mt-0 max-md:translate-y-0 max-md:gap-0 max-md:px-0 max-md:py-1.5 max-sm:min-w-[170px] max-sm:max-w-[192px]">
 
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
@@ -209,29 +209,19 @@
                 {!! view_render_event('bagisto.shop.components.products.card.image.after') !!}
 
                 <div class="action-items">
-                    <!-- Product Stock Badge for List View with Quantity Info (Low Stock removed) -->
+                    <!-- Product Stock Badge Only -->
                     <p
-                        class="absolute top-5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5 origin-center"
+                        class="absolute top-5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5"
                         :style="product.quantity !== undefined ? (product.quantity <= 0 ? 'background-color:#dc2626' : 'background-color:#16a34a') : ((product.is_saleable !== undefined ? product.is_saleable : true) ? 'background-color:#16a34a' : 'background-color:#dc2626')"
                     >
-                        <span>
-                            <template v-if="product.quantity !== undefined">
-                                <template v-if="product.quantity <= 0">@lang('shop::app.components.products.card.out-of-stock')</template>
-                                <template v-else>@lang('shop::app.components.products.card.in-stock')</template>
-                            </template>
-                            <template v-else>
-                                <template v-if="product.is_saleable !== undefined ? product.is_saleable : true">@lang('shop::app.components.products.card.in-stock')</template>
-                                <template v-else>@lang('shop::app.components.products.card.out-of-stock')</template>
-                            </template>
+                        <span v-if="product.quantity !== undefined">
+                            <span v-if="product.quantity <= 0">Out of Stock</span>
+                            <span v-else>In Stock</span>
                         </span>
-                    </p>
-
-                    <!-- Product New Badge for List View -->
-                    <p
-                        class="absolute top-16 inline-block rounded-[44px] bg-navyBlue px-2.5 text-sm text-white ltr:left-5 max-sm:ltr:left-2 rtl:right-5"
-                        v-if="product.is_new"
-                    >
-                        @lang('shop::app.components.products.card.new')
+                        <span v-else>
+                            <span v-if="product.is_saleable !== undefined ? product.is_saleable : true">In Stock</span>
+                            <span v-else>Out of Stock</span>
+                        </span>
                     </p>
 
                     <div class="transition-all duration-300 opacity-0 group-hover:bottom-0 group-hover:opacity-100 max-sm:opacity-100">
