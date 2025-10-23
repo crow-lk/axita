@@ -183,8 +183,6 @@
                     for (let key in this.filters.applied) {
                         if (this.filters.applied[key] != this.filters.default[key]) {
                             filters[key] = this.filters.applied[key];
-                        } else {
-                            filters= this.filters.default;
                         }
                     }
 

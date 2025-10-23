@@ -101,6 +101,51 @@
 
 {!! view_render_event('bagisto.shop.categories.view.filters.after') !!}
 
+@pushOnce('styles')
+    <style>
+        /* Modern Filter Dropdown Animations */
+        [v-show] {
+            animation: fadeInDown 0.3s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar for Dropdowns */
+        .absolute[style*="overflow-y: auto"]::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .absolute[style*="overflow-y: auto"]::-webkit-scrollbar-track {
+            background: #fef3e2;
+            border-radius: 10px;
+        }
+
+        .absolute[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #fb923c, #f97316);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        .absolute[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #f97316, #ea580c);
+        }
+
+        /* Checkbox Custom Styling */
+        input[type="checkbox"]:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+        }
+    </style>
+@endPushOnce
+
 @pushOnce('scripts')
     <!-- Filters Vue template -->
     <script
@@ -114,7 +159,7 @@
 
         <!-- Filters Container -->
         <template v-else>
-            <div class="flex flex-wrap items-center gap-4 py-4">
+            <div class="flex flex-wrap items-center gap-3 py-4">
                 <!-- Price Filter (special display) -->
                 <template v-if="hasPriceFilter">
                     <v-filter-item
@@ -132,37 +177,45 @@
                 >
                     <button
                         @click.stop="toggleDropdown(filterIndex)"
-                        class="flex items-center gap-2 rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+                        class="group relative flex items-center gap-2.5 rounded-lg border-2 border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all duration-300 ease-in-out hover:border-orange-400 hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                        :class="{'border-orange-500 bg-orange-50': activeDropdown === filterIndex}"
                     >
-                        <span>@{{ filter.name }}</span>
-                        <span class="icon-arrow-down text-xs transition-transform duration-200"
-                              :class="{'transform rotate-180': activeDropdown === filterIndex}"></span>
+                        <span class="transition-colors duration-200" :class="{'text-orange-600': activeDropdown === filterIndex}">@{{ filter.name }}</span>
+                        <span class="icon-arrow-down text-xs transition-all duration-300"
+                              :class="{
+                                  'transform rotate-180 text-orange-600': activeDropdown === filterIndex,
+                                  'group-hover:text-orange-500': activeDropdown !== filterIndex
+                              }"></span>
                     </button>
 
                     <!-- Dropdown Content -->
                     <div
                         v-show="activeDropdown === filterIndex"
                         @click.stop
-                        class="absolute z-10 mt-1 w-56 rounded-md bg-white shadow-lg ring-1 ring-Orange ring-opacity-5 focus:outline-none"
-                        style="min-inline-size: 200px; max-block-size: 300px; overflow-y: auto; border: 1px solid orange;"
+                        class="absolute z-20 mt-2 w-64 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur-sm transition-all duration-200 ease-out"
+                        style="min-inline-size: 240px; max-block-size: 350px; overflow-y: auto; border: 2px solid #fb923c;"
                     >
-                        <v-filter-item
-                            :ref="'filterItem_' + filterIndex"
-                            :filter="filter"
-                            @values-applied="applyFilter(filter, $event)"
-                            class="p-3"
-                        ></v-filter-item>
+                        <!-- Dropdown Header -->
+                        <div class="sticky top-0 z-10 bg-gradient-to-r from-orange-50 to-orange-100 px-4 py-3 border-b-2 border-orange-200 rounded-t-xl">
+                            <h3 class="text-sm font-bold text-orange-900">@{{ filter.name }}</h3>
+                        </div>
+                        
+                        <!-- Dropdown Items -->
+                        <div class="px-3 py-2">
+                            <v-filter-item
+                                :ref="'filterItem_' + filterIndex"
+                                :filter="filter"
+                                @values-applied="applyFilter(filter, $event)"
+                            ></v-filter-item>
+                        </div>
                     </div>
                 </div>
                  <!-- Clear Filters Button -->
                  <button @click="clearFilters"
-    class="ml-4 px-4 py-2 bg-navyBlue text-white rounded hover:bg-orange-700 text-sm font-medium flex items-center gap-2">
-                        <span class="icon-filter-1 text-xl"></span>
+                    class="ml-auto flex items-center gap-2.5 rounded-lg border-2 border-orange-500 bg-white px-5 py-2.5 text-sm font-semibold text-orange-600 shadow-sm transition-all duration-300 ease-in-out hover:bg-orange-500 hover:text-white hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                        <span class="icon-filter-1 text-lg"></span>
                         @lang('shop::app.categories.filters.clear-all')
                     </button>
-
-
-
             </div>
         </template>
 
@@ -187,23 +240,23 @@
             </template>
 
             <!-- Other Filters -->
-            <ul v-else class="space-y-2">
+            <ul v-else class="space-y-1.5">
                 <li
                     :key="option.id"
                     v-for="(option, optionIndex) in filter.options"
                 >
-                    <div class="flex items-center">
+                    <div class="group flex items-center gap-3 rounded-lg p-2.5 transition-all duration-200 hover:bg-orange-50">
                         <input
                             type="checkbox"
                             :id="'option_' + option.id + '_' + filter.code"
-                            class="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                            class="h-5 w-5 rounded-md border-2 border-gray-300 text-orange-600 transition-all duration-200 focus:ring-orange-500 focus:ring-2 focus:ring-offset-1 cursor-pointer hover:border-orange-400 checked:border-orange-600 checked:bg-orange-600"
                             :value="option.id"
                             v-model="appliedValues"
                             @change="applyValue"
                         />
                         <label
                             :for="'option_' + option.id + '_' + filter.code"
-                            class="ml-2 text-sm text-gray-700"
+                            class="flex-1 text-sm font-medium text-gray-700 cursor-pointer transition-colors duration-200 group-hover:text-orange-700 select-none"
                         >
                             @{{ option.name }}
                         </label>
