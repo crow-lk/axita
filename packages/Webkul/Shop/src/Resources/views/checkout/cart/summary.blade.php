@@ -98,9 +98,12 @@
 
         <!-- Shipping Rates -->
         {!! view_render_event('bagisto.shop.checkout.onepage.summary.delivery_charges.before') !!}
-        
+
         <template v-if="displayTax.shipping == 'including_tax'">
-            <div class="flex justify-between text-right">
+            <div
+                class="flex justify-between text-right"
+                v-if="cart.shipping_amount_incl_tax && parseFloat(cart.shipping_amount_incl_tax) > 0"
+            >
                 <p class="text-base max-sm:text-sm">
                     @lang('shop::app.checkout.cart.summary.delivery-charges')
                 </p>
@@ -112,29 +115,34 @@
         </template>
 
         <template v-else-if="displayTax.shipping == 'both'">
-            <div class="flex justify-between text-right">
-                <p class="text-base max-sm:text-sm">
-                    @lang('shop::app.checkout.cart.summary.delivery-charges-excl-tax')
-                </p>
+            <template v-if="(cart.shipping_amount && parseFloat(cart.shipping_amount) > 0) || (cart.shipping_amount_incl_tax && parseFloat(cart.shipping_amount_incl_tax) > 0)">
+                <div class="flex justify-between text-right">
+                    <p class="text-base max-sm:text-sm">
+                        @lang('shop::app.checkout.cart.summary.delivery-charges-excl-tax')
+                    </p>
 
-                <p class="text-base font-medium max-sm:text-sm">
-                    @{{ cart.formatted_shipping_amount }}
-                </p>
-            </div>
-            
-            <div class="flex justify-between text-right">
-                <p class="text-base max-sm:text-sm">
-                    @lang('shop::app.checkout.cart.summary.delivery-charges-incl-tax')
-                </p>
+                    <p class="text-base font-medium max-sm:text-sm">
+                        @{{ cart.formatted_shipping_amount }}
+                    </p>
+                </div>
 
-                <p class="text-base font-medium max-sm:text-sm">
-                    @{{ cart.formatted_shipping_amount_incl_tax }}
-                </p>
-            </div>
+                <div class="flex justify-between text-right">
+                    <p class="text-base max-sm:text-sm">
+                        @lang('shop::app.checkout.cart.summary.delivery-charges-incl-tax')
+                    </p>
+
+                    <p class="text-base font-medium max-sm:text-sm">
+                        @{{ cart.formatted_shipping_amount_incl_tax }}
+                    </p>
+                </div>
+            </template>
         </template>
 
         <template v-else>
-            <div class="flex justify-between text-right">
+            <div
+                class="flex justify-between text-right"
+                v-if="cart.shipping_amount && parseFloat(cart.shipping_amount) > 0"
+            >
                 <p class="text-base max-sm:text-sm">
                     @lang('shop::app.checkout.cart.summary.delivery-charges')
                 </p>

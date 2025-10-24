@@ -1,15 +1,14 @@
 <!-- SEO Meta Content -->
 @push('meta')
-    <meta name="description" content="@lang('shop::app.checkout.onepage.index.checkout')"/>
+    <meta name="description" content="@lang('shop::app.checkout.onepage.index.checkout')" />
 
-    <meta name="keywords" content="@lang('shop::app.checkout.onepage.index.checkout')"/>
+    <meta name="keywords" content="@lang('shop::app.checkout.onepage.index.checkout')" />
 @endPush
 
 <x-shop::layouts
-    :has-header="false"
-    :has-feature="false"
-    :has-footer="false"
->
+                 :has-header="false"
+                 :has-feature="false"
+                 :has-footer="false">
     <!-- Page Title -->
     <x-slot:title>
         @lang('shop::app.checkout.onepage.index.checkout')
@@ -22,16 +21,14 @@
         <div class="flex w-full justify-between border border-b border-l-0 border-r-0 border-t-0 px-[60px] py-4 max-lg:px-8 max-sm:px-4">
             <div class="flex items-center gap-x-14 max-[1180px]:gap-x-9">
                 <a
-                    href="{{ route('shop.home.index') }}"
-                    class="flex min-h-[30px]"
-                    aria-label="@lang('shop::checkout.onepage.index.bagisto')"
-                >
+                   href="{{ route('shop.home.index') }}"
+                   class="flex min-h-[30px]"
+                   aria-label="@lang('shop::checkout.onepage.index.bagisto')">
                     <img
-                        src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                        alt="{{ config('app.name') }}"
-                        width="131"
-                        height="29"
-                    >
+                         src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
+                         alt="{{ config('app.name') }}"
+                         width="131"
+                         height="29">
                 </a>
             </div>
 
@@ -49,7 +46,7 @@
         {!! view_render_event('bagisto.shop.checkout.onepage.breadcrumbs.before') !!}
 
         <!-- Breadcrumbs -->
-        @if ((core()->getConfigData('general.general.breadcrumbs.shop')))
+        @if (core()->getConfigData('general.general.breadcrumbs.shop'))
             <x-shop::breadcrumbs name="checkout" />
         @endif
 
@@ -84,19 +81,15 @@
                         id="steps-container"
                     >
                         <!-- Included Addresses Blade File -->
-                        <template v-if="['address', 'shipping', 'payment', 'review'].includes(currentStep)">
-                            @include('shop::checkout.onepage.address')
-                        </template>
+                        @include('shop::checkout.onepage.address')
 
                         <!-- Included Shipping Methods Blade File -->
-                        <template v-if="cart.have_stockable_items && ['shipping', 'payment', 'review'].includes(currentStep)">
+                        <template v-if="cart.have_stockable_items">
                             @include('shop::checkout.onepage.shipping')
                         </template>
 
                         <!-- Included Payment Methods Blade File -->
-                        <template v-if="['payment', 'review'].includes(currentStep)">
-                            @include('shop::checkout.onepage.payment')
-                        </template>
+                        @include('shop::checkout.onepage.payment')
                     </div>
 
                     <!-- Included Checkout Summary Blade File For Desktop view -->
@@ -105,11 +98,8 @@
                             @include('shop::checkout.onepage.summary')
                         </div>
 
-                        <div
-                            class="flex justify-end"
-                            v-if="canPlaceOrder"
-                        >
-                            <template v-if="cart.payment_method == 'paypal_smart_button'">
+                        <div class="flex justify-end">
+                            <template v-if="cart.payment_method == 'paypal_smart_button' && canPlaceOrder">
                                 {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.before') !!}
 
                                 <!-- Paypal Smart Button Vue Component -->
@@ -125,7 +115,7 @@
                                     :title="trans('shop::app.checkout.onepage.summary.place-order')"
                                     ::disabled="isPlacingOrder"
                                     ::loading="isPlacingOrder"
-                                    @click="placeOrder"
+                                    @click="handlePlaceOrder"
                                 />
                             </template>
                         </div>
@@ -146,76 +136,100 @@
                             prices: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_prices') }}",
 
                             subtotal: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_subtotal') }}",
-                            
+
                             shipping: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_shipping_amount') }}",
                         },
 
                         isPlacingOrder: false,
 
-                        currentStep: 'address',
-
-                        shippingMethods: null,
-
-                        paymentMethods: null,
-
-                        canPlaceOrder: false,
+                        pendingShippingMethod: null,
                     }
                 },
 
+                computed: {
+                    canPlaceOrder() {
+                        if (!this.cart) {
+                            return false;
+                        }
+
+                        // Check if billing address exists
+                        if (!this.cart.billing_address) {
+                            return false;
+                        }
+
+                        // Check if shipping method is selected (for stockable items)
+                        if (this.cart.have_stockable_items && !this.cart.shipping_method) {
+                            return false;
+                        }
+
+                        // Check if payment method is selected
+                        if (!this.cart.payment_method) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                },
                 mounted() {
                     this.getCart();
                 },
 
                 methods: {
                     getCart() {
-                        this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")
+                        return this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")
                             .then(response => {
                                 this.cart = response.data.data;
-
-                                this.scrollToCurrentStep();
                             })
                             .catch(error => {});
                     },
 
-                    stepForward(step) {
-                        this.currentStep = step;
-
-                        if (step == 'review') {
-                            this.canPlaceOrder = true;
-
-                            return;
-                        }
-
-                        this.canPlaceOrder = false;
-
-                        if (this.currentStep == 'shipping') {
-                            this.shippingMethods = null;
-                        } else if (this.currentStep == 'payment') {
-                            this.paymentMethods = null;
-                        }
+                    stepForward(section) {
+                        // No longer needed for simplified checkout, but kept for compatibility
                     },
 
                     stepProcessed(data) {
-                        if (this.currentStep == 'shipping') {
-                            this.shippingMethods = data;
-                        } else if (this.currentStep == 'payment') {
-                            this.paymentMethods = data;
-                        }
+                        // Refresh cart data to update shipping_rates and payment_methods
+                        this.getCart().then(() => {
+                            // If there's a pending shipping method, save it now
+                            if (this.pendingShippingMethod && this.cart.billing_address) {
+                                const shippingMethod = this.pendingShippingMethod;
+                                this.pendingShippingMethod = null;
 
-                        this.getCart();
+                                // Call the shipping component's store method
+                                if (this.$refs.shippingComponent) {
+                                    this.$refs.shippingComponent.store(shippingMethod);
+                                }
+                            }
+                        });
                     },
 
-                    scrollToCurrentStep() {
-                        let container = document.getElementById('steps-container');
+                    handleSaveAddressFirst(shippingMethod) {
+                        // Store the shipping method to be saved after address is saved
+                        this.pendingShippingMethod = shippingMethod;
 
-                        if (! container) {
-                            return;
+                        // For guest users, trigger address form submission
+                        if (this.cart.is_guest && this.$refs.guestAddressComponent) {
+                            this.$refs.guestAddressComponent.proceedGuest();
+                        } else {
+                            // For logged-in customers, show a message
+                            this.$emitter.emit('add-flash', {
+                                type: 'warning',
+                                message: '@lang('shop::app.checkout.onepage.shipping.save-address-first')'
+                            });
                         }
+                    },
 
-                        container.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'end'
-                        });
+                    handlePlaceOrder() {
+                        if (this.canPlaceOrder) {
+                            // All conditions met, place the order
+                            this.placeOrder();
+                        } else {
+                            // Trigger the proceed logic to save address/validate
+                            // User will need to click again after address is saved
+                            if (this.$refs.guestAddressComponent) {
+                                this.$refs.guestAddressComponent.proceedGuest();
+                            }
+                        }
                     },
 
                     placeOrder() {
@@ -234,7 +248,10 @@
                             .catch(error => {
                                 this.isPlacingOrder = false
 
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data.message
+                                });
                             });
                     }
                 },

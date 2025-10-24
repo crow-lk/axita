@@ -1405,6 +1405,14 @@ return [
                 'channel_based' => true,
                 'locale_based'  => false,
             ], [
+                'name'          => 'gateway_charge',
+                'title'         => 'admin::app.configuration.index.sales.payment-methods.gateway-charge',
+                'type'          => 'text',
+                'info'          => 'admin::app.configuration.index.sales.payment-methods.gateway-charge-info',
+                'validation'    => '',
+                'channel_based' => true,
+                'locale_based'  => false,
+            ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.status',
                 'type'          => 'boolean',
@@ -1510,6 +1518,14 @@ return [
                 'channel_based' => true,
                 'locale_based'  => true,
             ], [
+                'name'          => 'gateway_charge',
+                'title'         => 'admin::app.configuration.index.sales.payment-methods.gateway-charge',
+                'type'          => 'text',
+                'info'          => 'admin::app.configuration.index.sales.payment-methods.gateway-charge-info',
+                'validation'    => '',
+                'channel_based' => true,
+                'locale_based'  => false,
+            ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.status',
                 'type'          => 'boolean',
@@ -1573,6 +1589,14 @@ return [
                 'channel_based' => true,
                 'locale_based'  => false,
             ],  [
+                'name'          => 'gateway_charge',
+                'title'         => 'admin::app.configuration.index.sales.payment-methods.gateway-charge',
+                'type'          => 'text',
+                'info'          => 'admin::app.configuration.index.sales.payment-methods.gateway-charge-info',
+                'validation'    => '',
+                'channel_based' => true,
+                'locale_based'  => false,
+            ], [
                 'name'          => 'active',
                 'title'         => 'admin::app.configuration.index.sales.payment-methods.status',
                 'type'          => 'boolean',
@@ -1658,6 +1682,14 @@ return [
                 'type'          => 'text',
                 'depends'       => 'active:1',
                 'validation'    => 'required_if:active,1',
+                'channel_based' => true,
+                'locale_based'  => false,
+            ], [
+                'name'          => 'gateway_charge',
+                'title'         => 'admin::app.configuration.index.sales.payment-methods.gateway-charge',
+                'type'          => 'text',
+                'info'          => 'admin::app.configuration.index.sales.payment-methods.gateway-charge-info',
+                'validation'    => '',
                 'channel_based' => true,
                 'locale_based'  => false,
             ], [

@@ -2,6 +2,7 @@
 
 namespace Webkul\Sales\Generators;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Sales\Models\Order;
 
 class OrderSequencer extends Sequencer
@@ -42,8 +43,14 @@ class OrderSequencer extends Sequencer
      */
     public function getLastId()
     {
-        $lastOrder = Order::query()->orderBy('id', 'desc')->limit(1)->first();
+        return DB::transaction(function () {
+            $lastOrder = Order::query()
+                ->orderBy('id', 'desc')
+                ->lockForUpdate()
+                ->limit(1)
+                ->first();
 
-        return $lastOrder ? $lastOrder->id : 0;
+            return $lastOrder ? $lastOrder->id : 0;
+        });
     }
 }

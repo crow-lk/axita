@@ -3,6 +3,8 @@
 namespace Webkul\Shop\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Webkul\Payment\Facades\Payment;
+use Webkul\Shipping\Facades\Shipping;
 use Webkul\Tax\Facades\Tax;
 
 class CartResource extends JsonResource
@@ -40,14 +42,61 @@ class CartResource extends JsonResource
             'formatted_shipping_amount'          => core()->formatPrice($this->shipping_amount),
             'shipping_amount_incl_tax'           => $this->shipping_amount_incl_tax,
             'formatted_shipping_amount_incl_tax' => core()->formatPrice($this->shipping_amount_incl_tax),
+            'gateway_charge'                     => $this->gateway_charge ?? 0,
+            'formatted_gateway_charge'           => core()->formatPrice($this->gateway_charge ?? 0),
             'grand_total'                        => $this->grand_total,
             'formatted_grand_total'              => core()->formatPrice($this->grand_total),
             'items'                              => CartItemResource::collection($this->items),
             'billing_address'                    => new AddressResource($this->billing_address),
             'shipping_address'                   => new AddressResource($this->shipping_address),
+            'shipping_rates'                     => $this->getGroupedShippingRates(),
+            'payment_methods'                    => $this->getAvailablePaymentMethods(),
             'have_stockable_items'               => $this->haveStockableItems(),
             'payment_method'                     => $this->payment?->method,
             'payment_method_title'               => core()->getConfigData('sales.payment_methods.'.$this->payment?->method.'.title'),
         ];
+    }
+
+    /**
+     * Get shipping rates grouped by carrier.
+     *
+     * @return array|null
+     */
+    protected function getGroupedShippingRates()
+    {
+        if (! $this->haveStockableItems()) {
+            return null;
+        }
+
+        try {
+            // Collect shipping rates using the Shipping facade
+            $shippingData = Shipping::collectRates();
+
+            if (! $shippingData || empty($shippingData['shippingMethods'])) {
+                return null;
+            }
+
+            return $shippingData['shippingMethods'];
+        } catch (\Exception $e) {
+            // If shipping rate collection fails, return null
+            return null;
+        }
+    }
+
+    /**
+     * Get available payment methods.
+     *
+     * @return array|null
+     */
+    protected function getAvailablePaymentMethods()
+    {
+        try {
+            $paymentMethods = Payment::getPaymentMethods();
+
+            return $paymentMethods;
+        } catch (\Exception $e) {
+            // If payment method collection fails, return null
+            return null;
+        }
     }
 }

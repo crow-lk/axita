@@ -2,6 +2,7 @@
 
 <!-- Customer Address Vue Component -->
 <v-checkout-address-customer
+    ref="customerAddressComponent"
     :cart="cart"
     @processing="stepForward"
     @processed="stepProcessed"
@@ -242,16 +243,6 @@
                                 <x-shop::form.control-group.error name="shipping.id" />
                             </div>
                         </template>
-
-                        <!-- Proceed Button -->
-                        <div class="mt-4 flex justify-end max-md:my-4">
-                            <x-shop::button
-                                class="primary-button rounded-2xl px-11 py-3 max-md:rounded-lg max-sm:w-full max-sm:max-w-full max-sm:py-1.5"
-                                :title="trans('shop::app.checkout.onepage.address.proceed')"
-                                ::loading="isStoring"
-                                ::disabled="isStoring"
-                            />
-                        </div>
                     </form>
                 </x-shop::form>
             </template>

@@ -3849,6 +3849,8 @@ return [
                     'client-secret'                  => 'Client Secret',
                     'client-secret-info'             => 'Add your secret key here',
                     'description'                    => 'Description',
+                    'gateway-charge'                 => 'Gateway Charge (%)',
+                    'gateway-charge-info'            => 'Additional charge as a percentage of the subtotal (0-100). Leave empty or 0 for no charge.',
                     'generate-invoice'               => 'Automatically generate the invoice after placing an order',
                     'generate-invoice-applicable'    => 'Applicable if automatic generate invoice is enabled',
                     'info'                           => 'Set payment methods information',

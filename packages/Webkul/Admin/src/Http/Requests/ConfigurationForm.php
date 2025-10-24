@@ -26,7 +26,7 @@ class ConfigurationForm extends FormRequest
      */
     public function rules()
     {
-        return collect(request()->input('keys', []))->mapWithKeys(function ($item) {
+        $rules = collect(request()->input('keys', []))->mapWithKeys(function ($item) {
             $data = json_decode($item, true);
 
             return collect($data['fields'])->mapWithKeys(function ($field) use ($data) {
@@ -34,12 +34,19 @@ class ConfigurationForm extends FormRequest
 
                 // Check delete key exist in the request
                 if (! $this->has("{$key}.delete")) {
+                    // Special validation for gateway_charge field
+                    if ($field['name'] === 'gateway_charge') {
+                        return [$key => 'nullable|numeric|min:0|max:100'];
+                    }
+
                     return [$key => $this->getValidationRules($field['validation'] ?? 'nullable')];
                 }
 
                 return [];
             })->toArray();
         })->toArray();
+
+        return $rules;
     }
 
     /**

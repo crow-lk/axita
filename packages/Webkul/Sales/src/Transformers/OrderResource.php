@@ -57,6 +57,8 @@ class OrderResource extends JsonResource
             'base_tax_amount'          => $this->base_tax_total,
             'shipping_tax_amount'      => $this->selected_shipping_rate?->tax_amount ?? 0,
             'base_shipping_tax_amount' => $this->selected_shipping_rate?->base_tax_amount ?? 0,
+            'gateway_charge'           => $this->gateway_charge ?? 0,
+            'base_gateway_charge'      => $this->base_gateway_charge ?? 0,
             'coupon_code'              => $this->coupon_code,
             'applied_cart_rule_ids'    => $this->applied_cart_rule_ids,
             'discount_amount'          => $this->discount_amount,

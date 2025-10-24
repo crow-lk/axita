@@ -1,7 +1,8 @@
 {!! view_render_event('bagisto.shop.checkout.onepage.payment_methods.before') !!}
 
 <v-payment-methods
-    :methods="paymentMethods"
+    :methods="cart.payment_methods || null"
+    :cart="cart"
     @processing="stepForward"
     @processed="stepProcessed"
 >
@@ -16,41 +17,32 @@
         id="v-payment-methods-template"
     >
         <div class="mb-7 max-md:last:!mb-0">
+            <h2 class="mb-4 text-2xl font-medium max-md:text-base">
+                @lang('shop::app.checkout.onepage.payment.payment-method')
+            </h2>
+
             <template v-if="! methods">
                 <!-- Payment Method shimmer Effect -->
                 <x-shop::shimmer.checkout.onepage.payment-method />
             </template>
-    
+
             <template v-else>
                 {!! view_render_event('bagisto.shop.checkout.onepage.payment_method.accordion.before') !!}
 
-                <!-- Accordion Blade Component -->
-                <x-shop::accordion class="overflow-hidden !border-b-0 max-md:rounded-lg max-md:!border-none max-md:!bg-gray-100">
-                    <!-- Accordion Blade Component Header -->
-                    <x-slot:header class="px-0 py-4 max-md:p-3 max-md:text-sm max-md:font-medium max-sm:p-2">
-                        
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-medium max-md:text-base">
-                                @lang('shop::app.checkout.onepage.payment.payment-method')
-                            </h2>
-                        </div>
-                    </x-slot>
-    
-                    <!-- Accordion Blade Component Content -->
-                    <x-slot:content class="mt-8 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
-                        <div class="flex flex-wrap gap-7 max-md:gap-4 max-sm:gap-2.5">
-                            <div 
+                <div class="flex flex-wrap gap-7 max-md:gap-4 max-sm:gap-2.5">
+                            <div
                                 class="relative cursor-pointer max-md:max-w-full max-md:flex-auto"
                                 v-for="(payment, index) in methods"
                             >
                                 {!! view_render_event('bagisto.shop.checkout.payment-method.before') !!}
 
-                                <input 
-                                    type="radio" 
-                                    name="payment[method]" 
-                                    :value="payment.payment"
+                                <input
+                                    type="radio"
+                                    name="payment[method]"
+                                    :value="payment.method"
                                     :id="payment.method"
                                     class="peer hidden"
+                                    v-model="selectedPaymentMethod"
                                     @change="store(payment)"
                                 >
     
@@ -103,8 +95,6 @@
                                 {{-- \Webkul\Payment\Payment::getAdditionalDetails($payment['method'] --}}
                             </div>
                         </div>
-                    </x-slot>
-                </x-shop::accordion>
 
                 {!! view_render_event('bagisto.shop.checkout.onepage.payment_method.accordion.after') !!}
             </template>
@@ -121,9 +111,26 @@
                     required: true,
                     default: () => null,
                 },
+                cart: {
+                    type: Object,
+                    default: () => ({}),
+                },
             },
 
             emits: ['processing', 'processed'],
+
+            data() {
+                return {
+                    selectedPaymentMethod: null,
+                };
+            },
+
+            mounted() {
+                // Set selected payment method if already chosen
+                if (this.cart && this.cart.payment_method) {
+                    this.selectedPaymentMethod = this.cart.payment_method;
+                }
+            },
 
             methods: {
                 store(selectedMethod) {
@@ -133,9 +140,10 @@
                             payment: selectedMethod
                         })
                         .then(response => {
+                            this.selectedPaymentMethod = selectedMethod.method;
                             this.$emit('processed', response.data.cart);
 
-                            // Used in mobile view. 
+                            // Used in mobile view.
                             if (window.innerWidth <= 768) {
                                 window.scrollTo({
                                     top: document.body.scrollHeight,

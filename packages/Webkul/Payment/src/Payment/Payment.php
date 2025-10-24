@@ -79,6 +79,33 @@ abstract class Payment
     }
 
     /**
+     * Get gateway charge percentage.
+     *
+     * @return float
+     */
+    public function getGatewayChargePercentage()
+    {
+        return (float) $this->getConfigData('gateway_charge') ?: 0;
+    }
+
+    /**
+     * Calculate gateway charge amount based on subtotal.
+     *
+     * @param  float  $subtotal
+     * @return float
+     */
+    public function calculateGatewayCharge($subtotal)
+    {
+        $percentage = $this->getGatewayChargePercentage();
+
+        if ($percentage <= 0) {
+            return 0;
+        }
+
+        return ($subtotal * $percentage) / 100;
+    }
+
+    /**
      * Abstract method to get the redirect URL.
      *
      * @return string The redirect URL.

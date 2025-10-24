@@ -821,7 +821,8 @@ return [
             ],
 
             'shipping' => [
-                'shipping-method' => 'Shipping Method',
+                'save-address-first' => 'Please save your billing address before selecting a shipping method.',
+                'shipping-method'    => 'Shipping Method',
             ],
 
             'summary' => [
@@ -831,6 +832,7 @@ return [
                 'delivery-charges'          => 'Delivery Charges',
                 'discount-amount'           => 'Discount Amount',
                 'excl-tax'                  => 'Excl. Tax:',
+                'gateway-charge'            => 'Gateway Charge',
                 'grand-total'               => 'Grand Total',
                 'place-order'               => 'Place Order',
                 'price_&_qty'               => ':price × :qty',

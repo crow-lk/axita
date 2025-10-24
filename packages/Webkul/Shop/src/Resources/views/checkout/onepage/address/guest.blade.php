@@ -2,10 +2,10 @@
 
 <!-- Guest Address Vue Component -->
 <v-checkout-address-guest
-    :cart="cart"
-    @processing="stepForward"
-    @processed="stepProcessed"
-></v-checkout-address-guest>
+                          ref="guestAddressComponent"
+                          :cart="cart"
+                          @processing="stepForward"
+                          @processed="stepProcessed"></v-checkout-address-guest>
 
 {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.after') !!}
 
@@ -21,7 +21,7 @@
             v-slot="{ meta, errors, handleSubmit }"
             as="div"
         >
-            <form @submit="handleSubmit($event, addAddress)">
+            <form ref="guestForm" @submit="handleSubmit($event, addAddress)">
                 <!-- Guest Billing Address -->
                 <div class="mb-4">
                     {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.billing.before') !!}
@@ -32,7 +32,7 @@
                             @lang('shop::app.checkout.onepage.address.billing-address')
                         </h2>
                     </div>
-                
+
                     <!-- Billing Address Form -->
                     <v-checkout-address-form
                         control-name="billing"
@@ -55,7 +55,7 @@
                         />
 
                         <label
-                            class="cursor-pointer select-none text-base text-zinc-500 max-md:text-sm max-sm:text-xs ltr:pl-0 rtl:pr-0"
+                            class="text-base cursor-pointer select-none text-zinc-500 max-md:text-sm max-sm:text-xs ltr:pl-0 rtl:pr-0"
                             for="use_for_shipping"
                         >
                             @lang('shop::app.checkout.onepage.address.same-as-billing')
@@ -79,7 +79,7 @@
                                 @lang('shop::app.checkout.onepage.address.shipping-address')
                             </h2>
                         </div>
-                    
+
                         <!-- Shipping Address Form -->
                         <v-checkout-address-form
                             control-name="shipping"
@@ -89,16 +89,15 @@
                         {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.shipping.after') !!}
                     </div>
                 </template>
-
-                <!-- Proceed Button -->
-                <div class="mt-4 flex justify-end">
-                    <x-shop::button
-                        class="primary-button rounded-2xl px-11 py-3 max-md:w-full max-md:max-w-full max-md:rounded-lg"
-                        :title="trans('shop::app.checkout.onepage.address.proceed')"
-                        ::loading="isStoring"
-                        ::disabled="isStoring"
-                    />
-                </div>
+			              <!-- Proceed Button -->
+               {{-- <div class="flex justify-end mt-4">
+                   <x-shop::button
+                       class="py-3 primary-button rounded-2xl px-11 max-md:w-full max-md:max-w-full max-md:rounded-lg"
+                       :title="trans('shop::app.checkout.onepage.address.proceed')"
+                       ::loading="isStoring"
+                       ::disabled="isStoring"
+                   />
+               </div> --}}
             </form>
         </x-shop::form>
     </script>
@@ -106,37 +105,31 @@
     <script type="module">
         app.component('v-checkout-address-guest', {
             template: '#v-checkout-address-guest-template',
-
             props: ['cart'],
-
             emits: ['processing', 'processed'],
-
             data() {
                 return {
                     useBillingAddressForShipping: true,
-
                     isStoring: false,
                 }
             },
-
             created() {
                 if (this.cart.billing_address) {
                     this.useBillingAddressForShipping = this.cart.billing_address.use_for_shipping;
                 }
             },
-
+            mounted() {},
+            beforeUnmount() {},
             methods: {
-                addAddress(params, { setErrors }) {
+                addAddress(params, {
+                    setErrors
+                }) {
                     this.isStoring = true;
-
                     params['billing']['use_for_shipping'] = this.useBillingAddressForShipping;
-
                     this.moveToNextStep();
-
                     this.$axios.post('{{ route('shop.checkout.onepage.addresses.store') }}', params)
                         .then((response) => {
                             this.isStoring = false;
-
                             if (response.data.data.redirect_url) {
                                 window.location.href = response.data.data.redirect_url;
                             } else {
@@ -149,18 +142,21 @@
                         })
                         .catch(error => {
                             this.isStoring = false;
-
                             if (error.response.status == 422) {
                                 setErrors(error.response.data.errors);
                             }
                         });
                 },
-
                 moveToNextStep() {
                     if (this.cart.have_stockable_items) {
                         this.$emit('processing', 'shipping');
                     } else {
                         this.$emit('processing', 'payment');
+                    }
+                },
+                proceedGuest() {
+                    if (this.cart.is_guest && this.$refs.guestForm) {
+                        this.$refs.guestForm.requestSubmit();
                     }
                 }
             }
