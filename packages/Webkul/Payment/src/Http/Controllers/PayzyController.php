@@ -20,7 +20,7 @@ class PayzyController extends Controller
     /**
      * Payzy API endpoint.
      */
-    const PAYZY_API_URL = 'https://api.payzypay.xyz/checkout/custom-checkout';
+    const PAYZY_API_URL = 'https://api.payzy.lk/checkout/custom-checkout';
 
     /**
      * Create a new controller instance.
