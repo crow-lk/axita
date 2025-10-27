@@ -431,6 +431,8 @@
     </script>
 
     <script type="module">
+        const INSTALLMENT_SHIPPING_FEE = 500;
+
         app.component('v-product-card', {
             template: '#v-product-card-template',
 
@@ -445,6 +447,8 @@
                     payzyLogo: null,
 
                     kokoLogo: null,
+
+                    shippingCharge: INSTALLMENT_SHIPPING_FEE,
                 }
             },
 
@@ -460,8 +464,12 @@
                         this.payzyLogo = "{{ asset('storage') }}/" + payzyImage;
                     }
 
-                    // Set KOKO logo from hardcoded path
-                    this.kokoLogo = "{{ asset('storage/logos/kokologo.png') }}";
+                    const kokoImage = "{{ core()->getConfigData('sales.payment_methods.koko.image') }}";
+                    if (kokoImage) {
+                        this.kokoLogo = "{{ asset('storage') }}/" + kokoImage;
+                    } else {
+                        this.kokoLogo = "{{ asset('storage/logos/kokologo.png') }}";
+                    }
                 },
                 getStockBadgeStyle() {
                     // Check if product has quantity information
@@ -496,15 +504,23 @@
                     return 0;
                 },
 
+                getShippingCharge() {
+                    return Number.isFinite(this.shippingCharge) ? this.shippingCharge : 0;
+                },
+
                 getPayzyInstallment() {
                     const basePrice = this.getBasePrice();
-                    const totalWithCharge = basePrice * 1.14; // 14% charge
+                    const shipping = this.getShippingCharge();
+                    const baseAmount = basePrice + shipping;
+                    const totalWithCharge = baseAmount * 1.14; // 14% charge
                     return totalWithCharge / 4; // Divide into 4 installments
                 },
 
                 getKokoInstallment() {
                     const basePrice = this.getBasePrice();
-                    const totalWithCharge = basePrice * 1.12; // 12% charge
+                    const shipping = this.getShippingCharge();
+                    const baseAmount = basePrice + shipping;
+                    const totalWithCharge = baseAmount * 1.12; // 12% charge
                     return totalWithCharge / 3; // Divide into 3 installments
                 },
 

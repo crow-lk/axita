@@ -27,4 +27,13 @@ return [
         'active'      => true,
         'sort'        => 3,
     ],
+
+    'koko'   => [
+        'code'        => 'koko',
+        'title'       => 'KOKO',
+        'description' => 'KOKO Buy Now Pay Later',
+        'class'       => 'Webkul\Payment\Payment\Koko',
+        'active'      => true,
+        'sort'        => 4,
+    ],
 ];

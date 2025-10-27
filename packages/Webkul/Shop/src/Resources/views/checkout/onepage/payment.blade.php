@@ -97,6 +97,9 @@
                                         <p v-if="payment.method === 'payzy'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
                                             You will be redirected to Payzy to complete payment in 4 installments
                                         </p>
+                                        <p v-else-if="payment.method === 'koko'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
+                                            You will be redirected to KOKO to complete payment in 3 installments
+                                        </p>
                                         <p v-else-if="payment.method === 'paypal_standard'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
                                             You will be redirected to PayHere to complete secure online payment
                                         </p>
@@ -115,6 +118,12 @@
                                             class="mt-1 text-xs font-semibold text-navyBlue max-md:mt-0.5 max-sm:mt-0"
                                         >
                                             Pay @{{ formattedPayzyInstallment }} x 4 installments
+                                        </p>
+                                        <p
+                                            v-else-if="payment.method === 'koko'"
+                                            class="mt-1 text-xs font-semibold text-navyBlue max-md:mt-0.5 max-sm:mt-0"
+                                        >
+                                            Pay @{{ formattedKokoInstallment }} x 3 installments
                                         </p>
 
                                         {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.after') !!}
@@ -180,7 +189,33 @@
                     const amount = this.payzyInstallmentAmount;
 
                     return `Rs. ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                }
+                },
+
+                /**
+                 * Calculate the KOKO installment amount including convenience fee.
+                 */
+                kokoInstallmentAmount() {
+                    if (! this.cart) {
+                        return 0;
+                    }
+
+                    const grandTotal = parseFloat(this.cart.grand_total ?? 0);
+
+                    if (! Number.isFinite(grandTotal) || grandTotal <= 0) {
+                        return 0;
+                    }
+
+                    return grandTotal / 3;
+                },
+
+                /**
+                 * Format KOKO installment as currency.
+                 */
+                formattedKokoInstallment() {
+                    const amount = this.kokoInstallmentAmount;
+
+                    return `Rs. ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                },
             },
 
             methods: {
