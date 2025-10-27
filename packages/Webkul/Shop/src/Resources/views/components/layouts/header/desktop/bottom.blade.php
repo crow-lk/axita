@@ -1,8 +1,8 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.before') !!}
 
-<div class="flex min-h-[56px] w-full justify-between border border-b border-l-0 border-r-0 border-t-0 px-[60px] max-1180:px-8 relative">
-    <!-- Left: Browse Categories (collapsible) -->
-    <div class="flex items-center gap-x-6 max-[1180px]:gap-x-4 w-1/3">
+<div class="flex min-h-[56px] w-full items-center border border-b border-l-0 border-r-0 border-t-0 px-[60px] max-1180:px-8 relative">
+    <!-- Browse Categories (only) -->
+    <div class="flex items-center gap-x-6 max-[1180px]:gap-x-4">
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}
@@ -33,60 +33,7 @@
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.category.after') !!}
     </div>
 
-    <!-- Center: Search -->
-    <div class="flex justify-center items-center w-1/3">
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.before') !!}
-
-        <!-- Search Bar Container -->
-        <div class="relative w-full max-w-[445px]">
-            <form
-                action="{{ route('shop.search.index') }}"
-                class="flex w-full items-center"
-                role="search"
-            >
-                <label
-                    for="organic-search"
-                    class="sr-only"
-                >
-                    @lang('shop::app.components.layouts.header.search')
-                </label>
-
-                <div class="icon-search pointer-events-none absolute top-2.5 flex items-center text-xl ltr:left-3 rtl:right-3"></div>
-
-                <input
-                    type="text"
-                    name="query"
-                    value="{{ request('query') }}"
-                    class="block w-full rounded-lg border border-transparent bg-zinc-100 px-11 py-3 text-xs font-medium text-gray-900 transition-all hover:border-gray-400 focus:border-gray-400"
-                    minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
-                    maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
-                    placeholder="@lang('shop::app.components.layouts.header.search-text')"
-                    aria-label="@lang('shop::app.components.layouts.header.search-text')"
-                    aria-required="true"
-                    pattern="[^\\]+"
-                    required
-                >
-
-                <button
-                    type="submit"
-                    class="hidden"
-                    aria-label="@lang('shop::app.components.layouts.header.submit')"
-                >
-                </button>
-
-                @if (core()->getConfigData('catalog.products.settings.image_search'))
-                    @include('shop::search.images.index')
-                @endif
-            </form>
-        </div>
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.after') !!}
-
-    </div>
-
-    <!-- Right: intentionally empty (icons moved to top bar) -->
-    <div class="flex items-center justify-end gap-x-9 max-[1100px]:gap-x-6 max-lg:gap-x-8 w-1/3"></div>
+    <!-- Right side intentionally omitted (icons are in top bar) -->
 </div>
 
 @pushOnce('scripts')
