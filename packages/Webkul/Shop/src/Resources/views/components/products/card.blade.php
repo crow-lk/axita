@@ -12,7 +12,7 @@
     >
         <!-- Grid Card -->
         <div
-            class="1180:transtion-all group w-full max-w-[380px] rounded-md 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)]"
+            class="1180:transtion-all group w-full max-w-[380px] rounded-md border border-gray-200 p-2 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)]"
             v-if="mode != 'list'"
         >
             <div class="relative w-full aspect-square overflow-hidden max-md:rounded-lg">
@@ -234,7 +234,7 @@
 
         <!-- List Card -->
         <div
-            class="relative flex grid-cols-2 gap-4 overflow-hidden rounded max-w-max max-sm:flex-wrap"
+            class="relative flex grid-cols-2 gap-4 overflow-hidden rounded border border-gray-200 p-2 max-w-max max-sm:flex-wrap"
             v-else
         >
             <div class="group relative max-h-[258px] max-w-[250px] overflow-hidden"> 
