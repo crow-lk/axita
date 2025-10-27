@@ -90,7 +90,24 @@
 
                                         <p class="mt-2.5 text-xs font-medium text-zinc-500 max-md:mt-1 max-sm:mt-0">
                                             @{{ payment.description }}
-                                        </p> 
+                                        </p>
+
+                                        <!-- Payment arrangement description -->
+                                        <p v-if="payment.method === 'payzy'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
+                                            You will be redirected to Payzy to complete payment in 4 installments
+                                        </p>
+                                        <p v-else-if="payment.method === 'paypal_standard'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
+                                            You will be redirected to PayHere to complete secure online payment
+                                        </p>
+                                        <p v-else-if="payment.method === 'paypal_smart_button'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
+                                            Pay securely using your PayPal account
+                                        </p>
+                                        <p v-else-if="payment.method === 'cashondelivery'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
+                                            Pay cash to the delivery person upon receiving your order
+                                        </p>
+                                        <p v-else-if="payment.method === 'moneytransfer'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
+                                            Transfer the amount to our bank account and upload the receipt
+                                        </p>
 
                                         {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.after') !!}
     
