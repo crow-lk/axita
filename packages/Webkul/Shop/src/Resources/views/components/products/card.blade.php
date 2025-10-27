@@ -113,11 +113,11 @@
             </div>
 
             <!-- Product Information Section -->
-            <div class="-mt-9 grid max-w-[380px] translate-y-9 content-start gap-2.5 bg-white p-2.5 transition-transform duration-300 ease-out group-hover:-translate-y-0 group-hover:rounded-t-lg max-md:relative max-md:mt-0 max-md:translate-y-0 max-md:gap-0 max-md:px-0 max-md:py-1.5 max-sm:min-w-[170px] max-sm:max-w-[192px]">
+            <div class="-mt-9 grid max-w-[380px] translate-y-9 content-start gap-2.5 bg-white p-2.5 transition-transform duration-300 ease-out group-hover:-translate-y-0 group-hover:rounded-t-lg max-md:relative max-md:mt-0 max-md:translate-y-0 max-md:gap-0 max-md:px-0 max-md:py-1.5 max-sm:w-full max-sm:max-w-full">
 
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
-                <p class="break-all text-base font-medium max-md:mb-1.5 max-md:max-w-56 max-md:whitespace-break-spaces max-md:leading-6 max-sm:max-w-[192px] max-sm:text-sm max-sm:leading-4">
+                <p class="break-all text-base font-medium max-md:mb-1.5 max-md:max-w-full max-md:whitespace-break-spaces max-md:leading-6 max-sm:text-sm max-sm:leading-4">
                     @{{ product.name }}
                 </p>
 
@@ -135,9 +135,9 @@
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
 
                 <!-- Payment Method Pricing -->
-                <div class="mt-2 space-y-1.5 text-xs text-gray-600 max-sm:text-[10px]">
+                <div class="mt-2 space-y-1.5 text-xs text-gray-600 max-sm:w-full max-sm:text-[10px]">
                     <!-- PayHere with Logo -->
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-1 max-sm:w-full">
                         <div class="flex items-center gap-1">
                             <img 
                                 v-if="payhereLogo" 
