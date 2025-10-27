@@ -29,8 +29,8 @@
                             <img
                                 src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
                                 alt="{{ config('app.name') }}"
-                                width="131"
-                                height="29"
+                                width="160"
+                                height="36"
                             >
                         </a>
                     </div>
@@ -83,14 +83,14 @@
 
             <a
                 href="{{ route('shop.home.index') }}"
-                class="max-h-[30px]"
+                class="max-h-[40px]"
                 aria-label="@lang('shop::app.components.layouts.header.bagisto')"
             >
                 <img
                     src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
                     alt="{{ config('app.name') }}"
-                    width="131"
-                    height="29"
+                    width="160"
+                    height="36"
                 >
             </a>
             
@@ -640,4 +640,3 @@
         });
     </script>
 @endPushOnce
-

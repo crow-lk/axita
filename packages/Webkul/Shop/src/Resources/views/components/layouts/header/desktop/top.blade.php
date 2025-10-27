@@ -1,5 +1,36 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.top.before') !!}
 
+<!-- Top Bar -->
+<div class="w-full bg-gray-100 border-b border-gray-200">
+    <div class="grid grid-cols-3 items-center px-8 py-2 text-sm">
+        <!-- Left Column (empty to center the middle content) -->
+        <div></div>
+
+        <!-- Middle Column: Status Link -->
+        <div class="text-center">
+            <a href="http://axita.winsoft.site/repair-status" class="font-semibold text-base text-gray-700 hover:text-[#e85805] transition-colors">
+                Check your service status from here.
+            </a>
+        </div>
+
+        <!-- Right Column: Social Icons + Phone (single line) -->
+        <div class="flex items-center justify-end gap-4">
+            <div class="flex items-center gap-3">
+                <a href="https://www.facebook.com/axitacomputers" class="text-gray-600 hover:text-gray-800 transition-all duration-300" aria-label="Facebook">
+                    <i class="fab fa-facebook-f text-lg"></i>
+                </a>
+                <a href="https://www.tiktok.com/@axita.galle" class="text-gray-600 hover:text-gray-800 transition-all duration-300" aria-label="TikTok">
+                    <i class="fab fa-tiktok text-lg"></i>
+                </a>
+                <a href="https://www.instagram.com/axita_computer/" class="text-gray-600 hover:text-gray-800 transition-all duration-300" aria-label="Instagram">
+                    <i class="fab fa-instagram text-lg"></i>
+                </a>
+            </div>
+            <a href="tel:+94771284323" class="text-base text-[#e85805] font-semibold hover:text-[#d14805]">+94 77 128 4323</a>
+        </div>
+    </div>
+</div>
+
 <!-- Main Header -->
 <div class="main-header bg-white border-b border-gray-200 w-full">
     <!-- Top Row: Logo, Search Bar, Contact -->
@@ -13,8 +44,8 @@
                 >
                     <img
                         src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                        width="100"
-                        height="22"
+                        width="160"
+                        height="35"
                         alt="{{ config('app.name') }}"
                     >
                 </a>
@@ -31,55 +62,144 @@
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.top.search_bar.after') !!}
 
-        <!-- Right Section: Contact Info & Social Media -->
-        <div class="contact-info flex flex-col items-end text-right gap-1 min-w-fit">
-            <div class="social-icons flex items-center justify-end gap-2.5">
-                <a href="https://www.facebook.com/axitacomputers" class="text-blue-600 hover:text-blue-800 text-sm transition-all duration-300" aria-label="Facebook">
-                    <i class="fab fa-facebook-f"></i>
+        <!-- Right Section: Compare, Wishlist, Cart, User -->
+        <div class="flex items-center gap-x-8 min-w-fit">
+            <!-- Compare -->
+            @if(core()->getConfigData('catalog.products.settings.compare_option'))
+                <a
+                    href="{{ route('shop.compare.index') }}"
+                    aria-label="@lang('shop::app.components.layouts.header.compare')"
+                >
+                    <span
+                        class="icon-compare inline-block cursor-pointer text-2xl"
+                        role="presentation"
+                    ></span>
                 </a>
-                <a href="https://www.tiktok.com/@axita.galle" class="text-black hover:text-gray-700 text-sm transition-all duration-300" aria-label="TikTok">
-                    <i class="fab fa-tiktok"></i>
-                </a>
-                <a href="https://www.instagram.com/axita_computer/" class="text-pink-500 hover:text-pink-700 text-sm transition-all duration-300" aria-label="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-            </div>
+            @endif
 
-            <p class="text-xs font-semibold text-[#e85805]">
-                <a href="tel:+94771284323" class="hover:text-[#d14805]">+94 77 128 4323</a>
-            </p>
+            <!-- Wishlist -->
+            @if (core()->getConfigData('customer.settings.wishlist.wishlist_option'))
+                <a
+                    href="{{ route('shop.customers.account.wishlist.index') }}"
+                    aria-label="@lang('shop::app.components.layouts.header.wishlist')"
+                >
+                    <span class="icon-heart inline-block cursor-pointer text-2xl"></span>
+                </a>
+            @endif
+
+            <!-- Mini cart -->
+            @if(core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
+                @include('shop::checkout.cart.mini-cart')
+            @endif
+
+            <!-- User Profile Dropdown -->
+            <x-shop::dropdown position="bottom-{{ core()->getCurrentLocale()->direction === 'ltr' ? 'right' : 'left' }}">
+                <x-slot:toggle>
+                    <span
+                        class="icon-users inline-block cursor-pointer text-2xl"
+                        role="button"
+                        aria-label="@lang('shop::app.components.layouts.header.profile')"
+                        tabindex="0"
+                    ></span>
+                </x-slot>
+
+                <!-- Guest Dropdown -->
+                @guest('customer')
+                    <x-slot:content>
+                        <div class="grid gap-2.5">
+                            <p class="font-dmserif text-xl">
+                                @lang('shop::app.components.layouts.header.welcome-guest')
+                            </p>
+
+                            <p class="text-sm">
+                                @lang('shop::app.components.layouts.header.dropdown-text')
+                            </p>
+                        </div>
+
+                        <p class="mt-3 w-full border border-zinc-200"></p>
+
+                        <div class="mt-6 flex gap-4">
+                            <a
+                                href="{{ route('shop.customer.session.create') }}"
+                                class="primary-button m-0 mx-auto block w-max rounded-2xl px-7 text-center text-base max-md:rounded-lg ltr:ml-0 rtl:mr-0"
+                            >
+                                @lang('shop::app.components.layouts.header.sign-in')
+                            </a>
+
+                            <a
+                                href="{{ route('shop.customers.register.index') }}"
+                                class="secondary-button m-0 mx-auto block w-max rounded-2xl border-2 px-7 text-center text-base max-md:rounded-lg max-md:py-3 ltr:ml-0 rtl:mr-0"
+                            >
+                                @lang('shop::app.components.layouts.header.sign-up')
+                            </a>
+                        </div>
+                    </x-slot>
+                @endguest
+
+                <!-- Customers Dropdown -->
+                @auth('customer')
+                    <x-slot:content class="!p-0">
+                        <div class="grid gap-2.5 p-5 pb-0">
+                            <p class="font-dmserif text-xl">
+                                @lang('shop::app.components.layouts.header.welcome')’
+                                {{ auth()->guard('customer')->user()->first_name }}
+                            </p>
+
+                            <p class="text-sm">
+                                @lang('shop::app.components.layouts.header.dropdown-text')
+                            </p>
+                        </div>
+
+                        <p class="mt-3 w-full border border-zinc-200"></p>
+
+                        <div class="mt-2.5 grid gap-1 pb-2.5">
+                            <a
+                                class="cursor-pointer px-5 py-2 text-base hover:bg-gray-100"
+                                href="{{ route('shop.customers.account.profile.index') }}"
+                            >
+                                @lang('shop::app.components.layouts.header.profile')
+                            </a>
+
+                            <a
+                                class="cursor-pointer px-5 py-2 text-base hover:bg-gray-100"
+                                href="{{ route('shop.customers.account.orders.index') }}"
+                            >
+                                @lang('shop::app.components.layouts.header.orders')
+                            </a>
+
+                            @if (core()->getConfigData('customer.settings.wishlist.wishlist_option'))
+                                <a
+                                    class="cursor-pointer px-5 py-2 text-base hover:bg-gray-100"
+                                    href="{{ route('shop.customers.account.wishlist.index') }}"
+                                >
+                                    @lang('shop::app.components.layouts.header.wishlist')
+                                </a>
+                            @endif
+
+                            <!--Customers logout-->
+                            @auth('customer')
+                                <x-shop::form
+                                    method="DELETE"
+                                    action="{{ route('shop.customer.session.destroy') }}"
+                                    id="customerLogoutTop"
+                                />
+
+                                <a
+                                    class="cursor-pointer px-5 py-2 text-base hover:bg-gray-100"
+                                    href="{{ route('shop.customer.session.destroy') }}"
+                                    onclick="event.preventDefault(); document.getElementById('customerLogoutTop').submit();"
+                                >
+                                    @lang('shop::app.components.layouts.header.logout')
+                                </a>
+                            @endauth
+                        </div>
+                    </x-slot>
+                @endauth
+            </x-shop::dropdown>
         </div>
     </div>
 
-    <!-- Bottom Row: Tagline -->
-    <div class="bg-gradient-to-r from-gray-50 to-gray-100 py-1 px-8 overflow-hidden">
-        <div class="flex items-center justify-center">
-            <a href="http://axita.winsoft.site/repair-status" class="text-xs font-semibold text-gray-700 hover:text-[#e85805] transition-colors inline-block animate-slide">
-                Check your service status from here.
-            </a>
-        </div>
-    </div>
 </div>
-
-<style>
-    @keyframes slide {
-        0% {
-            transform: translateX(100%);
-        }
-        100% {
-            transform: translateX(-100%);
-        }
-    }
-    
-    .animate-slide {
-        animation: slide 15s linear infinite;
-        white-space: nowrap;
-    }
-    
-    .animate-slide:hover {
-        animation-play-state: paused;
-    }
-</style>
 
 @pushOnce('scripts')
     <script type="module">

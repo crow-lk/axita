@@ -44,7 +44,6 @@ Thumbs.db
 # Build artifacts
 /build/
 /dist/
-/public/themes/shop/default/build/
 # Testing
 .phpunit.result.cache
 coverage/
