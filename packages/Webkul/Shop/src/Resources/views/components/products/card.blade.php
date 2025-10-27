@@ -134,6 +134,36 @@
 
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
 
+                <!-- Payment Method Pricing -->
+                <div class="mt-2 space-y-1.5 text-xs text-gray-600 max-sm:text-[10px]">
+                    <!-- PayHere -->
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                        <span class="font-medium">PayHere:</span>
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayherePrice()) }}</span>
+                    </div>
+                    
+                    <!-- Payzy with Logo -->
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                        <div class="flex items-center gap-1">
+                            <img 
+                                v-if="payzyLogo" 
+                                :src="payzyLogo" 
+                                alt="Payzy" 
+                                class="h-4 w-auto max-w-[60px] object-contain"
+                            />
+                            <span v-else class="font-medium">Payzy (4x):</span>
+                            <span v-if="payzyLogo" class="font-medium text-[10px] max-sm:text-[8px]">(4x):</span>
+                        </div>
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayzyInstallment()) }} / month</span>
+                    </div>
+                    
+                    <!-- KOKO -->
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">KOKO (3x):</span>
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }} / month</span>
+                    </div>
+                </div>
+
                 <!-- Product Actions Section -->
                 <div class="flex items-center justify-between transition-all duration-300 ease-in-out opacity-0 action-items group-hover:opacity-100 max-md:hidden">
                     @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
@@ -278,6 +308,36 @@
 
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
 
+                <!-- Payment Method Pricing -->
+                <div class="mt-2 space-y-1.5 text-xs text-gray-600">
+                    <!-- PayHere -->
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                        <span class="font-medium">PayHere:</span>
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayherePrice()) }}</span>
+                    </div>
+                    
+                    <!-- Payzy with Logo -->
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                        <div class="flex items-center gap-1">
+                            <img 
+                                v-if="payzyLogo" 
+                                :src="payzyLogo" 
+                                alt="Payzy" 
+                                class="h-4 w-auto max-w-[60px] object-contain"
+                            />
+                            <span v-else class="font-medium">Payzy (4x):</span>
+                            <span v-if="payzyLogo" class="font-medium text-[10px]">(4x):</span>
+                        </div>
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayzyInstallment()) }} / month</span>
+                    </div>
+                    
+                    <!-- KOKO -->
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">KOKO (3x):</span>
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }} / month</span>
+                    </div>
+                </div>
+
                 <!-- Needs to implement that in future -->
                 <div class="flex hidden gap-4">
                     <span class="block h-[30px] w-[30px] rounded-full bg-[#B5DCB4]">
@@ -346,10 +406,23 @@
                     isCustomer: '{{ auth()->guard('customer')->check() }}',
 
                     isAddingToCart: false,
+
+                    payzyLogo: null,
                 }
             },
 
+            mounted() {
+                this.fetchPayzyLogo();
+            },
+
             methods: {
+                fetchPayzyLogo() {
+                    // Get Payzy logo from core config
+                    const payzyImage = "{{ core()->getConfigData('sales.payment_methods.payzy.image') }}";
+                    if (payzyImage) {
+                        this.payzyLogo = "{{ Storage::url('') }}" + payzyImage;
+                    }
+                },
                 getStockBadgeStyle() {
                     // Check if product has quantity information
                     if (this.product.quantity !== undefined) {
@@ -366,6 +439,44 @@
                     return (this.product.is_saleable !== undefined ? this.product.is_saleable : true) 
                         ? 'background-color:#16a34a' 
                         : 'background-color:#dc2626';
+                },
+
+                getBasePrice() {
+                    // Extract numeric price from product
+                    if (this.product.prices && this.product.prices.final) {
+                        return parseFloat(this.product.prices.final.price);
+                    }
+                    // Fallback: try to extract from price_html
+                    if (this.product.price_html) {
+                        const priceMatch = this.product.price_html.match(/[\d,]+\.?\d*/);
+                        if (priceMatch) {
+                            return parseFloat(priceMatch[0].replace(/,/g, ''));
+                        }
+                    }
+                    return 0;
+                },
+
+                getPayherePrice() {
+                    const basePrice = this.getBasePrice();
+                    return basePrice * 1.033; // 3.3% charge
+                },
+
+                getPayzyInstallment() {
+                    const basePrice = this.getBasePrice();
+                    const totalWithCharge = basePrice * 1.14; // 14% charge
+                    return totalWithCharge / 4; // Divide into 4 installments
+                },
+
+                getKokoInstallment() {
+                    const basePrice = this.getBasePrice();
+                    const totalWithCharge = basePrice * 1.12; // 12% charge
+                    return totalWithCharge / 3; // Divide into 3 installments
+                },
+
+                formatPrice(price) {
+                    // Format price with currency symbol
+                    const currencySymbol = this.product.prices?.final?.formatted_price?.match(/[^\d,.\s]+/)?.[0] || 'Rs.';
+                    return `${currencySymbol} ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
                 },
 
                 getStockBadgeText() {
