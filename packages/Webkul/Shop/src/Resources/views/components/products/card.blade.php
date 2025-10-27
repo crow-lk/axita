@@ -117,7 +117,7 @@
 
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
-                <p class="break-all text-base font-medium max-md:mb-1.5 max-md:max-w-full max-md:whitespace-break-spaces max-md:leading-6 max-sm:text-sm max-sm:leading-4">
+                <p class="text-base font-medium text-justify break-words max-md:mb-1.5 max-md:max-w-full max-md:whitespace-normal max-md:leading-6 max-sm:text-sm max-sm:leading-4">
                     @{{ product.name }}
                 </p>
 
@@ -136,20 +136,6 @@
 
                 <!-- Payment Method Pricing -->
                 <div class="mt-2 space-y-1.5 text-xs text-gray-600 max-sm:w-full max-sm:text-[10px]">
-                    <!-- PayHere with Logo -->
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-1 max-sm:w-full">
-                        <div class="flex items-center gap-1">
-                            <img 
-                                v-if="payhereLogo" 
-                                :src="payhereLogo" 
-                                alt="PayHere" 
-                                class="h-4 w-auto max-w-[60px] object-contain"
-                            />
-                            <span v-else class="font-medium">PayHere:</span>
-                        </div>
-                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayherePrice()) }}</span>
-                    </div>
-                    
                     <!-- Payzy with Logo -->
                     <div class="flex items-center justify-between border-b border-gray-100 pb-1">
                         <div class="flex items-center gap-1">
@@ -182,7 +168,7 @@
                 </div>
 
                 <!-- Product Actions Section -->
-                <div class="flex flex-col gap-2 pb-2.5 transition-all duration-300 ease-in-out opacity-0 action-items group-hover:opacity-100 max-md:hidden">
+                <div class="flex flex-col gap-2 pb-2.5 transition-all duration-300 ease-out transform action-items max-md:hidden group-hover:-translate-y-1 group-hover:scale-[1.01]">
                     @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
 
@@ -327,7 +313,7 @@
             <div class="grid content-start gap-4">
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
-                <p class="text-base">
+                <p class="text-base text-justify break-words">
                     @{{ product.name }}
                 </p>
 
@@ -345,20 +331,6 @@
 
                 <!-- Payment Method Pricing -->
                 <div class="mt-2 space-y-1.5 text-xs text-gray-600">
-                    <!-- PayHere with Logo -->
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-1">
-                        <div class="flex items-center gap-1">
-                            <img 
-                                v-if="payhereLogo" 
-                                :src="payhereLogo" 
-                                alt="PayHere" 
-                                class="h-4 w-auto max-w-[60px] object-contain"
-                            />
-                            <span v-else class="font-medium">PayHere:</span>
-                        </div>
-                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayherePrice()) }}</span>
-                    </div>
-                    
                     <!-- Payzy with Logo -->
                     <div class="flex items-center justify-between border-b border-gray-100 pb-1">
                         <div class="flex items-center gap-1">
@@ -470,8 +442,6 @@
 
                     isAddingToCart: false,
 
-                    payhereLogo: null,
-
                     payzyLogo: null,
 
                     kokoLogo: null,
@@ -484,12 +454,6 @@
 
             methods: {
                 fetchPaymentLogos() {
-                    // Get PayHere logo from core config (paypal_standard)
-                    const payhereImage = "{{ core()->getConfigData('sales.payment_methods.paypal_standard.image') }}";
-                    if (payhereImage) {
-                        this.payhereLogo = "{{ asset('storage') }}/" + payhereImage;
-                    }
-
                     // Get Payzy logo from core config
                     const payzyImage = "{{ core()->getConfigData('sales.payment_methods.payzy.image') }}";
                     if (payzyImage) {
@@ -530,11 +494,6 @@
                         }
                     }
                     return 0;
-                },
-
-                getPayherePrice() {
-                    const basePrice = this.getBasePrice();
-                    return basePrice * 1.033; // 3.3% charge
                 },
 
                 getPayzyInstallment() {
