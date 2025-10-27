@@ -3,6 +3,7 @@
 namespace Webkul\Checkout;
 
 use Illuminate\Support\Facades\Event;
+use Webkul\Checkout\Contracts\Cart as CartContract;
 use Webkul\Checkout\Contracts\CartAddress as CartAddressContract;
 use Webkul\Checkout\Exceptions\BillingAddressNotFoundException;
 use Webkul\Checkout\Models\CartAddress;
@@ -881,6 +882,14 @@ class Cart
             $this->cart->base_discount_amount += $shipping->base_discount_amount;
         }
 
+        if ($paymentMethod = $this->cart->payment?->method) {
+            $paymentCharge = $this->calculatePaymentMethodCharge($paymentMethod, $this->cart);
+            $basePaymentCharge = $this->calculateBasePaymentMethodCharge($paymentMethod, $this->cart);
+
+            $this->cart->grand_total = (float) $this->cart->grand_total + $paymentCharge;
+            $this->cart->base_grand_total = (float) $this->cart->base_grand_total + $basePaymentCharge;
+        }
+
         $this->cart->discount_amount = round($this->cart->discount_amount, 2);
         $this->cart->base_discount_amount = round($this->cart->base_discount_amount, 2);
 
@@ -1161,5 +1170,105 @@ class Cart
         $shippingRate->save();
 
         Event::dispatch('checkout.cart.calculate.shipping.tax.after', $this->cart);
+    }
+
+    /**
+     * Calculate convenience fee for the selected payment method.
+     */
+    public function calculatePaymentMethodCharge(?string $method = null, ?CartContract $cart = null): float
+    {
+        $cart = $cart ?? $this->cart;
+
+        if (! $cart) {
+            return 0.0;
+        }
+
+        $method = $method ?? $cart?->payment?->method;
+
+        if (! $method) {
+            return 0.0;
+        }
+
+        $chargePercentage = 0.0;
+
+        switch ($method) {
+            case 'paypal_standard':
+                $chargePercentage = 3.3;
+                break;
+            case 'payzy':
+                $chargePercentage = 14.0;
+                break;
+            case 'koko':
+                $chargePercentage = 12.0;
+                break;
+        }
+
+        if ($chargePercentage <= 0) {
+            return 0.0;
+        }
+
+        $subTotal = (float) $cart->sub_total;
+
+        $shippingRaw = $cart->shipping_amount_incl_tax ?? $cart->shipping_amount ?? 0;
+
+        $shipping = (float) $shippingRaw;
+
+        $baseAmount = $subTotal + $shipping;
+
+        if ($baseAmount <= 0) {
+            return 0.0;
+        }
+
+        return round(($baseAmount * $chargePercentage) / 100, 2);
+    }
+
+    /**
+     * Calculate convenience fee for base currency.
+     */
+    public function calculateBasePaymentMethodCharge(?string $method = null, ?CartContract $cart = null): float
+    {
+        $cart = $cart ?? $this->cart;
+
+        if (! $cart) {
+            return 0.0;
+        }
+
+        $method = $method ?? $cart?->payment?->method;
+
+        if (! $method) {
+            return 0.0;
+        }
+
+        $chargePercentage = 0.0;
+
+        switch ($method) {
+            case 'paypal_standard':
+                $chargePercentage = 3.3;
+                break;
+            case 'payzy':
+                $chargePercentage = 14.0;
+                break;
+            case 'koko':
+                $chargePercentage = 12.0;
+                break;
+        }
+
+        if ($chargePercentage <= 0) {
+            return 0.0;
+        }
+
+        $subTotal = (float) $cart->base_sub_total;
+
+        $shippingRaw = $cart->base_shipping_amount_incl_tax ?? $cart->base_shipping_amount ?? 0;
+
+        $shipping = (float) $shippingRaw;
+
+        $baseAmount = $subTotal + $shipping;
+
+        if ($baseAmount <= 0) {
+            return 0.0;
+        }
+
+        return round(($baseAmount * $chargePercentage) / 100, 2);
     }
 }

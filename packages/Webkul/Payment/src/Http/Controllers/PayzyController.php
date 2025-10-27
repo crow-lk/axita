@@ -47,6 +47,11 @@ class PayzyController extends Controller
             return redirect()->route('shop.checkout.cart.index');
         }
 
+        Cart::collectTotals();
+        Cart::refreshCart();
+
+        $cart = Cart::getCart();
+
         // Get Payzy configuration
         $shopId = core()->getConfigData('sales.payment_methods.payzy.shop_id');
         $secretKey = core()->getConfigData('sales.payment_methods.payzy.secret_key');
@@ -177,6 +182,9 @@ class PayzyController extends Controller
         if ($this->verifyPaymentSignature($request, $storedData)) {
             // Check if payment is successful (response_code = 00)
             if ($responseCode === '00') {
+                Cart::collectTotals();
+                Cart::refreshCart();
+
                 $cart = Cart::getCart();
 
                 if ($cart && $cart->id == $cartId) {

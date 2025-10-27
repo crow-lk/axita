@@ -2,6 +2,7 @@
 
 <v-payment-methods
     :methods="paymentMethods"
+    :cart="cart"
     @processing="stepForward"
     @processed="stepProcessed"
 >
@@ -109,8 +110,15 @@
                                             Transfer the amount to our bank account and upload the receipt
                                         </p>
 
+                                        <p
+                                            v-if="payment.method === 'payzy'"
+                                            class="mt-1 text-xs font-semibold text-navyBlue max-md:mt-0.5 max-sm:mt-0"
+                                        >
+                                            Pay @{{ formattedPayzyInstallment }} x 4 installments
+                                        </p>
+
                                         {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.after') !!}
-    
+
                                     </div>
                                 </label>
 
@@ -138,9 +146,42 @@
                     required: true,
                     default: () => null,
                 },
+                
+                cart: {
+                    type: Object,
+                    default: () => null,
+                },
             },
 
             emits: ['processing', 'processed'],
+
+            computed: {
+                /**
+                 * Calculate the Payzy installment amount including convenience fee.
+                 */
+                payzyInstallmentAmount() {
+                    if (! this.cart) {
+                        return 0;
+                    }
+
+                    const grandTotal = parseFloat(this.cart.grand_total ?? 0);
+
+                    if (! Number.isFinite(grandTotal) || grandTotal <= 0) {
+                        return 0;
+                    }
+
+                    return grandTotal / 4;
+                },
+
+                /**
+                 * Format Payzy installment as currency.
+                 */
+                formattedPayzyInstallment() {
+                    const amount = this.payzyInstallmentAmount;
+
+                    return `Rs. ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                }
+            },
 
             methods: {
                 store(selectedMethod) {

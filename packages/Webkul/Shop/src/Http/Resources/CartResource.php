@@ -3,6 +3,7 @@
 namespace Webkul\Shop\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Webkul\Checkout\Facades\Cart as CartFacade;
 use Webkul\Tax\Facades\Tax;
 
 class CartResource extends JsonResource
@@ -18,6 +19,9 @@ class CartResource extends JsonResource
         $taxes = collect(Tax::getTaxRatesWithAmount($this, true))->map(function ($rate) {
             return core()->currency($rate ?? 0);
         });
+
+        $paymentCharge = CartFacade::calculatePaymentMethodCharge($this->payment?->method, $this->resource);
+        $basePaymentCharge = CartFacade::calculateBasePaymentMethodCharge($this->payment?->method, $this->resource);
 
         return [
             'id'                                 => $this->id,
@@ -40,6 +44,9 @@ class CartResource extends JsonResource
             'formatted_shipping_amount'          => core()->formatPrice($this->shipping_amount),
             'shipping_amount_incl_tax'           => $this->shipping_amount_incl_tax,
             'formatted_shipping_amount_incl_tax' => core()->formatPrice($this->shipping_amount_incl_tax),
+            'payment_method_charge'              => $paymentCharge,
+            'formatted_payment_method_charge'    => core()->formatPrice($paymentCharge),
+            'base_payment_method_charge'         => $basePaymentCharge,
             'grand_total'                        => $this->grand_total,
             'formatted_grand_total'              => core()->formatPrice($this->grand_total),
             'items'                              => CartItemResource::collection($this->items),

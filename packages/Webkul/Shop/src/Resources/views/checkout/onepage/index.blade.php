@@ -168,61 +168,57 @@
 
                 computed: {
                     /**
-                     * Calculate payment method charge based on selected payment method
+                     * Convenience fee returned by backend.
                      */
                     paymentMethodCharge() {
-                        if (!this.cart || !this.cart.payment_method) {
-                            return 0;
-                        }
+                        const rawCharge = parseFloat(this.cart?.payment_method_charge ?? 0);
 
-                        let chargePercentage = 0;
-                        const paymentMethod = this.cart.payment_method;
-
-                        // Define payment gateway charge percentages
-                        if (paymentMethod === 'paypal_standard') { // PayHere
-                            chargePercentage = 3.3;
-                        } else if (paymentMethod === 'payzy') {
-                            chargePercentage = 14;
-                        } else if (paymentMethod === 'koko') {
-                            chargePercentage = 12;
-                        }
-
-                        // Calculate charge based on subtotal, shipping, and tax (not grand total)
-                        const subTotal = parseFloat(this.cart.sub_total || 0);
-                        const shipping = parseFloat(this.cart.shipping_amount || 0);
-                        const tax = parseFloat(this.cart.tax_total || 0);
-                        const baseAmount = subTotal + shipping + tax;
-                        const charge = (baseAmount * chargePercentage) / 100;
-
-                        return Math.round(charge * 100) / 100; // Round to 2 decimals
+                        return Number.isFinite(rawCharge) ? rawCharge : 0;
                     },
 
                     /**
-                     * Format payment method charge as currency
+                     * Pre-formatted convenience fee.
                      */
                     formattedPaymentMethodCharge() {
-                        // Always show as Rs. with two decimals
-                        return `Rs. ${this.paymentMethodCharge.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        if (this.cart?.formatted_payment_method_charge) {
+                            return this.cart.formatted_payment_method_charge;
+                        }
+
+                        return this.formatCurrency(this.paymentMethodCharge);
                     },
 
                     /**
-                     * Calculate grand total including payment charges
+                     * Grand total already includes the convenience fee.
                      */
                     grandTotalWithPayment() {
-                        const grandTotal = parseFloat(this.cart?.grand_total || 0);
-                        return grandTotal + this.paymentMethodCharge;
+                        const grandTotal = parseFloat(this.cart?.grand_total ?? 0);
+
+                        return Number.isFinite(grandTotal) ? grandTotal : 0;
                     },
 
                     /**
-                     * Format grand total with payment charges as currency
+                     * Pre-formatted grand total with charge.
                      */
                     formattedGrandTotalWithPayment() {
-                        // Always show as Rs. with two decimals
-                        return `Rs. ${this.grandTotalWithPayment.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        if (this.cart?.formatted_grand_total) {
+                            return this.cart.formatted_grand_total;
+                        }
+
+                        return this.formatCurrency(this.grandTotalWithPayment);
                     }
                 },
 
                 methods: {
+                    formatCurrency(amount) {
+                        const value = parseFloat(amount ?? 0);
+
+                        if (! Number.isFinite(value)) {
+                            return 'Rs. 0.00';
+                        }
+
+                        return `Rs. ${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    },
+
                     getCart() {
                         this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")
                             .then(response => {
