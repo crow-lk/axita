@@ -136,9 +136,17 @@
 
                 <!-- Payment Method Pricing -->
                 <div class="mt-2 space-y-1.5 text-xs text-gray-600 max-sm:text-[10px]">
-                    <!-- PayHere -->
+                    <!-- PayHere with Logo -->
                     <div class="flex items-center justify-between border-b border-gray-100 pb-1">
-                        <span class="font-medium">PayHere:</span>
+                        <div class="flex items-center gap-1">
+                            <img 
+                                v-if="payhereLogo" 
+                                :src="payhereLogo" 
+                                alt="PayHere" 
+                                class="h-4 w-auto max-w-[60px] object-contain"
+                            />
+                            <span v-else class="font-medium">PayHere:</span>
+                        </div>
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getPayherePrice()) }}</span>
                     </div>
                     
@@ -157,9 +165,18 @@
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getPayzyInstallment()) }} / month</span>
                     </div>
                     
-                    <!-- KOKO -->
+                    <!-- KOKO with Logo -->
                     <div class="flex items-center justify-between">
-                        <span class="font-medium">KOKO (3x):</span>
+                        <div class="flex items-center gap-1">
+                            <img 
+                                v-if="kokoLogo" 
+                                :src="kokoLogo" 
+                                alt="KOKO" 
+                                class="h-4 w-auto max-w-[60px] object-contain"
+                            />
+                            <span v-else class="font-medium">KOKO (3x):</span>
+                            <span v-if="kokoLogo" class="font-medium text-[10px] max-sm:text-[8px]">(3x):</span>
+                        </div>
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }} / month</span>
                     </div>
                 </div>
@@ -310,9 +327,17 @@
 
                 <!-- Payment Method Pricing -->
                 <div class="mt-2 space-y-1.5 text-xs text-gray-600">
-                    <!-- PayHere -->
+                    <!-- PayHere with Logo -->
                     <div class="flex items-center justify-between border-b border-gray-100 pb-1">
-                        <span class="font-medium">PayHere:</span>
+                        <div class="flex items-center gap-1">
+                            <img 
+                                v-if="payhereLogo" 
+                                :src="payhereLogo" 
+                                alt="PayHere" 
+                                class="h-4 w-auto max-w-[60px] object-contain"
+                            />
+                            <span v-else class="font-medium">PayHere:</span>
+                        </div>
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getPayherePrice()) }}</span>
                     </div>
                     
@@ -331,9 +356,18 @@
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getPayzyInstallment()) }} / month</span>
                     </div>
                     
-                    <!-- KOKO -->
+                    <!-- KOKO with Logo -->
                     <div class="flex items-center justify-between">
-                        <span class="font-medium">KOKO (3x):</span>
+                        <div class="flex items-center gap-1">
+                            <img 
+                                v-if="kokoLogo" 
+                                :src="kokoLogo" 
+                                alt="KOKO" 
+                                class="h-4 w-auto max-w-[60px] object-contain"
+                            />
+                            <span v-else class="font-medium">KOKO (3x):</span>
+                            <span v-if="kokoLogo" class="font-medium text-[10px]">(3x):</span>
+                        </div>
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }} / month</span>
                     </div>
                 </div>
@@ -407,21 +441,34 @@
 
                     isAddingToCart: false,
 
+                    payhereLogo: null,
+
                     payzyLogo: null,
+
+                    kokoLogo: null,
                 }
             },
 
             mounted() {
-                this.fetchPayzyLogo();
+                this.fetchPaymentLogos();
             },
 
             methods: {
-                fetchPayzyLogo() {
+                fetchPaymentLogos() {
+                    // Get PayHere logo from core config (paypal_standard)
+                    const payhereImage = "{{ core()->getConfigData('sales.payment_methods.paypal_standard.image') }}";
+                    if (payhereImage) {
+                        this.payhereLogo = "{{ asset('storage') }}/" + payhereImage;
+                    }
+
                     // Get Payzy logo from core config
                     const payzyImage = "{{ core()->getConfigData('sales.payment_methods.payzy.image') }}";
                     if (payzyImage) {
-                        this.payzyLogo = "{{ Storage::url('') }}" + payzyImage;
+                        this.payzyLogo = "{{ asset('storage') }}/" + payzyImage;
                     }
+
+                    // Set KOKO logo from hardcoded path
+                    this.kokoLogo = "{{ asset('storage/logos/kokologo.png') }}";
                 },
                 getStockBadgeStyle() {
                     // Check if product has quantity information
