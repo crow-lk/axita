@@ -2,8 +2,11 @@
 
 <v-shipping-methods
     :methods="shippingMethods"
+    :current-step="currentStep"
+    :selected-method="cart.shipping_method"
     @processing="stepForward"
     @processed="stepProcessed"
+    @auto-selected="handleAutoSelectedShipping"
 >
     <!-- Shipping Method Shimmer Effect -->
     <x-shop::shimmer.checkout.onepage.shipping-method />
@@ -50,7 +53,8 @@
                                         :id="rate.method"
                                         :value="rate.method"
                                         class="peer hidden"
-                                        @change="store(rate.method)"
+                                        :checked="selectedRate === rate.method"
+                                        @change="selectRate(rate.method)"
                                     >
 
                                     <label 
@@ -96,13 +100,70 @@
                     required: true,
                     default: () => null,
                 },
+
+                currentStep: {
+                    type: String,
+                    default: 'address',
+                },
+
+                selectedMethod: {
+                    type: String,
+                    default: null,
+                },
             },
 
-            emits: ['processing', 'processed'],
+            emits: ['processing', 'processed', 'auto-selected'],
+
+            data() {
+                return {
+                    selectedRate: this.selectedMethod,
+                };
+            },
+
+            watch: {
+                selectedMethod(value) {
+                    this.selectedRate = value ?? null;
+
+                    this.tryAutoSelectSingleRate();
+                },
+
+                methods: {
+                    handler() {
+                        this.tryAutoSelectSingleRate();
+                    },
+                    deep: true,
+                },
+
+                currentStep() {
+                    this.tryAutoSelectSingleRate();
+                },
+            },
+
+            mounted() {
+                this.tryAutoSelectSingleRate();
+            },
 
             methods: {
-                store(selectedMethod) {
-                    this.$emit('processing', 'payment');
+                selectRate(method) {
+                    if (! method) {
+                        return;
+                    }
+
+                    this.selectedRate = method;
+
+                    this.store(method);
+                },
+
+                store(selectedMethod, options = {}) {
+                    const { skipStepChange = false } = options;
+
+                    if (! selectedMethod) {
+                        return;
+                    }
+
+                    if (! skipStepChange) {
+                        this.$emit('processing', 'payment');
+                    }
 
                     this.$axios.post("{{ route('shop.checkout.onepage.shipping_methods.store') }}", {    
                             shipping_method: selectedMethod,
@@ -111,16 +172,64 @@
                             if (response.data.redirect_url) {
                                 window.location.href = response.data.redirect_url;
                             } else {
-                                this.$emit('processed', response.data.payment_methods);
+                                const paymentMethods = response.data.payment_methods ?? [];
+
+                                if (skipStepChange) {
+                                    this.$emit('auto-selected', paymentMethods);
+                                } else {
+                                    this.$emit('processed', paymentMethods);
+                                }
                             }
                         })
                         .catch(error => {
-                            this.$emit('processing', 'shipping');
+                            if (! skipStepChange) {
+                                this.$emit('processing', 'shipping');
+                            }
 
-                            if (error.response.data.redirect_url) {
+                            if (error.response?.data?.redirect_url) {
                                 window.location.href = error.response.data.redirect_url;
                             }
                         });
+                },
+
+                tryAutoSelectSingleRate() {
+                    if (! this.methods) {
+                        return;
+                    }
+
+                    const rates = this.flattenRates(this.methods);
+
+                    if (rates.length !== 1) {
+                        return;
+                    }
+
+                    const [singleRate] = rates;
+
+                    if (this.selectedRate === singleRate.method) {
+                        return;
+                    }
+
+                    this.selectedRate = singleRate.method;
+
+                    const skipStepChange = this.currentStep !== 'shipping';
+
+                    this.store(singleRate.method, {
+                        skipStepChange,
+                    });
+                },
+
+                flattenRates(methods) {
+                    if (! methods) {
+                        return [];
+                    }
+
+                    return Object.values(methods).reduce((accumulator, method) => {
+                        const rates = method?.rates ?? [];
+
+                        rates.forEach(rate => accumulator.push(rate));
+
+                        return accumulator;
+                    }, []);
                 },
             },
         });

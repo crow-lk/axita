@@ -89,12 +89,12 @@
                         </template>
 
                         <!-- Included Shipping Methods Blade File -->
-                        <template v-if="cart.have_stockable_items && ['shipping', 'payment', 'review'].includes(currentStep)">
+                        <template v-if="cart.have_stockable_items && (['shipping', 'payment', 'review'].includes(currentStep) || currentStep === 'address' || shippingMethods !== null)">
                             @include('shop::checkout.onepage.shipping')
                         </template>
 
                         <!-- Included Payment Methods Blade File -->
-                        <template v-if="['payment', 'review'].includes(currentStep)">
+                        <template v-if="['payment', 'review'].includes(currentStep) || paymentMethods !== null">
                             @include('shop::checkout.onepage.payment')
                         </template>
                     </div>
@@ -222,7 +222,19 @@
                     getCart() {
                         this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")
                             .then(response => {
-                                this.cart = response.data.data;
+                                const payload = response.data ?? {};
+
+                                this.cart = payload.data ?? null;
+
+                                if (Object.prototype.hasOwnProperty.call(payload, 'shipping_methods')) {
+                                    this.shippingMethods = payload.shipping_methods
+                                        ? payload.shipping_methods.shippingMethods
+                                        : null;
+                                }
+
+                                if (Object.prototype.hasOwnProperty.call(payload, 'payment_methods')) {
+                                    this.paymentMethods = payload.payment_methods ?? [];
+                                }
 
                                 this.scrollToCurrentStep();
                             })
@@ -253,6 +265,12 @@
                         } else if (this.currentStep == 'payment') {
                             this.paymentMethods = data;
                         }
+
+                        this.getCart();
+                    },
+
+                    handleAutoSelectedShipping(paymentMethods) {
+                        this.paymentMethods = paymentMethods ?? [];
 
                         this.getCart();
                     },

@@ -32,7 +32,54 @@ class OnepageController extends APIController
     {
         $cart = Cart::getCart();
 
-        return new CartResource($cart);
+        $shippingMethods = null;
+
+        if (
+            $cart
+            && $cart->haveStockableItems()
+        ) {
+            $cart->loadMissing(['shipping_rates', 'shipping_address']);
+
+            if (
+                $cart->shipping_rates->isEmpty()
+                && $cart->shipping_address
+            ) {
+                $collectedRates = Shipping::collectRates();
+
+                if ($collectedRates !== false) {
+                    $shippingMethods = $collectedRates;
+                }
+            }
+
+            if (! $shippingMethods && $cart->shipping_rates->isNotEmpty()) {
+                $shippingMethods = [
+                    'shippingMethods' => $cart->shipping_rates
+                        ->groupBy('carrier')
+                        ->map(function ($rates) {
+                            $carrierRates = $rates->map(function ($rate) {
+                                $rateData = $rate->toArray();
+
+                                $rateData['base_formatted_price'] = core()->currency($rate->base_price);
+
+                                return $rateData;
+                            })->values()->all();
+
+                            return [
+                                'carrier_title' => $rates->first()->carrier_title,
+                                'rates'         => $carrierRates,
+                            ];
+                        })
+                        ->toArray(),
+                ];
+            }
+        }
+
+        $paymentMethods = Payment::getSupportedPaymentMethods()['payment_methods'] ?? [];
+
+        return (new CartResource($cart))->additional([
+            'shipping_methods' => $shippingMethods,
+            'payment_methods'  => $paymentMethods,
+        ]);
     }
 
     /**
