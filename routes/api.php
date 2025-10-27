@@ -29,8 +29,8 @@ Route::post('/payhere', function (
     $statusCode      = $request->input('status_code');
     $md5sig          = $request->input('md5sig');
 
-    // TODO: store in config/env and read from there
-    $merchantSecret = 'NTU1MTcxOTU2MzU4MzQ3MTQ1NzI4NDE3NTQ2NTczNTMxNTE3MDAz';
+    // Read merchant secret from config
+    $merchantSecret = config('services.payhere.merchant_secret');
 
     $localSig = strtoupper(md5(
         $merchantId .

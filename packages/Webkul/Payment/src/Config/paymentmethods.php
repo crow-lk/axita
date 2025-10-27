@@ -18,4 +18,13 @@ return [
         'active'      => true,
         'sort'        => 2,
     ],
+
+    'payzy'   => [
+        'code'        => 'payzy',
+        'title'       => 'Payzy',
+        'description' => 'Payzy Payment Gateway',
+        'class'       => 'Webkul\Payment\Payment\Payzy',
+        'active'      => true,
+        'sort'        => 3,
+    ],
 ];

@@ -46,6 +46,9 @@ Route::group(['middleware' => ['locale', 'theme', 'currency']], function () {
         ->name('shop.search.index')
         ->middleware('cacheResponse');
 
+    Route::get('search/suggestions', [SearchController::class, 'suggestions'])
+        ->name('shop.search.suggestions');
+
     Route::post('search/upload', [SearchController::class, 'upload'])->name('shop.search.upload');
 
     /**

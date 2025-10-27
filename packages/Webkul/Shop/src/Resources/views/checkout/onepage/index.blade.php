@@ -221,17 +221,41 @@
                     placeOrder() {
                         this.isPlacingOrder = true;
 
+                        console.log('=== PAYZY CHECKOUT: Place Order Started ===');
+                        console.log('Current Step:', this.currentStep);
+                        console.log('Selected Payment Method:', this.cart?.payment?.method);
+                        console.log('Cart Data:', this.cart);
+                        console.log('API Endpoint:', '{{ route('shop.checkout.onepage.orders.store') }}');
+
                         this.$axios.post('{{ route('shop.checkout.onepage.orders.store') }}')
                             .then(response => {
+                                console.log('=== PAYZY CHECKOUT: Order Response Received ===');
+                                console.log('Response Status:', response.status);
+                                console.log('Response Data:', response.data);
+                                
                                 if (response.data.data.redirect) {
+                                    console.log('=== PAYZY CHECKOUT: Redirect Required ===');
+                                    console.log('Redirect URL:', response.data.data.redirect_url);
+                                    console.log('Payment Method:', response.data.data.method || 'Unknown');
+                                    
+                                    // Log before redirect
+                                    console.log('Redirecting to PayZY payment gateway...');
+                                    
                                     window.location.href = response.data.data.redirect_url;
                                 } else {
+                                    console.log('=== PAYZY CHECKOUT: No Redirect, Going to Success Page ===');
                                     window.location.href = '{{ route('shop.checkout.onepage.success') }}';
                                 }
 
                                 this.isPlacingOrder = false;
                             })
                             .catch(error => {
+                                console.error('=== PAYZY CHECKOUT: Order Error ===');
+                                console.error('Error Status:', error.response?.status);
+                                console.error('Error Message:', error.response?.data?.message);
+                                console.error('Error Data:', error.response?.data);
+                                console.error('Full Error:', error);
+                                
                                 this.isPlacingOrder = false
 
                                 this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
