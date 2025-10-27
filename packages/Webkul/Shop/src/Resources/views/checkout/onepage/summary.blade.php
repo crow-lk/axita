@@ -182,6 +182,24 @@
 
     {!! view_render_event('bagisto.shop.checkout.onepage.summary.delivery_charges.after') !!}
 
+    <!-- Payment Gateway Charges -->
+    {!! view_render_event('bagisto.shop.checkout.onepage.summary.payment_charges.before') !!}
+    
+    <div
+        class="flex justify-between text-right"
+        v-if="paymentMethodCharge > 0"
+    >
+        <p class="text-base font-medium max-sm:text-sm">
+            Convenience Fee (@{{ cart.payment_method_title }})
+        </p>
+
+        <p class="text-base font-medium max-sm:text-sm">
+            @{{ formattedPaymentMethodCharge }}
+        </p>
+    </div>
+
+    {!! view_render_event('bagisto.shop.checkout.onepage.summary.payment_charges.after') !!}
+
 
     <!-- Taxes -->
     {!! view_render_event('bagisto.shop.checkout.onepage.summary.tax.before') !!}
@@ -251,7 +269,7 @@
         </p>
 
         <p class="text-lg font-semibold max-sm:text-sm">
-            @{{ cart.formatted_grand_total }}
+            @{{ formattedGrandTotalWithPayment }}
         </p>
     </div>
 

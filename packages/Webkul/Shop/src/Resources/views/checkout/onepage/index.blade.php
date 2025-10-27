@@ -166,6 +166,62 @@
                     this.getCart();
                 },
 
+                computed: {
+                    /**
+                     * Calculate payment method charge based on selected payment method
+                     */
+                    paymentMethodCharge() {
+                        if (!this.cart || !this.cart.payment_method) {
+                            return 0;
+                        }
+
+                        let chargePercentage = 0;
+                        const paymentMethod = this.cart.payment_method;
+
+                        // Define payment gateway charge percentages
+                        if (paymentMethod === 'paypal_standard') { // PayHere
+                            chargePercentage = 3.3;
+                        } else if (paymentMethod === 'payzy') {
+                            chargePercentage = 14;
+                        } else if (paymentMethod === 'koko') {
+                            chargePercentage = 12;
+                        }
+
+                        // Calculate charge based on subtotal, shipping, and tax (not grand total)
+                        const subTotal = parseFloat(this.cart.sub_total || 0);
+                        const shipping = parseFloat(this.cart.shipping_amount || 0);
+                        const tax = parseFloat(this.cart.tax_total || 0);
+                        const baseAmount = subTotal + shipping + tax;
+                        const charge = (baseAmount * chargePercentage) / 100;
+
+                        return Math.round(charge * 100) / 100; // Round to 2 decimals
+                    },
+
+                    /**
+                     * Format payment method charge as currency
+                     */
+                    formattedPaymentMethodCharge() {
+                        // Always show as Rs. with two decimals
+                        return `Rs. ${this.paymentMethodCharge.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    },
+
+                    /**
+                     * Calculate grand total including payment charges
+                     */
+                    grandTotalWithPayment() {
+                        const grandTotal = parseFloat(this.cart?.grand_total || 0);
+                        return grandTotal + this.paymentMethodCharge;
+                    },
+
+                    /**
+                     * Format grand total with payment charges as currency
+                     */
+                    formattedGrandTotalWithPayment() {
+                        // Always show as Rs. with two decimals
+                        return `Rs. ${this.grandTotalWithPayment.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    }
+                },
+
                 methods: {
                     getCart() {
                         this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")

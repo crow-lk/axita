@@ -763,6 +763,8 @@ return [
                 'delivery-charges'          => 'Delivery Charges',
                 'discount-amount'           => 'Discount Amount',
                 'grand-total'               => 'Grand Total',
+                'payment-charges'           => 'Bank Charges + Convenience Fee',
+                'payment'                   => 'Payment',
                 'place-order'               => 'Place Order',
                 'proceed-to-checkout'       => 'Proceed To Checkout',
                 'sub-total-excl-tax'        => 'Subtotal (Excl. Tax)',
