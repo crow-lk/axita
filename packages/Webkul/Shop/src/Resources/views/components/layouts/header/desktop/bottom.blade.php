@@ -1,6 +1,6 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.before') !!}
 
-<div class="flex min-h-[56px] w-full items-center border border-b border-l-0 border-r-0 border-t-0 px-[60px] max-1180:px-8 relative">
+<div class="flex h-[56px] w-full items-center px-[60px] max-1180:px-8 relative bg-transparent border-b border-white/20">
     <!-- Browse Categories (only) -->
     <div class="flex items-center gap-x-6 max-[1180px]:gap-x-4">
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
