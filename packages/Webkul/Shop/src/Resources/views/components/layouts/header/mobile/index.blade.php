@@ -9,7 +9,8 @@
 @endphp
 
 <div class="flex flex-wrap gap-4 px-4 pb-4 pt-6 shadow-sm lg:hidden">
-    <div class="flex w-full items-center justify-between">
+    <!-- Top Row: Logo, Icons -->
+    <div class="flex w-full items-center justify-between mb-2">
         <!-- Left Navigation -->
         <div class="flex items-center gap-x-1.5">
             {!! view_render_event('bagisto.shop.components.layouts.header.mobile.drawer.before') !!}
@@ -261,32 +262,8 @@
 
     {!! view_render_event('bagisto.shop.components.layouts.header.mobile.search.before') !!}
 
-    <!-- Serach Catalog Form -->
-    <form action="{{ route('shop.search.index') }}" class="flex w-full items-center">
-        <label 
-            for="organic-search" 
-            class="sr-only"
-        >
-            @lang('shop::app.components.layouts.header.search')
-        </label>
-
-        <div class="relative w-full">
-            <div class="icon-search pointer-events-none absolute top-3 flex items-center text-2xl max-md:text-xl max-sm:top-2.5 ltr:left-3 rtl:right-3"></div>
-
-            <input
-                type="text"
-                class="block w-full rounded-xl border border-['#E3E3E3'] px-11 py-3.5 text-sm font-medium text-gray-900 max-md:rounded-lg max-md:px-10 max-md:py-3 max-md:font-normal max-sm:text-xs"
-                name="query"
-                value="{{ request('query') }}"
-                placeholder="@lang('shop::app.components.layouts.header.search-text')"
-                required
-            >
-
-            @if (core()->getConfigData('catalog.products.settings.image_search'))
-                @include('shop::search.images.index')
-            @endif
-        </div>
-    </form>
+    <!-- Search Bar Row -->
+    <v-mobile-search></v-mobile-search>
 
     {!! view_render_event('bagisto.shop.components.layouts.header.mobile.search.after') !!}
 
@@ -508,5 +485,159 @@
                 },
             },
         });
+
+        app.component('v-mobile-search', {
+            template: `
+                <div class="relative w-full">
+                    <form action="{{ route('shop.search.index') }}" class="flex flex-col w-full gap-2">
+                        <label for="mobile-search" class="sr-only">@lang('shop::app.components.layouts.header.search')</label>
+                        
+                        <!-- Unified Rounded Search Bar with Category -->
+                        <div class="flex flex-col w-full rounded-2xl border border-gray-300 bg-white overflow-hidden">
+                            <!-- Category Dropdown -->
+                            <div class="relative">
+                                <select 
+                                    name="category"
+                                    v-model="selectedCategory"
+                                    @change="search"
+                                    class="w-full px-4 py-2.5 pr-10 text-xs font-medium text-gray-700 bg-gray-50 border-b border-gray-300 outline-none cursor-pointer appearance-none"
+                                >
+                                    <option value="">All Categories</option>
+                                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                                        @{{ category.name }}
+                                    </option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center">
+                                    <span class="icon-arrow-right text-lg text-gray-600"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Search Input Row -->
+                            <div class="relative flex items-center">
+                                <div class="icon-search pointer-events-none flex items-center text-lg text-gray-400 ltr:ml-3 rtl:mr-3"></div>
+                                
+                                <input
+                                    type="text"
+                                    id="mobile-search"
+                                    name="query"
+                                    v-model="query"
+                                    @input="search"
+                                    @focus="showDropdown = true"
+                                    class="flex-grow px-3 py-2.5 text-sm font-medium text-gray-900 bg-transparent border-none outline-none placeholder-gray-400"
+                                    placeholder="@lang('shop::app.components.layouts.header.search-text')"
+                                    autocomplete="off"
+                                >
+                                
+                                <button type="submit" class="px-4 py-2 text-[#e85805] hover:text-[#d14805]">
+                                    <span class="icon-arrow-right text-lg"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Dropdown -->
+                    <div v-if="showDropdown && query.length >= 2" class="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+                        <!-- Loading -->
+                        <div v-if="loading" class="p-3 text-center">
+                            <div class="inline-block animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full"></div>
+                            <span class="ml-2 text-xs text-gray-600">Searching...</span>
+                        </div>
+
+                        <!-- Results -->
+                        <div v-else-if="products.length > 0">
+                            <a
+                                v-for="product in products"
+                                :key="product.id"
+                                :href="'{{ url('') }}/' + product.url"
+                                class="flex items-center gap-2 p-2.5 hover:bg-gray-50 border-b last:border-b-0"
+                            >
+                                <img :src="product.image" :alt="product.name" class="w-10 h-10 object-cover rounded bg-gray-100">
+                                <div class="flex-grow min-w-0">
+                                    <p class="text-xs font-medium text-gray-900 truncate">@{{ product.name }}</p>
+                                    <p class="text-xs text-[#e85805] font-semibold">@{{ product.formatted_price }}</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- No Results -->
+                        <div v-else class="p-3 text-center text-xs text-gray-600">
+                            No products found
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            data() {
+                return {
+                    query: '{{ request('query') }}',
+                    selectedCategory: '{{ request('category') }}',
+                    categories: [],
+                    products: [],
+                    loading: false,
+                    showDropdown: false,
+                    timeout: null
+                };
+            },
+
+            mounted() {
+                this.fetchCategories();
+                document.addEventListener('click', this.closeDropdown);
+            },
+
+            beforeDestroy() {
+                document.removeEventListener('click', this.closeDropdown);
+            },
+
+            methods: {
+                fetchCategories() {
+                    this.$axios.get('{{ route('shop.api.categories.index') }}')
+                        .then(response => {
+                            // Filter out root categories (parent_id is null)
+                            this.categories = response.data.data.filter(cat => cat.parent_id !== null);
+                        })
+                        .catch(error => {
+                            console.error('Failed to load categories:', error);
+                        });
+                },
+
+                search() {
+                    clearTimeout(this.timeout);
+                    
+                    if (this.query.length < 2) {
+                        this.products = [];
+                        this.showDropdown = false;
+                        return;
+                    }
+
+                    this.loading = true;
+                    this.showDropdown = true;
+
+                    this.timeout = setTimeout(() => {
+                        let params = { query: this.query };
+                        if (this.selectedCategory) {
+                            params.category = this.selectedCategory;
+                        }
+
+                        this.$axios.get('{{ route('shop.search.suggestions') }}', { params })
+                        .then(response => {
+                            this.products = response.data;
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            this.products = [];
+                            this.loading = false;
+                        });
+                    }, 300);
+                },
+
+                closeDropdown(e) {
+                    if (!this.$el.contains(e.target)) {
+                        this.showDropdown = false;
+                    }
+                }
+            }
+        });
     </script>
 @endPushOnce
+

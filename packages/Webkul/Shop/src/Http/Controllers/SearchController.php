@@ -2,6 +2,7 @@
 
 namespace Webkul\Shop\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use Webkul\Marketing\Repositories\SearchTermRepository;
 use Webkul\Product\Repositories\SearchRepository;
 
@@ -25,18 +26,21 @@ class SearchController extends Controller
     public function index()
     {
         $this->validate(request(), [
-            'query' => ['sometimes', 'required', 'string', 'regex:/^[^\\\\]+$/u'],
+            'query' => ['nullable', 'string', 'regex:/^[^\\\\]+$/u'],
             'category' => ['sometimes', 'integer', 'exists:categories,id'],
         ]);
 
-        $searchTerm = $this->searchTermRepository->findOneWhere([
-            'term'       => request()->query('query'),
-            'channel_id' => core()->getCurrentChannel()->id,
-            'locale'     => app()->getLocale(),
-        ]);
+        // Only check for redirect if query is provided
+        if (request()->query('query')) {
+            $searchTerm = $this->searchTermRepository->findOneWhere([
+                'term'       => request()->query('query'),
+                'channel_id' => core()->getCurrentChannel()->id,
+                'locale'     => app()->getLocale(),
+            ]);
 
-        if ($searchTerm?->redirect_url) {
-            return redirect()->to($searchTerm->redirect_url);
+            if ($searchTerm?->redirect_url) {
+                return redirect()->to($searchTerm->redirect_url);
+            }
         }
 
         return view('shop::search.index');
@@ -61,43 +65,76 @@ class SearchController extends Controller
             return response()->json([]);
         }
 
-        // Build search parameters
-        $params = [
-            'name' => $query,
-            'channel_id' => core()->getCurrentChannel()->id,
-            'status' => 1,
-            'visible_individually' => 1,
-            'limit' => 8, // Limit suggestions to 8 items
-        ];
+        try {
+            // Split query into words for better matching
+            $searchTerms = array_filter(explode(' ', strtolower($query)));
+            
+            // Build query to search product names with ranking
+            $productsQuery = \Webkul\Product\Models\Product::query()
+                ->select('products.*')
+                ->selectRaw('
+                    CASE 
+                        WHEN LOWER(product_flat.name) LIKE ? THEN 1
+                        WHEN LOWER(product_flat.sku) = ? THEN 2
+                        WHEN LOWER(product_flat.name) LIKE ? THEN 3
+                        ELSE 4
+                    END as relevance
+                ', [
+                    '%' . strtolower($query) . '%',
+                    strtolower($query),
+                    strtolower($searchTerms[0]) . '%'
+                ])
+                ->leftJoin('product_flat', function($join) {
+                    $join->on('products.id', '=', 'product_flat.product_id')
+                        ->where('product_flat.channel', core()->getCurrentChannel()->code)
+                        ->where('product_flat.locale', app()->getLocale());
+                })
+                ->where('product_flat.status', 1)
+                ->where('product_flat.visible_individually', 1);
 
-        if ($categoryId) {
-            $params['category_id'] = $categoryId;
+            // Add category filter if provided
+            if ($categoryId) {
+                $productsQuery->leftJoin('product_categories', 'products.id', '=', 'product_categories.product_id')
+                    ->where('product_categories.category_id', $categoryId);
+            }
+
+            $productsQuery->where(function($q) use ($searchTerms, $query) {
+                    // Match full query or any individual word (3+ chars)
+                    $q->where('product_flat.name', 'like', '%' . $query . '%')
+                      ->orWhere('product_flat.sku', 'like', '%' . $query . '%');
+                    
+                    // Also match individual words for partial matches
+                    foreach ($searchTerms as $term) {
+                        if (strlen($term) >= 3) {
+                            $q->orWhere('product_flat.name', 'like', '%' . $term . '%');
+                        }
+                    }
+                });
+
+            $products = $productsQuery->with(['images', 'price_indices'])
+                ->orderBy('relevance')
+                ->limit(8)
+                ->get();
+
+            // Format response
+            $suggestions = $products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'url' => $product->url_key,
+                    'image' => $product->base_image_url ?? bagisto_asset('images/small-product-placeholder.webp'),
+                    'price' => $product->getTypeInstance()->getMinimalPrice(),
+                    'formatted_price' => core()->currency($product->getTypeInstance()->getMinimalPrice()),
+                ];
+            });
+
+            return response()->json($suggestions);
+        } catch (\Exception $e) {
+            // Log error for debugging
+            Log::error('Search suggestions error: ' . $e->getMessage());
+            
+            return response()->json([]);
         }
-
-        // Get search engine configuration
-        $searchEngine = 'database';
-        if (core()->getConfigData('catalog.products.search.engine') == 'elastic') {
-            $searchEngine = core()->getConfigData('catalog.products.search.storefront_mode');
-        }
-
-        // Get products
-        $products = app(\Webkul\Product\Repositories\ProductRepository::class)
-            ->setSearchEngine($searchEngine ?? 'database')
-            ->getAll($params);
-
-        // Format response
-        $suggestions = $products->map(function ($product) {
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'url' => $product->url_key,
-                'image' => $product->base_image_url,
-                'price' => $product->getTypeInstance()->getMinimalPrice(),
-                'formatted_price' => core()->currency($product->getTypeInstance()->getMinimalPrice()),
-            ];
-        })->take(8);
-
-        return response()->json($suggestions);
     }
 
     /**
