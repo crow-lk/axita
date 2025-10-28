@@ -16,7 +16,7 @@
         type="text/x-template"
         id="v-payment-methods-template"
     >
-        <div class="mb-7 max-md:last:!mb-0">
+        <div class="mb-6 max-md:last:!mb-0">
             <template v-if="! methods">
                 <!-- Payment Method shimmer Effect -->
                 <x-shop::shimmer.checkout.onepage.payment-method />
@@ -28,7 +28,7 @@
                 <!-- Accordion Blade Component -->
                 <x-shop::accordion class="overflow-hidden !border-b-0 max-md:rounded-lg max-md:!border-none max-md:!bg-gray-100">
                     <!-- Accordion Blade Component Header -->
-                    <x-slot:header class="px-0 py-4 max-md:p-3 max-md:text-sm max-md:font-medium max-sm:p-2">
+                    <x-slot:header class="px-0 py-3 max-md:p-3 max-md:text-sm max-md:font-medium max-sm:p-2">
                         
                         <div class="flex items-center justify-between">
                             <h2 class="text-2xl font-medium max-md:text-base">
@@ -38,10 +38,10 @@
                     </x-slot>
     
                     <!-- Accordion Blade Component Content -->
-                    <x-slot:content class="mt-8 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
-                        <div class="flex flex-wrap gap-7 max-md:gap-4 max-sm:gap-2.5">
+                    <x-slot:content class="mt-6 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
+                        <div class="flex w-full flex-col gap-3 max-w-[420px] max-md:max-w-full max-sm:gap-2.5">
                             <div 
-                                class="relative cursor-pointer max-md:max-w-full max-md:flex-auto"
+                                class="relative w-full cursor-pointer"
                                 v-for="(payment, index) in methods"
                             >
                                 {!! view_render_event('bagisto.shop.checkout.payment-method.before') !!}
@@ -63,12 +63,12 @@
 
                                 <label 
                                     :for="payment.method" 
-                                    class="block w-[190px] cursor-pointer rounded-xl border border-zinc-200 p-5 max-md:flex max-md:w-full max-md:gap-5 max-md:rounded-lg max-sm:gap-4 max-sm:px-4 max-sm:py-2.5"
+                                    class="flex h-full w-full cursor-pointer flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-navyBlue/40 hover:shadow-lg peer-checked:border-navyBlue peer-checked:bg-navyBlue/[0.04] peer-checked:shadow-lg max-md:flex-row max-md:items-center max-md:gap-3 max-md:rounded-xl max-sm:gap-3 max-sm:px-3 max-sm:py-2.5"
                                 >
                                     {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.image.before') !!}
 
                                     <img
-                                        class="max-h-11 max-w-14"
+                                        class="max-h-10 max-w-14"
                                         :src="payment.image"
                                         width="55"
                                         height="55"
@@ -89,7 +89,7 @@
 
                                         {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.before') !!}
 
-                                        <p class="mt-2.5 text-xs font-medium text-zinc-500 max-md:mt-1 max-sm:mt-0">
+                                        <p class="mt-1.5 text-xs font-medium text-zinc-500 max-md:mt-1 max-sm:mt-0">
                                             @{{ payment.description }}
                                         </p>
 

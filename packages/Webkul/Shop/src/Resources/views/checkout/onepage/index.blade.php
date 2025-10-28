@@ -73,62 +73,62 @@
             </template>
 
             <template v-else>
-                <div class="grid grid-cols-[1fr_auto] gap-8 max-lg:grid-cols-[1fr] max-md:gap-5">
-                    <!-- Included Checkout Summary Blade File For Mobile view -->
-                    <div class="hidden max-md:block">
-                        @include('shop::checkout.onepage.summary')
-                    </div>
-
+                <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(360px,1fr)] gap-6 max-lg:grid-cols-1 max-md:gap-4">
                     <div
-                        class="overflow-y-auto max-md:grid max-md:gap-4"
+                        class="flex flex-col gap-5"
                         id="steps-container"
                     >
                         <!-- Included Addresses Blade File -->
                         <template v-if="['address', 'shipping', 'payment', 'review'].includes(currentStep)">
                             @include('shop::checkout.onepage.address')
                         </template>
+                    </div>
+
+                    <div class="flex flex-col gap-5 lg:gap-6">
+                        <div class="space-y-3">
+                            <div id="summary-section">
+                                @include('shop::checkout.onepage.summary')
+                            </div>
+
+                            <div
+                                class="flex justify-end"
+                                v-if="canPlaceOrder"
+                            >
+                                <template v-if="cart.payment_method == 'paypal_smart_button'">
+                                    {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.before') !!}
+
+                                    <!-- Paypal Smart Button Vue Component -->
+                                    <v-paypal-smart-button></v-paypal-smart-button>
+
+                                    {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.after') !!}
+                                </template>
+
+                                <template v-else>
+                                    <x-shop::button
+                                        type="button"
+                                        class="primary-button w-max rounded-2xl bg-navyBlue px-11 py-3 max-md:mb-4 max-md:w-full max-md:max-w-full max-md:rounded-lg max-sm:py-1.5"
+                                        :title="trans('shop::app.checkout.onepage.summary.place-order')"
+                                        ::disabled="isPlacingOrder"
+                                        ::loading="isPlacingOrder"
+                                        @click="placeOrder"
+                                    />
+                                </template>
+                            </div>
+                        </div>
 
                         <!-- Included Shipping Methods Blade File -->
                         <template v-if="cart.have_stockable_items && (['shipping', 'payment', 'review'].includes(currentStep) || currentStep === 'address' || shippingMethods !== null)">
-                            @include('shop::checkout.onepage.shipping')
+                            <div id="shipping-section">
+                                @include('shop::checkout.onepage.shipping')
+                            </div>
                         </template>
 
                         <!-- Included Payment Methods Blade File -->
                         <template v-if="['payment', 'review'].includes(currentStep) || paymentMethods !== null">
-                            @include('shop::checkout.onepage.payment')
+                            <div id="payment-section">
+                                @include('shop::checkout.onepage.payment')
+                            </div>
                         </template>
-                    </div>
-
-                    <!-- Included Checkout Summary Blade File For Desktop view -->
-                    <div class="sticky top-8 block h-max w-[442px] max-w-full max-lg:w-auto max-lg:max-w-[442px] ltr:pl-8 max-lg:ltr:pl-0 rtl:pr-8 max-lg:rtl:pr-0">
-                        <div class="block max-md:hidden">
-                            @include('shop::checkout.onepage.summary')
-                        </div>
-
-                        <div
-                            class="flex justify-end"
-                            v-if="canPlaceOrder"
-                        >
-                            <template v-if="cart.payment_method == 'paypal_smart_button'">
-                                {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.before') !!}
-
-                                <!-- Paypal Smart Button Vue Component -->
-                                <v-paypal-smart-button></v-paypal-smart-button>
-
-                                {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.after') !!}
-                            </template>
-
-                            <template v-else>
-                                <x-shop::button
-                                    type="button"
-                                    class="primary-button w-max rounded-2xl bg-navyBlue px-11 py-3 max-md:mb-4 max-md:w-full max-md:max-w-full max-md:rounded-lg max-sm:py-1.5"
-                                    :title="trans('shop::app.checkout.onepage.summary.place-order')"
-                                    ::disabled="isPlacingOrder"
-                                    ::loading="isPlacingOrder"
-                                    @click="placeOrder"
-                                />
-                            </template>
-                        </div>
                     </div>
                 </div>
             </template>
@@ -276,7 +276,17 @@
                     },
 
                     scrollToCurrentStep() {
-                        let container = document.getElementById('steps-container');
+                        let targetId = 'steps-container';
+
+                        if (this.currentStep === 'shipping') {
+                            targetId = 'shipping-section';
+                        } else if (this.currentStep === 'payment') {
+                            targetId = 'payment-section';
+                        } else if (this.currentStep === 'review') {
+                            targetId = 'summary-section';
+                        }
+
+                        let container = document.getElementById(targetId);
 
                         if (! container) {
                             return;
@@ -284,7 +294,7 @@
 
                         container.scrollIntoView({
                             behavior: 'smooth',
-                            block: 'end'
+                            block: 'start'
                         });
                     },
 
