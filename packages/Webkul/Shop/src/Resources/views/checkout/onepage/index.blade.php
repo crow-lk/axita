@@ -62,6 +62,52 @@
         </v-checkout>
     </div>
 
+    @pushOnce('styles')
+        <style>
+            .checkout-onepage .text-navyBlue,
+            .checkout-onepage .text-navyBlue *,
+            .checkout-onepage h1,
+            .checkout-onepage h2,
+            .checkout-onepage h3,
+            .checkout-onepage h4 {
+                color: #1f2937 !important;
+            }
+
+            .checkout-onepage .text-blue-700,
+            .checkout-onepage .text-blue-600,
+            .checkout-onepage .text-orange-600,
+            .checkout-onepage .text-orange-500,
+            .checkout-onepage .text-orange-900 {
+                color: #3f3f46 !important;
+            }
+
+            .checkout-onepage .border-navyBlue {
+                border-color: #d4d4d8 !important;
+            }
+
+            .checkout-onepage .bg-navyBlue {
+                background-color: #1f2937 !important;
+                border-color: #1f2937 !important;
+            }
+
+            .checkout-onepage .bg-navyBlue\/\[0\.08\] {
+                background-color: rgba(31, 41, 55, 0.08) !important;
+            }
+
+            .checkout-onepage .border-navyBlue\/30 {
+                border-color: rgba(156, 163, 175, 0.4) !important;
+            }
+
+            .checkout-onepage .hover\:border-navyBlue\/30:hover {
+                border-color: rgba(156, 163, 175, 0.6) !important;
+            }
+
+            .checkout-onepage .hover\:bg-\[\#050e3a0d\]:hover {
+                background-color: #f4f4f5 !important;
+            }
+        </style>
+    @endPushOnce
+
     @pushOnce('scripts')
         <script
             type="text/x-template"
@@ -73,7 +119,7 @@
             </template>
 
             <template v-else>
-                <div class="grid text-[13px] leading-6 text-zinc-700 lg:grid-cols-[minmax(0,1fr)_minmax(360px,1fr)] gap-5 max-lg:grid-cols-1 max-md:gap-3.5">
+                <div class="checkout-onepage grid text-[13px] leading-6 text-zinc-700 lg:grid-cols-[minmax(0,1fr)_minmax(360px,1fr)] gap-5 max-lg:grid-cols-1 max-md:gap-3.5">
                     <div
                         class="flex flex-col gap-5"
                         id="steps-container"
