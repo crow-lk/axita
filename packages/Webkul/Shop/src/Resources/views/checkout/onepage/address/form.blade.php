@@ -3,7 +3,7 @@
         type="text/x-template"
         id="v-checkout-address-form-template"
     >
-        <div class="mt-2 max-md:mt-3">
+        <div class="mt-2 space-y-4 text-[13px] leading-5 max-md:mt-3">
             <x-shop::form.control-group class="hidden">
                 <x-shop::form.control-group.control
                     type="text"
@@ -13,8 +13,8 @@
             </x-shop::form.control-group>
 
             <!-- Company Name -->
-            <x-shop::form.control-group>
-                <x-shop::form.control-group.label>
+            <x-shop::form.control-group class="space-y-1.5">
+                <x-shop::form.control-group.label class="text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                     @lang('shop::app.checkout.onepage.address.company-name')
                 </x-shop::form.control-group.label>
 
@@ -22,6 +22,7 @@
                     type="text"
                     ::name="controlName + '.company_name'"
                     ::value="address.company_name"
+                    class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                     :placeholder="trans('shop::app.checkout.onepage.address.company-name')"
                 />
             </x-shop::form.control-group>
@@ -29,9 +30,9 @@
             {!! view_render_event('bagisto.shop.checkout.onepage.address.form.company_name.after') !!}
 
             <!-- First Name -->
-            <div class="grid grid-cols-2 gap-x-5 max-md:grid-cols-1">
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="required !mt-0">
+            <div class="grid grid-cols-2 gap-4 max-md:grid-cols-1">
+                <x-shop::form.control-group class="space-y-1.5">
+                    <x-shop::form.control-group.label class="required !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                         @lang('shop::app.checkout.onepage.address.first-name')
                     </x-shop::form.control-group.label>
 
@@ -42,6 +43,7 @@
                         rules="required"
                         :label="trans('shop::app.checkout.onepage.address.first-name')"
                         :placeholder="trans('shop::app.checkout.onepage.address.first-name')"
+                        class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                     />
 
                     <x-shop::form.control-group.error ::name="controlName + '.first_name'" />
@@ -50,8 +52,8 @@
                 {!! view_render_event('bagisto.shop.checkout.onepage.address.form.first_name.after') !!}
 
                 <!-- Last Name -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="required !mt-0">
+                <x-shop::form.control-group class="space-y-1.5">
+                    <x-shop::form.control-group.label class="required !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                         @lang('shop::app.checkout.onepage.address.last-name')
                     </x-shop::form.control-group.label>
 
@@ -62,6 +64,7 @@
                         rules="required"
                         :label="trans('shop::app.checkout.onepage.address.last-name')"
                         :placeholder="trans('shop::app.checkout.onepage.address.last-name')"
+                        class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                     />
 
                     <x-shop::form.control-group.error ::name="controlName + '.last_name'" />
@@ -71,8 +74,8 @@
             </div>
 
             <!-- Email -->
-            <x-shop::form.control-group>
-                <x-shop::form.control-group.label class="required !mt-0">
+            <x-shop::form.control-group class="space-y-1.5">
+                <x-shop::form.control-group.label class="required !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                     @lang('shop::app.checkout.onepage.address.email')
                 </x-shop::form.control-group.label>
 
@@ -83,6 +86,7 @@
                     rules="required|email"
                     :label="trans('shop::app.checkout.onepage.address.email')"
                     placeholder="email@example.com"
+                    class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                 />
 
                 <x-shop::form.control-group.error ::name="controlName + '.email'" />
@@ -91,8 +95,8 @@
             {!! view_render_event('bagisto.shop.checkout.onepage.address.form.email.after') !!}
 
             <!-- Street Address -->
-            <x-shop::form.control-group>
-                <x-shop::form.control-group.label class="required !mt-0">
+            <x-shop::form.control-group class="space-y-1.5">
+                <x-shop::form.control-group.label class="required !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                     @lang('shop::app.checkout.onepage.address.street-address')
                 </x-shop::form.control-group.label>
 
@@ -103,6 +107,7 @@
                     rules="required|address"
                     :label="trans('shop::app.checkout.onepage.address.street-address')"
                     :placeholder="trans('shop::app.checkout.onepage.address.street-address')"
+                    class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                 />
 
                 <x-shop::form.control-group.error
@@ -118,6 +123,7 @@
                             rules="address"
                             :label="trans('shop::app.checkout.onepage.address.street-address')"
                             :placeholder="trans('shop::app.checkout.onepage.address.street-address')"
+                            class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                         />
 
                         <x-shop::form.control-group.error
@@ -130,10 +136,10 @@
 
             {!! view_render_event('bagisto.shop.checkout.onepage.address.form.address.after') !!}
 
-            <div class="grid grid-cols-2 gap-x-5 max-md:grid-cols-1">
+            <div class="grid grid-cols-2 gap-4 max-md:grid-cols-1">
                 <!-- Country -->
-                <x-shop::form.control-group class="!mb-4">
-                    <x-shop::form.control-group.label class="{{ core()->isCountryRequired() ? 'required' : '' }} !mt-0">
+                <x-shop::form.control-group class="space-y-1.5">
+                    <x-shop::form.control-group.label class="{{ core()->isCountryRequired() ? 'required' : '' }} !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                         @lang('shop::app.checkout.onepage.address.country')
                     </x-shop::form.control-group.label>
 
@@ -145,6 +151,7 @@
                         rules="{{ core()->isCountryRequired() ? 'required' : '' }}"
                         :label="trans('shop::app.checkout.onepage.address.country')"
                         :placeholder="trans('shop::app.checkout.onepage.address.country')"
+                        class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                     >
                         <option value="">
                             @lang('shop::app.checkout.onepage.address.select-country')
@@ -164,8 +171,8 @@
                 {!! view_render_event('bagisto.shop.checkout.onepage.address.form.country.after') !!}
 
                 <!-- State -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="{{ core()->isStateRequired() ? 'required' : '' }} !mt-0">
+                <x-shop::form.control-group class="space-y-1.5">
+                    <x-shop::form.control-group.label class="{{ core()->isStateRequired() ? 'required' : '' }} !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                         @lang('shop::app.checkout.onepage.address.state')
                     </x-shop::form.control-group.label>
 
@@ -178,6 +185,7 @@
                                 ::value="address.state"
                                 :label="trans('shop::app.checkout.onepage.address.state')"
                                 :placeholder="trans('shop::app.checkout.onepage.address.state')"
+                                class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                             >
                                 <option value="">
                                     @lang('shop::app.checkout.onepage.address.select-state')
@@ -198,6 +206,7 @@
                                 ::name="controlName + '.state'"
                                 ::value="address.state"
                                 rules="{{ core()->isStateRequired() ? 'required' : '' }}"
+                                class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                                 :label="trans('shop::app.checkout.onepage.address.state')"
                                 :placeholder="trans('shop::app.checkout.onepage.address.state')"
                             />
@@ -210,10 +219,10 @@
                 {!! view_render_event('bagisto.shop.checkout.onepage.address.form.state.after') !!}
             </div>
 
-            <div class="grid grid-cols-2 gap-x-5 max-md:grid-cols-1">
+            <div class="grid grid-cols-2 gap-4 max-md:grid-cols-1">
                 <!-- City -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="required !mt-0">
+                <x-shop::form.control-group class="space-y-1.5">
+                    <x-shop::form.control-group.label class="required !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                         @lang('shop::app.checkout.onepage.address.city')
                     </x-shop::form.control-group.label>
 
@@ -224,6 +233,7 @@
                         rules="required"
                         :label="trans('shop::app.checkout.onepage.address.city')"
                         :placeholder="trans('shop::app.checkout.onepage.address.city')"
+                        class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                     />
 
                     <x-shop::form.control-group.error ::name="controlName + '.city'" />
@@ -232,8 +242,8 @@
                 {!! view_render_event('bagisto.shop.checkout.onepage.address.form.city.after') !!}
 
                 <!-- Postcode -->
-                <x-shop::form.control-group>
-                    <x-shop::form.control-group.label class="{{ core()->isPostCodeRequired() ? 'required' : '' }} !mt-0">
+                <x-shop::form.control-group class="space-y-1.5">
+                    <x-shop::form.control-group.label class="{{ core()->isPostCodeRequired() ? 'required' : '' }} !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                         @lang('shop::app.checkout.onepage.address.postcode')
                     </x-shop::form.control-group.label>
 
@@ -244,6 +254,7 @@
                         rules="{{ core()->isPostCodeRequired() ? 'required' : '' }}|postcode"
                         :label="trans('shop::app.checkout.onepage.address.postcode')"
                         :placeholder="trans('shop::app.checkout.onepage.address.postcode')"
+                        class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                     />
 
                     <x-shop::form.control-group.error ::name="controlName + '.postcode'" />
@@ -253,8 +264,8 @@
             </div>
 
             <!-- Phone Number -->
-            <x-shop::form.control-group>
-                <x-shop::form.control-group.label class="required !mt-0">
+            <x-shop::form.control-group class="space-y-1.5">
+                <x-shop::form.control-group.label class="required !mt-0 text-[12px] font-semibold uppercase tracking-wide text-zinc-500">
                     @lang('shop::app.checkout.onepage.address.telephone')
                 </x-shop::form.control-group.label>
 
@@ -265,6 +276,7 @@
                     rules="required|numeric"
                     :label="trans('shop::app.checkout.onepage.address.telephone')"
                     :placeholder="trans('shop::app.checkout.onepage.address.telephone')"
+                    class="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] leading-5 text-zinc-700 focus:border-navyBlue focus:ring-0"
                 />
 
                 <x-shop::form.control-group.error ::name="controlName + '.phone'" />

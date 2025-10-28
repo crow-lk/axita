@@ -32,7 +32,7 @@
                     <form @submit="handleSubmit($event, addAddressToCart)">
                         <!-- Billing Address Header -->
                         <div class="mb-4 flex items-center justify-between max-md:mb-2">
-                            <h2 class="text-xl font-medium max-sm:text-base max-sm:font-normal">
+                            <h2 class="text-lg font-semibold text-navyBlue max-sm:text-base">
                                 @lang('shop::app.checkout.onepage.address.billing-address')
                             </h2>
                         </div>
@@ -125,7 +125,7 @@
                         <!-- Shipping Address Block if have stockable items -->
                         <template v-if="cart.have_stockable_items">
                             <!-- Use for Shipping Checkbox -->
-                            <x-shop::form.control-group class="!mb-0 mt-5 flex items-center gap-2.5">
+                            <x-shop::form.control-group class="!mb-0 mt-5 flex items-center gap-2.5 text-[13px]">
                                 <x-shop::form.control-group.control
                                     type="checkbox"
                                     name="billing.use_for_shipping"
@@ -137,7 +137,7 @@
                                 />
 
                                 <label
-                                    class="cursor-pointer select-none text-base text-zinc-500 max-md:text-sm max-sm:text-xs ltr:pl-0 rtl:pr-0"
+                                    class="cursor-pointer select-none text-[13px] text-zinc-600 ltr:pl-0 rtl:pr-0"
                                     for="use_for_shipping"
                                 >
                                     @lang('shop::app.checkout.onepage.address.same-as-billing')
@@ -152,7 +152,7 @@
                             >
                                 <!-- Shipping Address Header -->
                                 <div class="mb-4 flex items-center justify-between">
-                                    <h2 class="text-xl font-medium max-md:text-lg max-sm:text-base">
+                                    <h2 class="text-lg font-semibold text-navyBlue max-sm:text-base">
                                         @lang('shop::app.checkout.onepage.address.shipping-address')
                                     </h2>
                                 </div>
@@ -265,7 +265,7 @@
                     <form @submit="handleSubmit($event, updateOrCreateAddress)">
                         <!-- Billing Address Header -->
                         <div class="mb-4 flex items-center justify-between">
-                            <h2 class="text-xl font-medium max-md:text-base max-sm:font-normal">
+                            <h2 class="text-lg font-semibold text-navyBlue max-sm:text-base">
                                 <template v-if="activeAddressForm == 'billing'">
                                     @lang('shop::app.checkout.onepage.address.billing-address')
                                 </template>
@@ -287,39 +287,41 @@
                         </div>
                         
                         <!-- Address Form Vue Component -->
-                        <v-checkout-address-form
-                            :control-name="activeAddressForm"
-                            :address="selectedAddressForEdit || undefined"
-                        ></v-checkout-address-form>
+                        <div class="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm max-sm:p-3">
+                            <v-checkout-address-form
+                                :control-name="activeAddressForm"
+                                :address="selectedAddressForEdit || undefined"
+                            ></v-checkout-address-form>
 
-                        <!-- Save Address to Address Book Checkbox -->
-                        <x-shop::form.control-group class="!mb-0 flex items-center gap-2.5">
-                            <x-shop::form.control-group.control
-                                type="checkbox"
-                                ::name="activeAddressForm + '.save_address'"
-                                id="save_address"
-                                for="save_address"
-                                value="1"
-                                v-model="saveAddress"
-                                @change="saveAddress = ! saveAddress"
-                            />
+                            <!-- Save Address to Address Book Checkbox -->
+                            <x-shop::form.control-group class="mt-4 flex items-center gap-2.5 text-[13px]">
+                                <x-shop::form.control-group.control
+                                    type="checkbox"
+                                    ::name="activeAddressForm + '.save_address'"
+                                    id="save_address"
+                                    for="save_address"
+                                    value="1"
+                                    v-model="saveAddress"
+                                    @change="saveAddress = ! saveAddress"
+                                />
 
-                            <label
-                                class="cursor-pointer select-none text-base text-zinc-500 max-md:text-sm max-sm:text-xs ltr:pl-0 rtl:pr-0"
-                                for="save_address"
-                            >
-                                @lang('shop::app.checkout.onepage.address.save-address')
-                            </label>
-                        </x-shop::form.control-group>
+                                <label
+                                    class="cursor-pointer select-none text-[13px] text-zinc-600 ltr:pl-0 rtl:pr-0"
+                                    for="save_address"
+                                >
+                                    @lang('shop::app.checkout.onepage.address.save-address')
+                                </label>
+                            </x-shop::form.control-group>
 
-                        <!-- Save Button -->
-                        <div class="mt-4 flex justify-end">
-                            <x-shop::button
-                                class="primary-button rounded-2xl px-11 py-3 max-md:rounded-lg max-sm:w-full max-sm:max-w-full max-sm:py-1.5"
-                                :title="trans('shop::app.checkout.onepage.address.save')"
-                                ::loading="isStoring"
-                                ::disabled="isStoring"
-                            />
+                            <!-- Save Button -->
+                            <div class="mt-6 flex justify-end">
+                                <x-shop::button
+                                    class="primary-button rounded-2xl px-11 py-3 max-md:rounded-lg max-sm:w-full max-sm:max-w-full max-sm:py-1.5"
+                                    :title="trans('shop::app.checkout.onepage.address.save')"
+                                    ::loading="isStoring"
+                                    ::disabled="isStoring"
+                                />
+                            </div>
                         </div>
                     </form>
                 </x-shop::form>

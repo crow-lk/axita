@@ -28,39 +28,51 @@
 
                     <!-- Billing Address Header -->
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-medium max-md:text-lg max-sm:text-base">
+                        <h2 class="text-lg font-semibold text-navyBlue max-md:text-base">
                             @lang('shop::app.checkout.onepage.address.billing-address')
                         </h2>
                     </div>
                 
                     <!-- Billing Address Form -->
-                    <v-checkout-address-form
-                        control-name="billing"
-                        :address="cart.billing_address || undefined"
-                    ></v-checkout-address-form>
+                    <div class="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm max-sm:p-3">
+                        <v-checkout-address-form
+                            control-name="billing"
+                            :address="cart.billing_address || undefined"
+                        ></v-checkout-address-form>
 
-                    <!-- Use for Shipping Checkbox -->
-                    <x-shop::form.control-group
-                        class="!mb-0 flex items-center gap-2.5"
-                        v-if="cart.have_stockable_items"
-                    >
-                        <x-shop::form.control-group.control
-                            type="checkbox"
-                            name="billing.use_for_shipping"
-                            id="use_for_shipping"
-                            for="use_for_shipping"
-                            value="1"
-                            @change="useBillingAddressForShipping = ! useBillingAddressForShipping"
-                            ::checked="!! useBillingAddressForShipping"
-                        />
-
-                        <label
-                            class="cursor-pointer select-none text-base text-zinc-500 max-md:text-sm max-sm:text-xs ltr:pl-0 rtl:pr-0"
-                            for="use_for_shipping"
+                        <!-- Use for Shipping Checkbox -->
+                        <x-shop::form.control-group
+                            class="mt-4 flex items-center gap-2.5 text-[13px]"
+                            v-if="cart.have_stockable_items"
                         >
-                            @lang('shop::app.checkout.onepage.address.same-as-billing')
-                        </label>
-                    </x-shop::form.control-group>
+                            <x-shop::form.control-group.control
+                                type="checkbox"
+                                name="billing.use_for_shipping"
+                                id="use_for_shipping"
+                                for="use_for_shipping"
+                                value="1"
+                                @change="useBillingAddressForShipping = ! useBillingAddressForShipping"
+                                ::checked="!! useBillingAddressForShipping"
+                            />
+
+                            <label
+                                class="cursor-pointer select-none text-[13px] text-zinc-600 ltr:pl-0 rtl:pr-0"
+                                for="use_for_shipping"
+                            >
+                                @lang('shop::app.checkout.onepage.address.same-as-billing')
+                            </label>
+                        </x-shop::form.control-group>
+
+                        <!-- Proceed Button -->
+                        <div class="mt-6 flex justify-end">
+                            <x-shop::button
+                                class="primary-button rounded-2xl px-11 py-3 max-md:w-full max-md:max-w-full max-md:rounded-lg"
+                                :title="trans('shop::app.checkout.onepage.address.proceed')"
+                                ::loading="isStoring"
+                                ::disabled="isStoring"
+                            />
+                        </div>
+                    </div>
 
                     {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.billing.after') !!}
                 </div>
@@ -75,30 +87,23 @@
 
                         <!-- Shipping Address Header -->
                         <div class="flex items-center justify-between">
-                            <h2 class="text-xl font-medium max-md:text-lg max-sm:text-base">
+                            <h2 class="text-lg font-semibold text-navyBlue max-md:text-base">
                                 @lang('shop::app.checkout.onepage.address.shipping-address')
                             </h2>
                         </div>
                     
                         <!-- Shipping Address Form -->
-                        <v-checkout-address-form
-                            control-name="shipping"
-                            :address="cart.shipping_address || undefined"
-                        ></v-checkout-address-form>
+                        <div class="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm max-sm:p-3">
+                            <v-checkout-address-form
+                                control-name="shipping"
+                                :address="cart.shipping_address || undefined"
+                            ></v-checkout-address-form>
+                        </div>
 
                         {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.shipping.after') !!}
                     </div>
                 </template>
 
-                <!-- Proceed Button -->
-                <div class="mt-4 flex justify-end">
-                    <x-shop::button
-                        class="primary-button rounded-2xl px-11 py-3 max-md:w-full max-md:max-w-full max-md:rounded-lg"
-                        :title="trans('shop::app.checkout.onepage.address.proceed')"
-                        ::loading="isStoring"
-                        ::disabled="isStoring"
-                    />
-                </div>
             </form>
         </x-shop::form>
     </script>
