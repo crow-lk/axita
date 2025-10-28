@@ -16,7 +16,7 @@
         type="text/x-template"
         id="v-shipping-methods-template"
     >
-        <div v-if="! shouldHideSelector" class="mb-6 max-md:mb-0">
+        <div v-if="! shouldHideSelector" class="mb-4 max-md:mb-0">
             <template v-if="methods">
                 <!-- Accordion Blade Component -->
                 <x-shop::accordion class="overflow-hidden !border-b-0 max-md:rounded-lg max-md:!border-none max-md:!bg-gray-100">
@@ -30,7 +30,7 @@
                     </x-slot>
 
                     <!-- Accordion Blade Component Content -->
-                    <x-slot:content class="mt-6 !p-0 text-[13px] leading-5 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
+                    <x-slot:content class="mt-4 !p-0 text-[13px] leading-5 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
                         <div class="flex w-full flex-col gap-2 max-sm:gap-1.5">
                             <template v-for="method in methods">
                                 {!! view_render_event('bagisto.shop.checkout.onepage.shipping.before') !!}

@@ -4,7 +4,7 @@
         @lang('shop::app.checkout.onepage.summary.cart-summary')
     </h1>
 
-    <div class="mt-4 space-y-4">
+    <div class="mt-4 space-y-3.5">
         <!-- Cart Items -->
         <div class="space-y-3 border-b border-zinc-200 pb-3">
             <div
