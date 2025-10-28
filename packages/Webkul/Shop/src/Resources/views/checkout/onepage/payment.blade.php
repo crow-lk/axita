@@ -31,15 +31,15 @@
                     <x-slot:header class="px-0 py-3 max-md:p-3 max-md:text-sm max-md:font-medium max-sm:p-2">
                         
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-medium max-md:text-base">
+                            <h2 class="text-xl font-semibold text-navyBlue max-md:text-base">
                                 @lang('shop::app.checkout.onepage.payment.payment-method')
                             </h2>
                         </div>
                     </x-slot>
     
                     <!-- Accordion Blade Component Content -->
-                    <x-slot:content class="mt-6 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
-                        <div class="flex w-full flex-col gap-3 max-w-[420px] max-md:max-w-full max-sm:gap-2.5">
+                    <x-slot:content class="mt-6 !p-0 text-[13px] leading-5 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
+                        <div class="flex w-full flex-col gap-3 max-sm:gap-2.5">
                             <div 
                                 class="relative w-full cursor-pointer"
                                 v-for="(payment, index) in methods"
@@ -52,82 +52,106 @@
                                     :value="payment.payment"
                                     :id="payment.method"
                                     class="peer hidden"
+                                    :checked="selectedPayment === payment.method"
                                     @change="store(payment)"
                                 >
     
                                 <label 
                                     :for="payment.method" 
-                                    class="icon-radio-unselect peer-checked:icon-radio-select absolute top-5 cursor-pointer text-2xl text-navyBlue ltr:right-5 rtl:left-5"
+                                    class="flex w-full cursor-pointer items-start gap-3 rounded-lg px-3 py-2 text-[13px] transition max-md:flex-row max-md:items-center"
+                                    :class="selectedPayment === payment.method ? 'bg-navyBlue/[0.08] text-navyBlue' : 'text-zinc-600 hover:bg-zinc-50'"
                                 >
-                                </label>
+                                    <span
+                                        class="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border transition max-md:mt-0"
+                                        :class="selectedPayment === payment.method ? 'border-navyBlue bg-navyBlue/10' : 'border-zinc-300 bg-transparent'"
+                                    >
+                                        <span
+                                            class="h-2 w-2 rounded-full transition"
+                                            :class="selectedPayment === payment.method ? 'bg-navyBlue' : 'bg-transparent'"
+                                        ></span>
+                                    </span>
 
-                                <label 
-                                    :for="payment.method" 
-                                    class="flex h-full w-full cursor-pointer flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-navyBlue/40 hover:shadow-lg peer-checked:border-navyBlue peer-checked:bg-navyBlue/[0.04] peer-checked:shadow-lg max-md:flex-row max-md:items-center max-md:gap-3 max-md:rounded-xl max-sm:gap-3 max-sm:px-3 max-sm:py-2.5"
-                                >
-                                    {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.image.before') !!}
-
-                                    <img
-                                        class="max-h-10 max-w-14"
-                                        :src="payment.image"
-                                        width="55"
-                                        height="55"
-                                        :alt="payment.method_title"
-                                        :title="payment.method_title"
-                                    />
-
-                                    {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.image.after') !!}
-
-                                    <div>
+                                    <div class="flex w-full items-start justify-between gap-4">
                                         {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.title.before') !!}
 
-                                        <p class="mt-1.5 text-sm font-semibold max-md:mt-1 max-sm:mt-0">
-                                            @{{ payment.method_title }}
-                                        </p>
-                                        
-                                        {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.title.after') !!}
+                                        <div class="flex items-start gap-3">
+                                            <div class="flex h-10 w-12 flex-shrink-0 items-center justify-center rounded-md bg-white/60">
+                                                <img
+                                                    v-if="payment.image"
+                                                    :src="payment.image"
+                                                    :alt="payment.method_title"
+                                                    :title="payment.method_title"
+                                                    class="max-h-8 max-w-full object-contain"
+                                                />
+                                                <span v-else class="text-[11px] font-semibold uppercase text-navyBlue">
+                                                    @{{ payment.method_code ? payment.method_code : payment.method }}
+                                                </span>
+                                            </div>
 
-                                        {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.before') !!}
+                                            <div class="flex flex-col">
+                                                <span class="font-semibold text-navyBlue">
+                                                    @{{ payment.method_title }}
+                                                </span>
+                                                
+                                                {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.title.after') !!}
 
-                                        <p class="mt-1.5 text-xs font-medium text-zinc-500 max-md:mt-1 max-sm:mt-0">
-                                            @{{ payment.description }}
-                                        </p>
+                                                {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.before') !!}
 
-                                        <!-- Payment arrangement description -->
-                                        <p v-if="payment.method === 'payzy'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
-                                            You will be redirected to Payzy to complete payment in 4 installments
-                                        </p>
-                                        <p v-else-if="payment.method === 'koko'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
-                                            You will be redirected to KOKO to complete payment in 3 installments
-                                        </p>
-                                        <p v-else-if="payment.method === 'paypal_standard'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
-                                            You will be redirected to PayHere to complete secure online payment
-                                        </p>
-                                        <p v-else-if="payment.method === 'paypal_smart_button'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
-                                            Pay securely using your PayPal account
-                                        </p>
-                                        <p v-else-if="payment.method === 'cashondelivery'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
-                                            Pay cash to the delivery person upon receiving your order
-                                        </p>
-                                        <p v-else-if="payment.method === 'moneytransfer'" class="mt-1 text-xs text-zinc-400 max-md:mt-0.5 max-sm:mt-0">
-                                            Transfer the amount to our bank account and upload the receipt
-                                        </p>
+                                                <span class="mt-1 text-[11px] text-zinc-500">
+                                                    @{{ payment.description }}
+                                                </span>
 
-                                        <p
-                                            v-if="payment.method === 'payzy'"
-                                            class="mt-1 text-xs font-semibold text-navyBlue max-md:mt-0.5 max-sm:mt-0"
-                                        >
-                                            Pay @{{ formattedPayzyInstallment }} x 4 installments
-                                        </p>
-                                        <p
-                                            v-else-if="payment.method === 'koko'"
-                                            class="mt-1 text-xs font-semibold text-navyBlue max-md:mt-0.5 max-sm:mt-0"
-                                        >
-                                            Pay @{{ formattedKokoInstallment }} x 3 installments
-                                        </p>
+                                                <!-- Payment arrangement description -->
+                                                <span v-if="payment.method === 'payzy'" class="mt-1 text-[11px] text-zinc-400">
+                                                    You will be redirected to Payzy to complete payment in 4 installments
+                                                </span>
+                                                <span v-else-if="payment.method === 'koko'" class="mt-1 text-[11px] text-zinc-400">
+                                                    You will be redirected to KOKO to complete payment in 3 installments
+                                                </span>
+                                                <span v-else-if="payment.method === 'paypal_standard'" class="mt-1 text-[11px] text-zinc-400">
+                                                    You will be redirected to PayHere to complete secure online payment
+                                                </span>
+                                                <span v-else-if="payment.method === 'paypal_smart_button'" class="mt-1 text-[11px] text-zinc-400">
+                                                    Pay securely using your PayPal account
+                                                </span>
+                                                <span v-else-if="payment.method === 'cashondelivery'" class="mt-1 text-[11px] text-zinc-400">
+                                                    Pay cash to the delivery person upon receiving your order
+                                                </span>
+                                                <span v-else-if="payment.method === 'moneytransfer'" class="mt-1 text-[11px] text-zinc-400">
+                                                    Transfer the amount to our bank account and upload the receipt
+                                                </span>
 
-                                        {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.after') !!}
+                                                <span
+                                                    v-if="payment.method === 'payzy'"
+                                                    class="mt-1 text-[11px] font-semibold text-navyBlue"
+                                                >
+                                                    Pay @{{ formattedPayzyInstallment }} x 4 installments
+                                                </span>
+                                                <span
+                                                    v-else-if="payment.method === 'koko'"
+                                                    class="mt-1 text-[11px] font-semibold text-navyBlue"
+                                                >
+                                                    Pay @{{ formattedKokoInstallment }} x 3 installments
+                                                </span>
 
+                                                {!! view_render_event('bagisto.shop.checkout.onepage.payment-method.description.after') !!}
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-col items-end justify-between gap-1">
+                                            <span
+                                                class="text-sm font-semibold text-navyBlue"
+                                                v-if="payment.additional_amount_label"
+                                                v-html="payment.additional_amount_label"
+                                            ></span>
+
+                                            <span
+                                                class="text-xs font-medium text-zinc-500"
+                                                v-if="payment.additional_fee"
+                                            >
+                                                @{{ payment.additional_fee }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </label>
 
@@ -163,6 +187,23 @@
             },
 
             emits: ['processing', 'processed'],
+
+            data() {
+                return {
+                    selectedPayment: this.cart && this.cart.payment ? this.cart.payment.method : null,
+                };
+            },
+
+            watch: {
+                cart: {
+                    handler(newCart) {
+                        if (newCart && newCart.payment && newCart.payment.method) {
+                            this.selectedPayment = newCart.payment.method;
+                        }
+                    },
+                    deep: true,
+                },
+            },
 
             computed: {
                 /**
@@ -220,6 +261,8 @@
 
             methods: {
                 store(selectedMethod) {
+                    this.selectedPayment = selectedMethod.method;
+
                     this.$emit('processing', 'review');
 
                     this.$axios.post("{{ route('shop.checkout.onepage.payment_methods.store') }}", {

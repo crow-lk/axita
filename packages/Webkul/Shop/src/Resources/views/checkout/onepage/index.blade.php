@@ -73,7 +73,7 @@
             </template>
 
             <template v-else>
-                <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(360px,1fr)] gap-6 max-lg:grid-cols-1 max-md:gap-4">
+                <div class="grid text-[13px] leading-6 text-zinc-700 lg:grid-cols-[minmax(0,1fr)_minmax(360px,1fr)] gap-6 max-lg:grid-cols-1 max-md:gap-4">
                     <div
                         class="flex flex-col gap-5"
                         id="steps-container"

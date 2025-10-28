@@ -5,14 +5,14 @@
     <!-- Accordion Header Component Slot -->
     <x-slot:header class="!p-0 max-md:!mb-0 max-md:rounded-t-md max-md:!p-3 max-md:text-sm max-md:font-medium max-sm:!p-2">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-medium max-md:text-base">
+            <h2 class="text-xl font-semibold text-navyBlue max-md:text-base">
                 @lang('shop::app.checkout.onepage.address.title')
             </h2>
         </div>
     </x-slot>
 
     <!-- Accordion Content Component Slot -->
-    <x-slot:content class="mt-8 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
+    <x-slot:content class="mt-8 !p-0 text-[13px] leading-6 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
         <!-- If the customer is guest -->
         <template v-if="cart.is_guest">
             @include('shop::checkout.onepage.address.guest')

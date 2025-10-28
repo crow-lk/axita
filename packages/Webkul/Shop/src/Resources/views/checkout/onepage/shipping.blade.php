@@ -31,15 +31,15 @@
                     <!-- Accordion Blade Component Header -->
                     <x-slot:header class="px-0 py-3 max-md:p-3 max-md:text-sm max-md:font-medium max-sm:p-2">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-medium max-md:text-base">
+                            <h2 class="text-xl font-semibold text-navyBlue max-md:text-base">
                                 @lang('shop::app.checkout.onepage.shipping.shipping-method')
                             </h2>
                         </div>
                     </x-slot>
 
                     <!-- Accordion Blade Component Content -->
-                    <x-slot:content class="mt-6 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
-                        <div class="flex w-full flex-col gap-3 max-w-[420px] max-md:max-w-full max-sm:gap-2.5">
+                    <x-slot:content class="mt-6 !p-0 text-[13px] leading-5 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
+                        <div class="flex w-full flex-col gap-2 max-sm:gap-1.5">
                             <template v-for="method in methods">
                                 {!! view_render_event('bagisto.shop.checkout.onepage.shipping.before') !!}
 
@@ -57,27 +57,32 @@
                                         @change="selectRate(rate.method)"
                                     >
 
-                                    <label 
-                                        class="icon-radio-unselect peer-checked:icon-radio-select absolute top-5 cursor-pointer text-2xl text-navyBlue ltr:right-5 rtl:left-5"
-                                        :for="rate.method"
-                                    >
-                                    </label>
-
                                     <label
-                                        class="flex h-full cursor-pointer flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-navyBlue/40 hover:shadow-lg peer-checked:border-navyBlue peer-checked:bg-navyBlue/[0.04] peer-checked:shadow-lg max-sm:flex-row max-sm:items-center max-sm:rounded-xl max-sm:px-3 max-sm:py-2.5"
+                                        class="flex w-full cursor-pointer items-start gap-3 rounded-lg px-3 py-2 text-[13px] transition max-sm:flex-row max-sm:items-center"
+                                        :class="selectedRate === rate.method ? 'bg-navyBlue/[0.08] text-navyBlue' : 'text-zinc-600 hover:bg-zinc-50'"
                                         :for="rate.method"
                                     >
-                                        <span class="icon-flate-rate text-5xl text-navyBlue max-sm:text-4xl"></span>
+                                        <span
+                                            class="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border transition max-sm:mt-0"
+                                            :class="selectedRate === rate.method ? 'border-navyBlue bg-navyBlue/10' : 'border-zinc-300 bg-transparent'"
+                                        >
+                                            <span
+                                                class="h-2 w-2 rounded-full transition"
+                                                :class="selectedRate === rate.method ? 'bg-navyBlue' : 'bg-transparent'"
+                                            ></span>
+                                        </span>
 
-                                        <div class="flex flex-col">
-                                            <p class="text-xl font-semibold text-navyBlue max-md:text-lg max-sm:text-base">
-                                                @{{ rate.base_formatted_price }}
-                                            </p>
-                                            
-                                            <p class="mt-1 text-sm text-zinc-600 max-md:text-xs max-sm:mt-0">
-                                                <span class="font-semibold text-navyBlue">@{{ rate.method_title }}</span>
-                                                <span class="ml-1 text-zinc-500">- @{{ rate.method_description }}</span>
-                                            </p>
+                                        <div class="flex w-full items-center justify-between gap-4">
+                                            <div class="flex items-start gap-3">
+                                                <span class="icon-flate-rate text-2xl text-navyBlue"></span>
+
+                                                <div class="flex flex-col">
+                                                    <span class="font-semibold text-navyBlue">@{{ rate.method_title }}</span>
+                                                    <span class="text-xs text-zinc-500">@{{ rate.method_description }}</span>
+                                                </div>
+                                            </div>
+
+                                            <span class="text-sm font-semibold text-navyBlue">@{{ rate.base_formatted_price }}</span>
                                         </div>
                                     </label>
                                 </div>
