@@ -6,8 +6,8 @@ return [
         'title'        => 'Flat Rate',
         'description'  => 'Flat Rate Shipping',
         'active'       => true,
-        'default_rate' => '10',
-        'type'         => 'per_unit',
+        'default_rate' => '500',
+        'type'         => 'per_order',
         'class'        => 'Webkul\Shipping\Carriers\FlatRate',
     ],
 

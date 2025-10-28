@@ -7,10 +7,7 @@
     @processing="stepForward"
     @processed="stepProcessed"
     @auto-selected="handleAutoSelectedShipping"
->
-    <!-- Shipping Method Shimmer Effect -->
-    <x-shop::shimmer.checkout.onepage.shipping-method />
-</v-shipping-methods>
+/>
 
 {!! view_render_event('bagisto.shop.checkout.onepage.shipping.after') !!}
 
@@ -19,13 +16,8 @@
         type="text/x-template"
         id="v-shipping-methods-template"
     >
-        <div class="mb-6 max-md:mb-0">
-            <template v-if="! methods">
-                <!-- Shipping Method Shimmer Effect -->
-                <x-shop::shimmer.checkout.onepage.shipping-method />
-            </template>
-
-            <template v-else>
+        <div v-if="! shouldHideSelector" class="mb-6 max-md:mb-0">
+            <template v-if="methods">
                 <!-- Accordion Blade Component -->
                 <x-shop::accordion class="overflow-hidden !border-b-0 max-md:rounded-lg max-md:!border-none max-md:!bg-gray-100">
                     <!-- Accordion Blade Component Header -->
@@ -142,6 +134,14 @@
 
                 currentStep() {
                     this.tryAutoSelectSingleRate();
+                },
+            },
+
+            computed: {
+                shouldHideSelector() {
+                    const rates = this.flattenRates(this.methods);
+
+                    return rates.length === 1;
                 },
             },
 

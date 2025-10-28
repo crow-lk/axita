@@ -52,16 +52,24 @@ class FlatRate extends AbstractShipping
         $cartShippingRate->price = 0;
         $cartShippingRate->base_price = 0;
 
-        if ($this->getConfigData('type') == 'per_unit') {
+        $defaultRate = (float) ($this->getConfigData('default_rate') ?? 0);
+
+        if ($defaultRate <= 0) {
+            $defaultRate = 500;
+        }
+
+        $calculationType = $this->getConfigData('type') ?: 'per_order';
+
+        if ($calculationType === 'per_unit') {
             foreach ($cart->items as $item) {
                 if ($item->getTypeInstance()->isStockable()) {
-                    $cartShippingRate->price += core()->convertPrice($this->getConfigData('default_rate')) * $item->quantity;
-                    $cartShippingRate->base_price += $this->getConfigData('default_rate') * $item->quantity;
+                    $cartShippingRate->price += core()->convertPrice($defaultRate) * $item->quantity;
+                    $cartShippingRate->base_price += $defaultRate * $item->quantity;
                 }
             }
         } else {
-            $cartShippingRate->price = core()->convertPrice($this->getConfigData('default_rate'));
-            $cartShippingRate->base_price = $this->getConfigData('default_rate');
+            $cartShippingRate->price = core()->convertPrice($defaultRate);
+            $cartShippingRate->base_price = $defaultRate;
         }
 
         return $cartShippingRate;
