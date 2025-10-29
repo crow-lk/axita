@@ -153,6 +153,30 @@
                                                         <span v-else-if="payment.method === 'moneytransfer'" class="text-[11px] text-zinc-400">
                                                             Transfer the amount to our bank account and upload the receipt
                                                         </span>
+                                                        <div
+                                                            v-if="payment.method === 'moneytransfer'"
+                                                            class="mt-2 rounded border border-dashed border-navyBlue/20 bg-white px-3 py-2 text-[11px] text-zinc-600"
+                                                        >
+                                                            <p class="font-semibold text-navyBlue">
+                                                                Bank Account Details
+                                                            </p>
+
+                                                            <p>
+                                                                Account Number: 1000902653
+                                                            </p>
+
+                                                            <p>
+                                                                Bank: Commercial bank
+                                                            </p>
+
+                                                            <p>
+                                                                Branch: Karapitiya
+                                                            </p>
+
+                                                            <p>
+                                                                Account Name: Axita computers pvt ltd
+                                                            </p>
+                                                        </div>
 
                                                         <span
                                                             v-if="payment.method === 'payzy'"
