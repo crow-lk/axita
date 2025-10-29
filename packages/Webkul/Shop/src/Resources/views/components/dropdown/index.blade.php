@@ -1,6 +1,17 @@
-@props(['position' => 'bottom-right'])
+@props([
+    'position' => 'bottom-right',
+    'trigger' => 'click',
+    'openDelay' => 150,
+    'closeDelay' => 200,
+])
 
-<v-dropdown position="{{ $position }}" {{ $attributes->merge(['class' => 'relative']) }}>
+<v-dropdown
+    position="{{ $position }}"
+    trigger="{{ $trigger }}"
+    open-delay="{{ $openDelay }}"
+    close-delay="{{ $closeDelay }}"
+    {{ $attributes->merge(['class' => 'relative']) }}
+>
     @isset($toggle)
         {{ $toggle }}
 
@@ -31,11 +42,15 @@
         type="text/x-template"
         id="v-dropdown-template"
     >
-        <div>
+        <div
+            class="v-dropdown-wrapper"
+            @mouseenter="handleMouseEnter"
+            @mouseleave="handleMouseLeave"
+        >
             <div
                 class="select-none"
                 ref="toggleBlock"
-                @click="toggle()"
+                @click="handleToggleClick"
             >
                 <slot name="toggle">Toggle</slot>
             </div>
@@ -75,6 +90,22 @@
                     required: false,
                     default: true
                 },
+
+                trigger: {
+                    type: String,
+                    default: 'click',
+                    validator: value => ['click', 'hover'].includes(value),
+                },
+
+                openDelay: {
+                    type: [Number, String],
+                    default: 150,
+                },
+
+                closeDelay: {
+                    type: [Number, String],
+                    default: 200,
+                },
             },
 
             data() {
@@ -84,6 +115,10 @@
                     toggleBlockHeight: 0,
 
                     isActive: false,
+
+                    openTimeout: null,
+
+                    closeTimeout: null,
                 };
             },
 
@@ -99,6 +134,10 @@
 
             beforeDestroy() {
                 window.removeEventListener('click', this.handleFocusOut);
+
+                this.clearOpenTimeout();
+
+                this.clearCloseTimeout();
             },
 
             computed: {
@@ -143,27 +182,95 @@
             },
 
             methods: {
-                toggle() {
-                    /**
-                     * If still somehow width is zero then this will check for width one more time.
-                     */
+                handleToggleClick() {
+                    if (this.trigger === 'click') {
+                        this.toggle();
+                    }
+                },
+
+                handleMouseEnter() {
+                    if (this.trigger !== 'hover') {
+                        return;
+                    }
+
+                    this.clearOpenTimeout();
+
+                    this.clearCloseTimeout();
+
+                    this.openTimeout = setTimeout(() => {
+                        this.open();
+                    }, Number(this.openDelay) || 0);
+                },
+
+                handleMouseLeave() {
+                    if (this.trigger !== 'hover') {
+                        return;
+                    }
+
+                    this.clearOpenTimeout();
+
+                    this.clearCloseTimeout();
+
+                    this.closeTimeout = setTimeout(() => {
+                        this.close();
+                    }, Number(this.closeDelay) || 0);
+                },
+
+                ensureDimensions() {
                     if (this.toggleBlockWidth === 0) {
                         this.toggleBlockWidth = this.$refs.toggleBlock.clientWidth;
                     }
 
-                    /**
-                     * If still somehow height is zero then this will check for height one more time.
-                     */
                     if (this.toggleBlockHeight === 0) {
                         this.toggleBlockHeight = this.$refs.toggleBlock.clientHeight;
                     }
+                },
 
-                    this.isActive = ! this.isActive;
+                open() {
+                    this.clearOpenTimeout();
+
+                    this.clearCloseTimeout();
+
+                    this.ensureDimensions();
+
+                    this.isActive = true;
+                },
+
+                close() {
+                    this.clearOpenTimeout();
+
+                    this.clearCloseTimeout();
+
+                    this.isActive = false;
+                },
+
+                clearOpenTimeout() {
+                    if (this.openTimeout) {
+                        clearTimeout(this.openTimeout);
+
+                        this.openTimeout = null;
+                    }
+                },
+
+                clearCloseTimeout() {
+                    if (this.closeTimeout) {
+                        clearTimeout(this.closeTimeout);
+
+                        this.closeTimeout = null;
+                    }
+                },
+
+                toggle() {
+                    if (this.isActive) {
+                        this.close();
+                    } else {
+                        this.open();
+                    }
                 },
 
                 handleFocusOut(e) {
                     if (! this.$el.contains(e.target) || (this.closeOnClick && this.$el.children[1].contains(e.target))) {
-                        this.isActive = false;
+                        this.close();
                     }
                 },
             },
