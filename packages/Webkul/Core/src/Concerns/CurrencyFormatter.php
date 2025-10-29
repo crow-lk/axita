@@ -26,7 +26,9 @@ trait CurrencyFormatter
     {
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
 
-        if ($currency->symbol) {
+        $symbol = $this->normalizeCurrencySymbol($currency->symbol ?? '');
+
+        if ($symbol !== '') {
             /**
              * If, somehow, the currency symbol mentioned matches with the user-defined symbol,
              * then we can simply use the 'formatCurrency' method.
@@ -35,7 +37,7 @@ trait CurrencyFormatter
                 return $formatter->formatCurrency($price, $currency->code);
             }
 
-            $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, $currency->symbol);
+            $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, $symbol);
 
             return $formatter->format($price);
         }
@@ -75,11 +77,26 @@ trait CurrencyFormatter
             );
         }
 
-        $symbol = ! empty($currency->symbol)
-            ? $currency->symbol
-            : $currency->code;
+        $symbol = $this->normalizeCurrencySymbol(
+            ! empty($currency->symbol)
+                ? $currency->symbol
+                : $currency->code
+        );
 
-        return match ($currency->currency_position) {
+        $position = $currency->currency_position;
+
+        if ($symbol && stripos($symbol, 'rs') === 0) {
+            if (in_array($position, [
+                CurrencyPositionEnum::RIGHT->value,
+                CurrencyPositionEnum::RIGHT_WITH_SPACE->value,
+            ])) {
+                $position = CurrencyPositionEnum::LEFT_WITH_SPACE->value;
+            } elseif ($position === CurrencyPositionEnum::LEFT->value) {
+                $position = CurrencyPositionEnum::LEFT_WITH_SPACE->value;
+            }
+        }
+
+        return match ($position) {
             CurrencyPositionEnum::LEFT->value             => $symbol.$formattedCurrency,
             CurrencyPositionEnum::LEFT_WITH_SPACE->value  => $symbol.' '.$formattedCurrency,
             CurrencyPositionEnum::RIGHT->value            => $formattedCurrency.$symbol,
@@ -99,5 +116,29 @@ trait CurrencyFormatter
         $formatter = new \NumberFormatter(app()->getLocale().'@currency='.$code, \NumberFormatter::CURRENCY);
 
         return $formatter->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+    }
+
+    /**
+     * Normalize various rupee symbols to a consistent representation.
+     */
+    protected function normalizeCurrencySymbol(?string $symbol): string
+    {
+        if (! $symbol) {
+            return '';
+        }
+
+        $trimmed = trim($symbol);
+
+        $lower = mb_strtolower($trimmed, 'UTF-8');
+
+        $rupeeAscii = ['rs', 'rs.'];
+
+        $rupeeUnicode = ['₨', '₹', 'रु', 'रू'];
+
+        if (in_array($lower, $rupeeAscii, true) || in_array($trimmed, $rupeeUnicode, true)) {
+            return 'Rs';
+        }
+
+        return $trimmed;
     }
 }

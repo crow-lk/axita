@@ -134,7 +134,7 @@
 
                 <div
                     class="flex flex-wrap items-baseline gap-2 text-lg font-semibold text-zinc-900 max-sm:text-lg max-sm:leading-7"
-                    v-html="product.price_html"
+                    v-html="displayPriceHtml"
                 >
                 </div>
 
@@ -310,7 +310,7 @@
 
                 <div
                     class="flex gap-2.5 text-lg font-semibold"
-                    v-html="product.price_html"
+                    v-html="displayPriceHtml"
                 >
                 </div>
 
@@ -443,6 +443,65 @@
                 this.fetchPaymentLogos();
             },
 
+            computed: {
+                displayPriceHtml() {
+                    const html = this.product?.price_html ?? '';
+
+                    if (! html) {
+                        return html;
+                    }
+
+                    const normalizeSymbol = (symbol = '') => {
+                        const trimmed = (symbol || '').trim();
+                        const rupeeSymbols = ['₨', '₹', 'रु', 'रू', 'Rs', 'Rs.', 'RS', 'RS.', 'rs', 'rs.'];
+
+                        if (rupeeSymbols.includes(trimmed)) {
+                            return 'Rs';
+                        }
+
+                        return trimmed;
+                    };
+
+                    const ensureSymbolLeft = (value) => {
+                        if (! value) {
+                            return value;
+                        }
+
+                        const normalizedSpace = value.replace(/\u00a0/g, ' ');
+
+                        let adjusted = normalizedSpace.replace(
+                            /(\d[\d.,]*)(?:\s*)(Rs\.?|₨|₹|रु|रू)/gi,
+                            (_match, amount, symbol) => `${normalizeSymbol(symbol)} ${amount}`.trim()
+                        );
+
+                        adjusted = adjusted.replace(
+                            /(Rs\.?|₨|₹|रु|रू)(?:\s*)(?=\d)/gi,
+                            (_match, symbol) => `${normalizeSymbol(symbol)} `
+                        );
+
+                        return adjusted.replace(/\s{2,}/g, ' ');
+                    };
+
+                    const container = document.createElement('div');
+
+                    container.innerHTML = html;
+
+                    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+
+                    const textNodes = [];
+
+                    while (walker.nextNode()) {
+                        textNodes.push(walker.currentNode);
+                    }
+
+                    textNodes.forEach((node) => {
+                        node.textContent = ensureSymbolLeft(node.textContent);
+                    });
+
+                    return container.innerHTML;
+                },
+            },
+
             methods: {
                 fetchPaymentLogos() {
                     // Get Payzy logo from core config
@@ -513,8 +572,12 @@
 
                 formatPrice(price) {
                     // Format price with currency symbol
-                    const currencySymbol = this.product.prices?.final?.formatted_price?.match(/[^\d,.\s]+/)?.[0] || 'Rs.';
-                    return `${currencySymbol} ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+                    const rupeeSymbols = ['₨', '₹', 'रु', 'रू', 'Rs', 'Rs.', 'RS', 'RS.', 'rs', 'rs.'];
+                    const matchSymbol = this.product.prices?.final?.formatted_price?.match(/[^\d,.\s]+/)?.[0];
+                    const symbol = matchSymbol ? matchSymbol.trim() : 'Rs';
+                    const normalizedSymbol = rupeeSymbols.includes(symbol) ? 'Rs' : symbol;
+
+                    return `${normalizedSymbol} ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
                 },
 
                 getStockBadgeText() {

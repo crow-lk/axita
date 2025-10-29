@@ -41,7 +41,18 @@ export default {
 
                 const currency = JSON.parse(document.querySelector('meta[name="currency"]').content);
 
-                const symbol = currency.symbol !== '' ? currency.symbol : currency.code;
+                const normalizeSymbol = (rawSymbol = '') => {
+                    const trimmed = (rawSymbol || '').trim();
+                    const rupeeSymbols = ['₨', '₹', 'रु', 'रू', 'Rs', 'Rs.', 'RS', 'RS.', 'rs', 'rs.'];
+
+                    if (rupeeSymbols.includes(trimmed)) {
+                        return 'Rs';
+                    }
+
+                    return trimmed;
+                };
+
+                const symbol = normalizeSymbol(currency.symbol !== '' ? currency.symbol : currency.code);
 
                 if (! currency.currency_position) {
                     return new Intl.NumberFormat(locale, {
@@ -78,7 +89,17 @@ export default {
                     })
                     .join('');
 
-                switch (currency.currency_position) {
+                let position = currency.currency_position;
+
+                if (symbol && symbol.toLowerCase().startsWith('rs')) {
+                    if (['right', 'right_with_space'].includes(position)) {
+                        position = 'left_with_space';
+                    } else if (position === 'left') {
+                        position = 'left_with_space';
+                    }
+                }
+
+                switch (position) {
                     case 'left':
                         return symbol + formattedCurrency;
 
