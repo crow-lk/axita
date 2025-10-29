@@ -1,140 +1,167 @@
 {!! view_render_event('bagisto.shop.layout.footer.before') !!}
 
-<!--
-    The category repository is injected directly here because there is no way
-    to retrieve it from the view composer, as this is an anonymous component.
--->
-@inject('themeCustomizationRepository', 'Webkul\Theme\Repositories\ThemeCustomizationRepository')
-
-<!--
-    This code needs to be refactored to reduce the amount of PHP in the Blade
-    template as much as possible.
--->
+<!-- Reimagined footer layout with curated content for AXITA storefront. -->
 @php
     $channel = core()->getCurrentChannel();
-
-    $customization = $themeCustomizationRepository->findOneWhere([
-        'type'       => 'footer_links',
-        'status'     => 1,
-        'theme_code' => $channel->theme,
-        'channel_id' => $channel->id,
-    ]);
+    $footerLogo = $channel?->logo_url ?? bagisto_asset('images/logo.svg');
 @endphp
+<footer class="mt-12 bg-[#080808] text-white max-sm:mt-10">
+    <div class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-black via-[#111827] to-[#1F2937] opacity-95"></div>
 
-<footer class="mt-9 bg-lightOrange max-sm:mt-10">
-    <div class="flex justify-between gap-x-6 gap-y-8 p-[60px] max-1060:flex-col-reverse max-md:gap-5 max-md:p-8 max-sm:px-4 max-sm:py-5">
-        <!-- For Desktop View -->
-        <div class="flex flex-wrap items-start gap-24 max-1180:gap-6 max-1060:hidden">
-            @if ($customization?->options)
-                @foreach ($customization->options as $footerLinkSection)
-                    <ul class="grid gap-5 text-sm">
-                        @php
-                            usort($footerLinkSection, function ($a, $b) {
-                                return $a['sort_order'] - $b['sort_order'];
-                            });
-                        @endphp
-
-                        @foreach ($footerLinkSection as $link)
-                            <li>
-                                <a href="{{ $link['url'] }}">
-                                    {{ $link['title'] }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endforeach
-            @endif
-        </div>
-
-        <!-- For Mobile view -->
-        <x-shop::accordion
-            :is-active="false"
-            class="hidden !w-full rounded-xl !border-2 !border-[#e9decc] max-1060:block max-sm:rounded-lg"
-        >
-            <x-slot:header class="rounded-t-lg bg-[#F1EADF] font-medium max-md:p-2.5 max-sm:px-3 max-sm:py-2 max-sm:text-sm">
-                @lang('shop::app.components.layouts.footer.footer-content')
-            </x-slot>
-
-            <x-slot:content class="flex justify-between !bg-transparent !p-4">
-                @if ($customization?->options)
-                    @foreach ($customization->options as $footerLinkSection)
-                        <ul class="grid gap-5 text-sm">
-                            @php
-                                usort($footerLinkSection, function ($a, $b) {
-                                    return $a['sort_order'] - $b['sort_order'];
-                                });
-                            @endphp
-
-                            @foreach ($footerLinkSection as $link)
-                                <li>
-                                    <a
-                                        href="{{ $link['url'] }}"
-                                        class="text-sm font-medium max-sm:text-xs">
-                                        {{ $link['title'] }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endforeach
-                @endif
-            </x-slot>
-        </x-shop::accordion>
-
-        {!! view_render_event('bagisto.shop.layout.footer.newsletter_subscription.before') !!}
-
-        <!-- News Letter subscription -->
-        @if (core()->getConfigData('customer.settings.newsletter.subscription'))
-            <div class="grid gap-2.5">
-                <p
-                    class="max-w-[288px] text-3xl italic leading-[45px] text-navyBlue max-md:text-2xl max-sm:text-lg"
-                    role="heading"
-                    aria-level="2"
-                >
-                    @lang('shop::app.components.layouts.footer.newsletter-text')
-                </p>
-
-                <p class="text-xs">
-                    @lang('shop::app.components.layouts.footer.subscribe-stay-touch')
-                </p>
-
-                <div>
-                    <x-shop::form
-                        :action="route('shop.subscription.store')"
-                        class="mt-2.5 rounded max-sm:mt-0"
+        <div class="relative mx-auto w-full max-w-7xl px-6 py-16 lg:px-12">
+            <div class="grid gap-12 text-white/70 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="space-y-5 text-sm">
+                    <a
+                        href="{{ route('shop.home.index') }}"
+                        class="inline-flex items-center gap-3"
                     >
-                        <div class="relative w-full">
-                            <x-shop::form.control-group.control
-                                type="email"
-                                class="block w-[420px] max-w-full rounded-xl border-2 border-[#e9decc] bg-[#F1EADF] px-5 py-4 text-base max-1060:w-full max-md:p-3.5 max-sm:mb-0 max-sm:rounded-lg max-sm:border-2 max-sm:p-2 max-sm:text-sm"
-                                name="email"
-                                rules="required|email"
-                                label="Email"
-                                :aria-label="trans('shop::app.components.layouts.footer.email')"
-                                placeholder="email@example.com"
-                            />
-    
-                            <x-shop::form.control-group.error control-name="email" />
-    
-                            <button
-                                type="submit"
-                                class="absolute top-1.5 flex w-max items-center rounded-xl bg-white px-7 py-2.5 font-medium hover:bg-zinc-100 max-md:top-1 max-md:px-5 max-md:text-xs max-sm:mt-0 max-sm:rounded-lg max-sm:px-4 max-sm:py-2 ltr:right-2 rtl:left-2"
+                        <img
+                            src="{{ $footerLogo }}"
+                            alt="{{ $channel?->name ?? config('app.name') }}"
+                            loading="lazy"
+                            class="h-12 w-auto object-contain"
+                        >
+                    </a>
+
+                    <p class="max-w-md text-base leading-relaxed text-white/80">
+                        Discover cutting-edge tech, trusted warranty support, and expert service from AXITA Computers.
+                    </p>
+                </div>
+
+                <div class="text-base">
+                    <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-gray-300">Links</h3>
+
+                    <ul class="mt-4 space-y-2">
+                        <li>
+                            <a
+                                href="{{ route('shop.cms.page', 'about-us') }}"
+                                class="transition-colors duration-200 hover:text-white"
                             >
-                                @lang('shop::app.components.layouts.footer.subscribe')
-                            </button>
+                                About Us
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{{ route('shop.home.contact_us') }}"
+                                class="transition-colors duration-200 hover:text-white"
+                            >
+                                Contact Us
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{{ route('shop.cms.page', 'terms-conditions') }}"
+                                class="transition-colors duration-200 hover:text-white"
+                            >
+                                Terms &amp; Conditions
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{{ route('shop.cms.page', 'refund-policy') }}"
+                                class="transition-colors duration-200 hover:text-white"
+                            >
+                                Refund Policy
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{{ route('shop.cms.page', 'privacy-policy') }}"
+                                class="transition-colors duration-200 hover:text-white"
+                            >
+                                Privacy Policy
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="text-base">
+                    <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-gray-300">Brands</h3>
+
+                    <ul class="mt-4 space-y-2">
+                        <li>MSI</li>
+                        <li>ASUS</li>
+                        <li>ACER</li>
+                        <li>HP</li>
+                        <li>TOSHIBA</li>
+                        <li>DELL</li>
+                        <li>OSCO</li>
+                        <li>LEXER</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-6 text-base">
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-gray-300">Contact</h3>
+
+                        <p>Follow us on social media</p>
+
+                        <div class="flex items-center gap-4 text-white">
+                            <a
+                                href="https://www.facebook.com/axitacomputers"
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:-translate-y-1 hover:bg-white/20"
+                                aria-label="Facebook"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <i class="fab fa-facebook-f text-lg"></i>
+                            </a>
+
+                            <a
+                                href="https://www.instagram.com/axita_computer/"
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:-translate-y-1 hover:bg-white/20"
+                                aria-label="Instagram"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <i class="fab fa-instagram text-lg"></i>
+                            </a>
+
+                            <a
+                                href="https://wa.me/94771284323"
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:-translate-y-1 hover:bg-white/20"
+                                aria-label="WhatsApp"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <i class="fab fa-whatsapp text-lg"></i>
+                            </a>
                         </div>
-                    </x-shop::form>
+                    </div>
+
+                    <div class="space-y-2 text-white">
+                        <p class="text-sm uppercase tracking-[0.2em] text-white/60">Phone</p>
+
+                        <a
+                            href="tel:+94771284323"
+                            class="text-2xl font-semibold transition-colors duration-200 hover:text-gray-300"
+                        >
+                            +94 77 128 4323
+                        </a>
+                    </div>
+
+                    <div class="space-y-2 text-white/80">
+                        <p class="text-sm uppercase tracking-[0.2em] text-white/60">Address</p>
+
+                        <p>
+                            Beligaha Junction, Galle, Sri Lanka
+                        </p>
+                    </div>
                 </div>
             </div>
-        @endif
-
-        {!! view_render_event('bagisto.shop.layout.footer.newsletter_subscription.after') !!}
+        </div>
     </div>
 
-    <div class="flex justify-between bg-[#F1EADF] px-[60px] py-3.5 max-md:justify-center max-sm:px-5">
+    <div class="border-t border-white/10 bg-transparent">
         {!! view_render_event('bagisto.shop.layout.footer.footer_text.before') !!}
 
-        <p class="text-sm text-zinc-600 max-md:text-center">
-            @lang('shop::app.components.layouts.footer.footer-text', ['current_year'=> date('Y') ])
+        <p class="mx-auto max-w-7xl px-6 py-6 text-center text-xs uppercase tracking-[0.3em] text-gray-400 lg:px-12">
+            © 2025 All rights reserved | Designed &amp; maintained by AXITA Computers Pvt Ltd | Powered by crow.lk
         </p>
 
         {!! view_render_event('bagisto.shop.layout.footer.footer_text.after') !!}
