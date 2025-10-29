@@ -9,6 +9,26 @@
     $customAttributeValues = $productViewHelper->getAdditionalData($product);
 
     $attributeData = collect($customAttributeValues)->filter(fn ($item) => ! empty($item['value']));
+
+    $productPrices = $product->getTypeInstance()->getProductPrices();
+
+    $finalPriceValue = (float) ($productPrices['final']['price'] ?? 0);
+
+    $installmentShippingFee = 500;
+
+    $baseInstallmentAmount = $finalPriceValue + $installmentShippingFee;
+
+    $payzyInstallment = $baseInstallmentAmount > 0 ? ($baseInstallmentAmount * 1.14) / 4 : 0;
+
+    $kokoInstallment = $baseInstallmentAmount > 0 ? ($baseInstallmentAmount * 1.12) / 3 : 0;
+
+    $payzyImage = core()->getConfigData('sales.payment_methods.payzy.image');
+
+    $payzyLogo = $payzyImage ? asset('storage/'.$payzyImage) : null;
+
+    $kokoImage = core()->getConfigData('sales.payment_methods.koko.image');
+
+    $kokoLogo = $kokoImage ? asset('storage/'.$kokoImage) : asset('storage/logos/kokologo.png');
 @endphp
 
 <!-- SEO Meta Content -->
@@ -350,6 +370,48 @@
                                 <p class="mt-[22px] flex items-center gap-2.5 text-2xl !font-medium max-sm:mt-2 max-sm:gap-x-2.5 max-sm:gap-y-0 max-sm:text-lg">
                                     {!! $product->getTypeInstance()->getPriceHtml() !!}
                                 </p>
+
+                                @if ($baseInstallmentAmount > 0)
+                                    <div class="mt-4 space-y-2 text-sm text-gray-600 max-sm:space-y-1.5 max-sm:text-xs">
+                                        <div class="flex items-center justify-between border-b border-gray-100 pb-1">
+                                            <div class="flex items-center gap-2">
+                                                @if ($payzyLogo)
+                                                    <img
+                                                        src="{{ $payzyLogo }}"
+                                                        alt="Payzy"
+                                                        class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
+                                                    />
+                                                    <span class="font-medium text-xs text-gray-700">(4x):</span>
+                                                @else
+                                                    <span class="font-medium text-gray-700">Payzy (4x):</span>
+                                                @endif
+                                            </div>
+
+                                            <span class="font-semibold text-gray-900">
+                                                {{ core()->formatPrice($payzyInstallment) }} / month
+                                            </span>
+                                        </div>
+
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                @if ($kokoLogo)
+                                                    <img
+                                                        src="{{ $kokoLogo }}"
+                                                        alt="KOKO"
+                                                        class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
+                                                    />
+                                                    <span class="font-medium text-xs text-gray-700">(3x):</span>
+                                                @else
+                                                    <span class="font-medium text-gray-700">KOKO (3x):</span>
+                                                @endif
+                                            </div>
+
+                                            <span class="font-semibold text-gray-900">
+                                                {{ core()->formatPrice($kokoInstallment) }} / month
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 @if (\Webkul\Tax\Facades\Tax::isInclusiveTaxProductPrices())
                                     <span class="text-sm font-normal text-zinc-500 max-sm:text-xs">
