@@ -275,84 +275,154 @@
         id="v-mobile-category-template"
     >
         <div>
-            <template v-for="(category) in categories">
-                {!! view_render_event('bagisto.shop.components.layouts.header.mobile.category.before') !!}
+            <div v-if="isLoading" class="space-y-3">
+                <span class="shimmer block h-12 w-full rounded-2xl" role="presentation"></span>
+                <span class="shimmer block h-12 w-full rounded-2xl" role="presentation"></span>
+                <span class="shimmer block h-12 w-full rounded-2xl" role="presentation"></span>
+            </div>
 
-                <div class="flex items-center justify-between border border-b border-l-0 border-r-0 border-t-0 border-zinc-100 py-3.5 max-sm:py-2.5">
-                    <a
-                        :href="category.url"
-                        class="flex items-center justify-between"
+            <div v-else class="space-y-3">
+                <template v-for="category in categories" :key="category.id">
+                    {!! view_render_event('bagisto.shop.components.layouts.header.mobile.category.before') !!}
+
+                    <div
+                        class="rounded-2xl border border-zinc-200 bg-white/90 p-4 shadow-sm backdrop-blur-sm transition-all duration-200 hover:border-zinc-300"
+                        :class="{ 'ring-1 ring-zinc-900/10': category.isOpen }"
                     >
-                        @{{ category.name }}
-                    </a>
-
-                    <span
-                        class="cursor-pointer text-2xl"
-                        :class="{'icon-arrow-down': category.isOpen, 'icon-arrow-right': ! category.isOpen}"
-                        @click="toggle(category)"
-                    >
-                    </span>
-                </div>
-
-                <div
-                    class="grid gap-2"
-                    v-if="category.isOpen"
-                >
-                    <ul v-if="category.children.length">
-                        <li v-for="secondLevelCategory in category.children">
-                            <div class="flex items-center justify-between border border-b border-l-0 border-r-0 border-t-0 border-zinc-100 ltr:ml-3 rtl:mr-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="min-w-0 flex-1">
                                 <a
-                                    :href="secondLevelCategory.url"
-                                    class="mt-5 flex items-center justify-between pb-5"
+                                    :href="category.url"
+                                    class="block truncate text-base font-semibold text-zinc-900 transition-colors duration-200 hover:text-zinc-700"
                                 >
-                                    @{{ secondLevelCategory.name }}
+                                    @{{ category.name }}
                                 </a>
 
-                                <span
-                                    class="cursor-pointer text-2xl"
-                                    :class="{
-                                        'icon-arrow-down': secondLevelCategory.category_show,
-                                        'icon-arrow-right': ! secondLevelCategory.category_show
-                                    }"
-                                    @click="secondLevelCategory.category_show = ! secondLevelCategory.category_show"
+                                <p
+                                    v-if="hasChildren(category)"
+                                    class="mt-1 text-xs text-zinc-500"
                                 >
-                                </span>
+                                    Tap to explore
+                                </p>
                             </div>
 
-                            <div v-if="secondLevelCategory.category_show">
-                                <ul v-if="secondLevelCategory.children.length">
-                                    <li v-for="thirdLevelCategory in secondLevelCategory.children">
-                                        <div class="flex items-center justify-between border border-b border-l-0 border-r-0 border-t-0 border-zinc-100 ltr:ml-3 rtl:mr-3">
+                            <div class="flex items-center gap-2">
+                                <a
+                                    v-if="! hasChildren(category)"
+                                    :href="category.url"
+                                    class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white"
+                                >
+                                    <span>View all</span>
+                                    <span class="icon-arrow-right text-sm"></span>
+                                </a>
+
+                                <button
+                                    v-else
+                                    type="button"
+                                    class="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900/10 text-lg text-zinc-500 transition-all duration-200 hover:bg-zinc-900/15 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-600/30"
+                                    @click="toggle(category)"
+                                    :aria-expanded="category.isOpen"
+                                    :aria-label="'Toggle ' + category.name"
+                                >
+                                    <span
+                                        class="transition-transform duration-200"
+                                        :class="{
+                                            'icon-arrow-down -rotate-180 text-zinc-900': category.isOpen,
+                                            'icon-arrow-right text-zinc-500': !category.isOpen
+                                        }"
+                                    ></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <transition name="mobile-collapsible">
+                            <div v-if="category.isOpen && hasChildren(category)" class="mt-4 space-y-3">
+                                <div class="flex justify-end">
+                                    <a
+                                        :href="category.url"
+                                        class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white"
+                                    >
+                                        <span>View all</span>
+                                        <span class="icon-arrow-right text-sm"></span>
+                                    </a>
+                                </div>
+
+                                <div
+                                    v-for="second in category.children"
+                                    :key="second.id"
+                                    class="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-200 hover:border-zinc-300"
+                                >
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div class="min-w-0 flex-1">
                                             <a
-                                                :href="thirdLevelCategory.url"
-                                                class="mt-5 flex items-center justify-between pb-5 ltr:ml-3 rtl:mr-3"
+                                                :href="second.url"
+                                                class="block truncate text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:text-zinc-600"
                                             >
-                                                @{{ thirdLevelCategory.name }}
+                                                @{{ second.name }}
                                             </a>
                                         </div>
-                                    </li>
-                                </ul>
 
-                                <span
-                                    class="ltr:ml-2 rtl:mr-2"
-                                    v-else
-                                >
-                                    @lang('shop::app.components.layouts.header.no-category-found')
-                                </span>
+                                        <div class="flex items-center gap-2">
+                                            <button
+                                                v-if="hasChildren(second)"
+                                                type="button"
+                                                class="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-base text-zinc-500 transition-all duration-200 hover:bg-zinc-900/10 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-600/30"
+                                                @click.stop="toggleSecond(category, second)"
+                                                :aria-expanded="second.isOpen"
+                                                :aria-label="'Toggle ' + second.name"
+                                            >
+                                                <span
+                                                    class="transition-transform duration-200"
+                                                    :class="{
+                                                        'icon-arrow-down -rotate-180 text-zinc-900': second.isOpen,
+                                                        'icon-arrow-right text-zinc-500': !second.isOpen
+                                                    }"
+                                                ></span>
+                                            </button>
+
+                                            <a
+                                                v-else
+                                                :href="second.url"
+                                                class="inline-flex items-center gap-2 rounded-full border border-zinc-900/10 bg-white px-3 py-1 text-xs font-medium uppercase tracking-wide text-zinc-700 transition-all duration-200 hover:border-zinc-900/30 hover:text-zinc-900"
+                                            >
+                                                <span>View all</span>
+                                                <span class="icon-arrow-right text-xs"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <transition name="mobile-collapsible">
+                                        <div v-if="second.isOpen && hasChildren(second)" class="mt-3 space-y-1 ltr:pl-3 rtl:pr-3">
+                                            <div class="flex justify-end">
+                                                <a
+                                                    :href="second.url"
+                                                    class="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:text-zinc-900"
+                                                >
+                                                    <span>View all</span>
+                                                    <span class="icon-arrow-right text-xs"></span>
+                                                </a>
+                                            </div>
+
+                                                <ul class="space-y-1 text-sm text-zinc-600">
+                                                    <li v-for="third in second.children" :key="third.id">
+                                                        <a
+                                                            :href="third.url"
+                                                            class="block rounded-lg px-3 py-1.5 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-900"
+                                                        >
+                                                            @{{ third.name }}
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                        </div>
+                                    </transition>
+                                </div>
                             </div>
-                        </li>
-                    </ul>
+                        </transition>
+                    </div>
 
-                    <span
-                        class="mt-2 max-sm:my-1.5 ltr:ml-2 rtl:mr-2"
-                        v-else
-                    >
-                        @lang('shop::app.components.layouts.header.no-category-found')
-                    </span>
-                </div>
-
-                {!! view_render_event('bagisto.shop.components.layouts.header.mobile.category.after') !!}
-            </template>
+                    {!! view_render_event('bagisto.shop.components.layouts.header.mobile.category.after') !!}
+                </template>
+            </div>
         </div>
 
         <!-- Localization & Currency Section -->
@@ -454,6 +524,7 @@
             data() {
                 return  {
                     categories: [],
+                    isLoading: true,
                 }
             },
 
@@ -469,19 +540,97 @@
 
             methods: {
                 get() {
+                    this.isLoading = true;
+
                     this.$axios.get("{{ route('shop.api.categories.tree') }}")
                         .then(response => {
-                            this.categories = response.data.data;
+                            const categories = response.data.data || [];
+
+                            this.categories = categories.map(category => this.normalizeCategory(category));
+                            this.isLoading = false;
                         }).catch(error => {
                             console.log(error);
+
+                            this.isLoading = false;
                         });
                 },
 
                 toggle(selectedCategory) {
-                    this.categories = this.categories.map((category) => ({
+                    if (! this.hasChildren(selectedCategory)) {
+                        return;
+                    }
+
+                    this.categories = this.categories.map((category) => {
+                        const baseChildren = category.children.map((child) => this.cloneChild(child));
+
+                        if (category.id !== selectedCategory.id) {
+                            return {
+                                ...category,
+                                isOpen: false,
+                                children: baseChildren.map((child) => this.cloneChild(child, { isOpen: false })),
+                            };
+                        }
+
+                        const nextOpen = ! category.isOpen;
+
+                        return {
+                            ...category,
+                            isOpen: nextOpen,
+                            children: baseChildren.map((child) => this.cloneChild(child, { isOpen: nextOpen ? child.isOpen : false })),
+                        };
+                    });
+                },
+
+                toggleSecond(parentCategory, secondCategory) {
+                    if (! this.hasChildren(secondCategory)) {
+                        return;
+                    }
+
+                    this.categories = this.categories.map((category) => {
+                        if (category.id !== parentCategory.id) {
+                            return {
+                                ...category,
+                                children: category.children.map((child) => this.cloneChild(child, { isOpen: false })),
+                            };
+                        }
+
+                        return {
+                            ...category,
+                            children: category.children.map((child) => {
+                                if (child.id !== secondCategory.id) {
+                                    return this.cloneChild(child, { isOpen: false });
+                                }
+
+                                return this.cloneChild(child, { isOpen: ! child.isOpen });
+                            }),
+                        };
+                    });
+                },
+
+                hasChildren(node) {
+                    return Array.isArray(node.children) && node.children.length > 0;
+                },
+
+                normalizeCategory(category) {
+                    return {
                         ...category,
-                        isOpen: category.id === selectedCategory.id ? ! category.isOpen : false,
-                    }));
+                        isOpen: false,
+                        children: (category.children || []).map((child) => this.normalizeChild(child)),
+                    };
+                },
+
+                normalizeChild(child) {
+                    return this.cloneChild(child, { isOpen: false });
+                },
+
+                cloneChild(child, overrides = {}) {
+                    const children = (child.children || []).map((grandChild) => ({ ...grandChild }));
+
+                    return {
+                        ...child,
+                        ...overrides,
+                        children,
+                    };
                 },
             },
         });
@@ -639,4 +788,28 @@
             }
         });
     </script>
+@endPushOnce
+
+@pushOnce('styles')
+    <style>
+        .mobile-collapsible-enter-active,
+        .mobile-collapsible-leave-active {
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        .mobile-collapsible-enter-from,
+        .mobile-collapsible-leave-to {
+            opacity: 0;
+            transform: translateY(-6px);
+            max-height: 0;
+        }
+
+        .mobile-collapsible-enter-to,
+        .mobile-collapsible-leave-from {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 600px;
+        }
+    </style>
 @endPushOnce

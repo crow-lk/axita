@@ -65,7 +65,7 @@
                 <div
                     v-for="category in categories"
                     :key="category.id"
-                    class="rounded-2xl border border-transparent bg-white/70 p-4 shadow-sm transition-all duration-200 hover:border-sky-200 hover:bg-white"
+                    class="rounded-2xl border border-transparent bg-white/80 p-4 shadow-sm transition-all duration-200 hover:border-zinc-300 hover:bg-white"
                     @mouseenter="openOnHover(category)"
                     @mouseleave="closeOnHover(category)"
                 >
@@ -74,7 +74,7 @@
                             <button
                                 type="button"
                                 @click="toggle(category)"
-                                class="text-left text-base font-semibold text-zinc-800 transition-colors duration-200 hover:text-navyBlue focus-visible:outline-none"
+                                class="text-left text-base font-semibold text-zinc-900 transition-colors duration-200 hover:text-zinc-700 focus-visible:outline-none"
                                 :aria-expanded="category.isOpen"
                             >
                                 @{{ category.name }}
@@ -82,7 +82,7 @@
 
                             <button
                                 type="button"
-                                class="flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-xl text-zinc-400 transition-all duration-200 hover:bg-white hover:text-navyBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navyBlue/30"
+                                class="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/10 text-xl text-zinc-500 transition-all duration-200 hover:bg-zinc-900/15 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/30"
                                 @click.stop="toggle(category)"
                                 :aria-label="'Toggle ' + category.name"
                                 :aria-expanded="category.isOpen"
@@ -90,8 +90,8 @@
                                 <span
                                     class="transition-transform duration-200"
                                     :class="{
-                                        'icon-arrow-down -rotate-180 text-navyBlue': category.isOpen,
-                                        'icon-arrow-right rotate-0 text-zinc-400': !category.isOpen
+                                        'icon-arrow-down -rotate-180 text-zinc-900': category.isOpen,
+                                        'icon-arrow-right rotate-0 text-zinc-500': !category.isOpen
                                     }"
                                 ></span>
                             </button>
@@ -100,7 +100,7 @@
                         <transition name="collapsible">
                             <div v-if="category.isOpen" class="mt-3 space-y-3">
                                 <div class="flex justify-end">
-                                    <a :href="category.url" class="inline-flex items-center gap-2 rounded-full border border-navyBlue/20 bg-navyBlue/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-navyBlue transition-all duration-200 hover:bg-navyBlue hover:text-white">
+                                    <a :href="category.url" class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white">
                                         <span>View all</span>
                                         <span class="icon-arrow-right text-sm"></span>
                                     </a>
@@ -109,7 +109,7 @@
                                 <div
                                     v-for="second in category.children"
                                     :key="second.id"
-                                    class="rounded-xl bg-white/70 p-3 transition-all duration-200 hover:bg-white"
+                                    class="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-200 hover:border-zinc-300"
                                     @mouseenter="openOnHover(second)"
                                     @mouseleave="closeOnHover(second)"
                                 >
@@ -118,7 +118,7 @@
                                             <button
                                                 type="button"
                                                 @click="toggle(second)"
-                                                class="text-left text-sm font-semibold text-zinc-700 transition-colors duration-200 hover:text-navyBlue focus-visible:outline-none"
+                                                class="text-left text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:text-zinc-600 focus-visible:outline-none"
                                                 :aria-expanded="second.isOpen"
                                             >
                                                 @{{ second.name }}
@@ -126,7 +126,7 @@
 
                                             <button
                                                 type="button"
-                                                class="flex h-8 w-8 items-center justify-center rounded-full bg-white/70 text-lg text-zinc-400 transition-all duration-200 hover:bg-white hover:text-navyBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navyBlue/20"
+                                                class="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900/10 text-lg text-zinc-500 transition-all duration-200 hover:bg-zinc-900/15 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/20"
                                                 @click.stop="toggle(second)"
                                                 :aria-label="'Toggle ' + second.name"
                                                 :aria-expanded="second.isOpen"
@@ -134,8 +134,8 @@
                                                 <span
                                                     class="transition-transform duration-200"
                                                     :class="{
-                                                        'icon-arrow-down -rotate-180 text-navyBlue': second.isOpen,
-                                                        'icon-arrow-right rotate-0 text-zinc-400': !second.isOpen
+                                                        'icon-arrow-down -rotate-180 text-zinc-900': second.isOpen,
+                                                        'icon-arrow-right rotate-0 text-zinc-500': !second.isOpen
                                                     }"
                                                 ></span>
                                             </button>
@@ -144,7 +144,7 @@
                                         <transition name="collapsible">
                                             <div v-if="second.isOpen" class="mt-2 space-y-1 ltr:pl-3 rtl:pr-3">
                                                 <div class="mb-1 flex justify-end">
-                                                    <a :href="second.url" class="inline-flex items-center gap-2 text-xs font-medium text-navyBlue transition-colors duration-200 hover:text-darkBlue">
+                                                    <a :href="second.url" class="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:text-zinc-900">
                                                         <span>View all</span>
                                                         <span class="icon-arrow-right text-xs"></span>
                                                     </a>
@@ -152,7 +152,7 @@
 
                                                 <ul v-if="second.children.length" class="space-y-1 text-sm text-zinc-600">
                                                     <li v-for="third in second.children" :key="third.id">
-                                                        <a :href="third.url" class="transition-colors duration-200 hover:text-navyBlue">@{{ third.name }}</a>
+                                                        <a :href="third.url" class="transition-colors duration-200 hover:text-zinc-900">@{{ third.name }}</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -162,7 +162,7 @@
                                     <template v-else>
                                         <div class="flex items-center justify-between gap-3">
                                             <span class="text-sm font-semibold text-zinc-700">@{{ second.name }}</span>
-                                            <a :href="second.url" class="inline-flex items-center gap-2 text-xs font-medium text-navyBlue transition-colors duration-200 hover:text-darkBlue">
+                                            <a :href="second.url" class="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:text-zinc-900">
                                                 <span>View all</span>
                                                 <span class="icon-arrow-right text-xs"></span>
                                             </a>
@@ -175,8 +175,8 @@
 
                     <template v-else>
                         <div class="flex items-center justify-between gap-3">
-                            <span class="text-base font-semibold text-zinc-800">@{{ category.name }}</span>
-                            <a :href="category.url" class="inline-flex items-center gap-2 rounded-full border border-navyBlue/20 bg-navyBlue/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-navyBlue transition-all duration-200 hover:bg-navyBlue hover:text-white">
+                            <span class="text-base font-semibold text-zinc-900">@{{ category.name }}</span>
+                            <a :href="category.url" class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white">
                                 <span>View all</span>
                                 <span class="icon-arrow-right text-sm"></span>
                             </a>
