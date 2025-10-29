@@ -107,10 +107,12 @@
                     :title="trans('shop::app.products.view.description')"
                     :is-selected="true"
                 >
-                    <div class="container mt-[60px] max-1180:px-5">
-                        <p class="text-lg text-zinc-500 max-1180:text-sm">
-                            {!! $product->description !!}
-                        </p>
+                    <div class="container mt-[40px] max-1180:px-5">
+                        <div class="rounded-3xl border border-zinc-100 bg-white/85 p-8 shadow-sm shadow-zinc-200/30 max-1180:p-6 max-sm:p-4">
+                            <div class="space-y-5 text-lg leading-7 text-zinc-600 max-1180:text-base max-sm:text-sm">
+                                {!! $product->description !!}
+                            </div>
+                        </div>
                     </div>
                 </x-shop::tabs.item>
 
@@ -124,42 +126,49 @@
                         :title="trans('shop::app.products.view.additional-information')"
                         :is-selected="false"
                     >
-                        <div class="container mt-[60px] max-1180:px-5">
-                            <div class="mt-8 grid max-w-max grid-cols-[auto_1fr] gap-4">
-                                @foreach ($customAttributeValues as $customAttributeValue)
-                                    @if (! empty($customAttributeValue['value']))
-                                        <div class="grid">
-                                            <p class="text-base text-black">
-                                                {!! $customAttributeValue['label'] !!}
-                                            </p>
-                                        </div>
+                        <div class="container mt-[40px] max-1180:px-5">
+                            <div class="rounded-3xl border border-zinc-100 bg-white/85 p-8 shadow-sm shadow-zinc-200/30 max-1180:p-6 max-sm:p-4">
+                                <div class="grid gap-6 text-sm text-zinc-600 sm:grid-cols-2">
+                                    @foreach ($customAttributeValues as $customAttributeValue)
+                                        @if (! empty($customAttributeValue['value']))
+                                            <div class="flex flex-col gap-1 rounded-2xl border border-zinc-100 bg-white/70 p-5 shadow-sm shadow-zinc-200/20">
+                                                <span class="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                                                    {!! $customAttributeValue['label'] !!}
+                                                </span>
 
-                                        @if ($customAttributeValue['type'] == 'file')
-                                            <a 
-                                                href="{{ Storage::url($product[$customAttributeValue['code']]) }}" 
-                                                download="{{ $customAttributeValue['label'] }}"
-                                            >
-                                                <span class="text-2xl icon-download"></span>
-                                            </a>
-                                        @elseif ($customAttributeValue['type'] == 'image')
-                                            <a 
-                                                href="{{ Storage::url($product[$customAttributeValue['code']]) }}" 
-                                                download="{{ $customAttributeValue['label'] }}"
-                                            >
-                                                <img 
-                                                    class="w-5 h-5 min-h-5 min-w-5" 
-                                                    src="{{ Storage::url($customAttributeValue['value']) }}" 
-                                                />
-                                            </a>
-                                        @else
-                                            <div class="grid">
-                                                <p class="text-base text-zinc-500">
-                                                    {!! $customAttributeValue['value'] !!}
-                                                </p>
+                                                @if ($customAttributeValue['type'] == 'file')
+                                                    <a
+                                                        href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
+                                                        download="{{ $customAttributeValue['label'] }}"
+                                                        class="flex items-center gap-2 text-sm font-medium text-navyBlue hover:underline"
+                                                    >
+                                                        <span class="icon-download text-lg"></span>
+                                                        {{ __('Download') }}
+                                                    </a>
+                                                @elseif ($customAttributeValue['type'] == 'image')
+                                                    <a
+                                                        href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
+                                                        download="{{ $customAttributeValue['label'] }}"
+                                                        class="flex items-center gap-2"
+                                                    >
+                                                        <img
+                                                            class="h-12 w-12 rounded-xl border border-zinc-200 object-cover"
+                                                            src="{{ Storage::url($customAttributeValue['value']) }}"
+                                                            alt="{{ $customAttributeValue['label'] }}"
+                                                        />
+                                                        <span class="text-sm font-medium text-navyBlue hover:underline">
+                                                            {{ __('View') }}
+                                                        </span>
+                                                    </a>
+                                                @else
+                                                    <p class="text-base font-medium text-zinc-700 max-sm:text-sm">
+                                                        {!! $customAttributeValue['value'] !!}
+                                                    </p>
+                                                @endif
                                             </div>
                                         @endif
-                                    @endif
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </x-shop::tabs.item>
@@ -172,7 +181,11 @@
                     :title="trans('shop::app.products.view.review')"
                     :is-selected="false"
                 >
-                    @include('shop::products.view.reviews')
+                    <div class="container mt-[40px] max-1180:px-5">
+                        <div class="rounded-3xl border border-zinc-100 bg-white/85 p-8 shadow-sm shadow-zinc-200/30 max-1180:p-6 max-sm:p-4">
+                            @include('shop::products.view.reviews')
+                        </div>
+                    </div>
                 </x-shop::tabs.item>
             </x-shop::tabs>
         </div>
@@ -185,14 +198,14 @@
             class="max-md:border-none"
             :is-active="true"
         >
-            <x-slot:header class="bg-gray-100 max-md:!py-3 max-sm:!py-2">
-                <p class="text-base font-medium 1180:hidden">
+            <x-slot:header class="rounded-2xl border border-zinc-200 bg-white/85 px-5 py-4 shadow-sm shadow-zinc-200/30 max-md:!py-3 max-sm:!py-2">
+                <p class="text-base font-semibold text-zinc-800 1180:hidden">
                     @lang('shop::app.products.view.description')
                 </p>
             </x-slot>
 
-            <x-slot:content class="max-sm:px-0">
-                <div class="mb-5 text-lg text-zinc-500 max-1180:text-sm max-md:mb-1 max-md:px-4">
+            <x-slot:content class="!bg-transparent !p-0 !rounded-none max-sm:px-0">
+                <div class="mt-3 rounded-3xl border border-zinc-100 bg-white/85 p-6 text-lg leading-7 text-zinc-600 shadow-sm shadow-zinc-200/30 max-1180:text-base max-md:p-5 max-sm:text-sm">
                     {!! $product->description !!}
                 </div>
             </x-slot>
@@ -204,48 +217,52 @@
                 class="max-md:border-none"
                 :is-active="false"
             >
-                <x-slot:header class="bg-gray-100 max-md:!py-3 max-sm:!py-2">
-                    <p class="text-base font-medium 1180:hidden">
+                <x-slot:header class="rounded-2xl border border-zinc-200 bg-white/85 px-5 py-4 shadow-sm shadow-zinc-200/30 max-md:!py-3 max-sm:!py-2">
+                    <p class="text-base font-semibold text-zinc-800 1180:hidden">
                         @lang('shop::app.products.view.additional-information')
                     </p>
                 </x-slot>
 
-                <x-slot:content class="max-sm:px-0">
+                <x-slot:content class="!bg-transparent !p-0 !rounded-none max-sm:px-0">
                     <div class="container max-1180:px-5">
-                        <div class="grid max-w-max grid-cols-[auto_1fr] gap-4 text-lg text-zinc-500 max-1180:text-sm">
+                        <div class="mt-3 grid gap-4 text-sm text-zinc-600">
                             @foreach ($customAttributeValues as $customAttributeValue)
                                 @if (! empty($customAttributeValue['value']))
-                                    <div class="grid">
-                                        <p class="text-base text-black">
+                                    <div class="rounded-2xl border border-zinc-100 bg-white/85 p-5 shadow-sm shadow-zinc-200/25">
+                                        <span class="text-xs font-semibold uppercase tracking-wide text-zinc-400">
                                             {{ $customAttributeValue['label'] }}
-                                        </p>
-                                    </div>
+                                        </span>
 
-                                    @if ($customAttributeValue['type'] == 'file')
-                                        <a
-                                            href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
-                                            download="{{ $customAttributeValue['label'] }}"
-                                        >
-                                            <span class="text-2xl icon-download"></span>
-                                        </a>
-                                    @elseif ($customAttributeValue['type'] == 'image')
-                                        <a
-                                            href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
-                                            download="{{ $customAttributeValue['label'] }}"
-                                        >
-                                            <img
-                                                class="w-5 h-5 min-h-5 min-w-5"
-                                                src="{{ Storage::url($customAttributeValue['value']) }}"
-                                                alt="Product Image"
-                                            />
-                                        </a>
-                                    @else
-                                        <div class="grid">
-                                            <p class="text-base text-zinc-500">
+                                        @if ($customAttributeValue['type'] == 'file')
+                                            <a
+                                                href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
+                                                download="{{ $customAttributeValue['label'] }}"
+                                                class="mt-2 flex items-center gap-2 text-sm font-medium text-navyBlue hover:underline"
+                                            >
+                                                <span class="icon-download text-lg"></span>
+                                                {{ __('Download') }}
+                                            </a>
+                                        @elseif ($customAttributeValue['type'] == 'image')
+                                            <a
+                                                href="{{ Storage::url($product[$customAttributeValue['code']]) }}"
+                                                download="{{ $customAttributeValue['label'] }}"
+                                                class="mt-2 flex items-center gap-2"
+                                            >
+                                                <img
+                                                    class="h-12 w-12 rounded-xl border border-zinc-200 object-cover"
+                                                    src="{{ Storage::url($customAttributeValue['value']) }}"
+                                                    alt="{{ $customAttributeValue['label'] }}"
+                                                />
+                                                <span class="text-sm font-medium text-navyBlue hover:underline">
+                                                    {{ __('View') }}
+                                                </span>
+                                            </a>
+                                        @else
+                                            <p class="mt-2 text-base font-medium text-zinc-700">
                                                 {{ $customAttributeValue['value'] ?? '-' }}
                                             </p>
-                                        </div>
-                                    @endif
+                                        @endif
+                                    </div>
                                 @endif
                             @endforeach
                         </div>
@@ -260,16 +277,18 @@
             :is-active="false"
         >
             <x-slot:header
-                class="bg-gray-100 max-md:!py-3 max-sm:!py-2"
+                class="rounded-2xl border border-zinc-200 bg-white/85 px-5 py-4 shadow-sm shadow-zinc-200/30 max-md:!py-3 max-sm:!py-2"
                 id="review-accordian-button"
             >
-                <p class="text-base font-medium">
+                <p class="text-base font-semibold text-zinc-800">
                     @lang('shop::app.products.view.review')
                 </p>
             </x-slot>
 
-            <x-slot:content>
-                @include('shop::products.view.reviews')
+            <x-slot:content class="!bg-transparent !p-0 !rounded-none">
+                <div class="mt-3 rounded-3xl border border-zinc-100 bg-white/85 p-6 shadow-sm shadow-zinc-200/30">
+                    @include('shop::products.view.reviews')
+                </div>
             </x-slot>
         </x-shop::accordion>
     </div>
@@ -322,8 +341,8 @@
                             <div class="relative max-w-[590px] max-1180:w-full max-1180:max-w-full max-1180:px-5 max-sm:px-4">
                                 {!! view_render_event('bagisto.shop.products.name.before', ['product' => $product]) !!}
 
-                                <div class="flex justify-between gap-4">
-                                    <h1 class="text-3xl font-medium break-all max-sm:text-xl">
+                                <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
+                                    <h1 class="text-3xl font-semibold leading-tight text-zinc-900 break-all max-sm:text-2xl">
                                         {{ $product->name }}
                                     </h1>
 
@@ -367,51 +386,57 @@
                                 <!-- Pricing -->
                                 {!! view_render_event('bagisto.shop.products.price.before', ['product' => $product]) !!}
 
-                                <p class="mt-[22px] flex items-center gap-2.5 text-2xl !font-medium max-sm:mt-2 max-sm:gap-x-2.5 max-sm:gap-y-0 max-sm:text-lg">
-                                    {!! $product->getTypeInstance()->getPriceHtml() !!}
-                                </p>
-
-                                @if ($baseInstallmentAmount > 0)
-                                    <div class="mt-4 space-y-2 text-sm text-gray-600 max-sm:space-y-1.5 max-sm:text-xs">
-                                        <div class="flex items-center justify-between border-b border-gray-100 pb-1">
-                                            <div class="flex items-center gap-2">
-                                                @if ($payzyLogo)
-                                                    <img
-                                                        src="{{ $payzyLogo }}"
-                                                        alt="Payzy"
-                                                        class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
-                                                    />
-                                                    <span class="font-medium text-xs text-gray-700">(4x):</span>
-                                                @else
-                                                    <span class="font-medium text-gray-700">Payzy (4x):</span>
-                                                @endif
-                                            </div>
-
-                                            <span class="font-semibold text-gray-900">
-                                                {{ core()->formatPrice($payzyInstallment) }} / month
-                                            </span>
-                                        </div>
-
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                @if ($kokoLogo)
-                                                    <img
-                                                        src="{{ $kokoLogo }}"
-                                                        alt="KOKO"
-                                                        class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
-                                                    />
-                                                    <span class="font-medium text-xs text-gray-700">(3x):</span>
-                                                @else
-                                                    <span class="font-medium text-gray-700">KOKO (3x):</span>
-                                                @endif
-                                            </div>
-
-                                            <span class="font-semibold text-gray-900">
-                                                {{ core()->formatPrice($kokoInstallment) }} / month
-                                            </span>
-                                        </div>
+                                <div class="mt-6 space-y-4 rounded-3xl border border-zinc-100 bg-white/80 p-5 shadow-sm backdrop-blur-sm max-sm:mt-4 max-sm:rounded-2xl max-sm:p-4">
+                                    <div class="flex flex-wrap items-end gap-x-3 gap-y-2 text-3xl font-semibold text-zinc-900 max-sm:text-2xl [&_.final-price]:text-xl [&_.final-price]:font-medium [&_.final-price]:text-zinc-400 [&_.line-through]:text-zinc-400 [&_.line-through]:decoration-zinc-300">
+                                        {!! $product->getTypeInstance()->getPriceHtml() !!}
                                     </div>
-                                @endif
+
+                                    @if ($baseInstallmentAmount > 0)
+                                        <div class="grid gap-2 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 text-sm text-zinc-600 max-sm:gap-1.5 max-sm:p-3">
+                                            <div class="flex items-center justify-between gap-3 border-b border-zinc-200 pb-2">
+                                                <div class="flex items-center gap-2">
+                                                    @if ($payzyLogo)
+                                                        <img
+                                                            src="{{ $payzyLogo }}"
+                                                            alt="Payzy"
+                                                            class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
+                                                        />
+                                                        <span class="font-medium text-xs uppercase tracking-wide text-zinc-500">4x</span>
+                                                    @else
+                                                        <span class="font-medium text-zinc-700">Payzy (4x)</span>
+                                                    @endif
+                                                </div>
+
+                                                <span class="font-semibold text-zinc-900">
+                                                    {{ core()->formatPrice($payzyInstallment) }} <span class="text-xs font-medium text-zinc-500">/ month</span>
+                                                </span>
+                                            </div>
+
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="flex items-center gap-2">
+                                                    @if ($kokoLogo)
+                                                        <img
+                                                            src="{{ $kokoLogo }}"
+                                                            alt="KOKO"
+                                                            class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
+                                                        />
+                                                        <span class="font-medium text-xs uppercase tracking-wide text-zinc-500">3x</span>
+                                                    @else
+                                                        <span class="font-medium text-zinc-700">KOKO (3x)</span>
+                                                    @endif
+                                                </div>
+
+                                                <span class="font-semibold text-zinc-900">
+                                                    {{ core()->formatPrice($kokoInstallment) }} <span class="text-xs font-medium text-zinc-500">/ month</span>
+                                                </span>
+                                            </div>
+
+                                            <p class="pt-1 text-xs text-zinc-400 max-sm:text-[11px]">
+                                                Includes estimated shipping & finance fees. Final amount may vary at checkout.
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
 
                                 @if (\Webkul\Tax\Facades\Tax::isInclusiveTaxProductPrices())
                                     <span class="text-sm font-normal text-zinc-500 max-sm:text-xs">

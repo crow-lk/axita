@@ -12,25 +12,32 @@
         type="text/x-template"
         id="v-tabs-template"
     >
-        <div>
-            <div
-                class="flex flex-row justify-center gap-8 bg-zinc-100 max-sm:gap-1.5"
-                :style="positionStyles"
-            >
-                <div
-                    role="button"
-                    tabindex="0"
-                    v-for="tab in tabs"
-                    class="cursor-pointer px-8 py-5 text-xl font-medium text-zinc-600 max-md:px-4 max-md:py-3 max-md:text-sm max-sm:px-2.5 max-sm:py-2.5"
-                    :class="{'border-b-2 border-navyBlue !text-black transition': tab.isActive }"
-                    :id="tab.$attrs.id + '-button'"
-                    @click="change(tab)"
-                >
-                    @{{ tab.title }}
+        <div class="space-y-10">
+            <div class="container px-5">
+                <div class="mx-auto max-w-5xl rounded-full border border-zinc-100 bg-white/80 p-1 shadow-sm shadow-zinc-200/40 backdrop-blur-md">
+                    <div
+                        class="flex flex-wrap items-center gap-1.5"
+                        :style="positionStyles"
+                    >
+                        <div
+                            role="button"
+                            tabindex="0"
+                            v-for="tab in tabs"
+                            class="group relative flex cursor-pointer items-center rounded-full px-6 py-3 text-sm font-medium text-zinc-500 transition-all duration-200 ease-out hover:text-zinc-900 hover:shadow-sm max-md:px-4 max-md:py-2.5 max-sm:px-3 max-sm:text-xs"
+                            :class="{
+                                'bg-zinc-900 text-white shadow-lg shadow-zinc-400/50 hover:text-white': tab.isActive,
+                                'bg-transparent': ! tab.isActive,
+                            }"
+                            :id="tab.$attrs.id + '-button'"
+                            @click="change(tab)"
+                        >
+                            @{{ tab.title }}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div>
+            <div class="px-5">
                 {{ $slot }}
             </div>
         </div>
