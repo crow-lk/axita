@@ -39,10 +39,16 @@ trait CurrencyFormatter
 
             $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, $symbol);
 
-            return $formatter->format($price);
+            return $this->ensureRupeeSymbolPrefix(
+                $formatter->format($price),
+                $symbol
+            );
         }
 
-        return $formatter->formatCurrency($price, $currency->code);
+        return $this->ensureRupeeSymbolPrefix(
+            $formatter->formatCurrency($price, $currency->code),
+            $symbol
+        );
     }
 
     /**
@@ -96,12 +102,14 @@ trait CurrencyFormatter
             }
         }
 
-        return match ($position) {
+        $formatted = match ($position) {
             CurrencyPositionEnum::LEFT->value             => $symbol.$formattedCurrency,
             CurrencyPositionEnum::LEFT_WITH_SPACE->value  => $symbol.' '.$formattedCurrency,
             CurrencyPositionEnum::RIGHT->value            => $formattedCurrency.$symbol,
             CurrencyPositionEnum::RIGHT_WITH_SPACE->value => $formattedCurrency.' '.$symbol,
         };
+
+        return $this->ensureRupeeSymbolPrefix($formatted, $symbol);
     }
 
     /**
@@ -116,6 +124,76 @@ trait CurrencyFormatter
         $formatter = new \NumberFormatter(app()->getLocale().'@currency='.$code, \NumberFormatter::CURRENCY);
 
         return $formatter->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+    }
+
+    /**
+     * Ensure rupee-like symbols appear before the numeric amount.
+     */
+    protected function ensureRupeeSymbolPrefix(string $value, string $symbol): string
+    {
+        if ($symbol !== 'Rs') {
+            return $value;
+        }
+
+        $trimmed = trim($value);
+
+        $negativeIndicator = null;
+
+        if (preg_match('/^\((.*)\)$/u', $trimmed, $matches)) {
+            $negativeIndicator = 'parentheses';
+
+            $trimmed = $matches[1];
+        }
+
+        $normalized = preg_replace('/(₨|₹|रु|रू|Rs\.?|RS\.?|rs\.?)/u', '', $trimmed);
+
+        $normalized = preg_replace('/[\s\x{00A0}]+/u', ' ', $normalized ?? '');
+
+        $normalized = trim($normalized);
+
+        if ($normalized === '') {
+            $normalized = '0';
+        }
+
+        foreach (['-', "\u{2212}"] as $minusSign) {
+            if (mb_strpos($normalized, $minusSign) === 0) {
+                $negativeIndicator = $negativeIndicator ?? 'sign';
+
+                $normalized = mb_substr($normalized, mb_strlen($minusSign));
+
+                $normalized = ltrim($normalized);
+
+                break;
+            }
+        }
+
+        foreach (['-', "\u{2212}"] as $minusSign) {
+            $length = mb_strlen($minusSign);
+
+            if ($length === 0) {
+                continue;
+            }
+
+            if (mb_substr($normalized, -$length) === $minusSign) {
+                $negativeIndicator = $negativeIndicator ?? 'sign';
+
+                $normalized = mb_substr($normalized, 0, mb_strlen($normalized) - $length);
+
+                $normalized = rtrim($normalized);
+
+                break;
+            }
+        }
+
+        $result = 'Rs '.$normalized;
+
+        if ($negativeIndicator === 'sign') {
+            $result = '-'.$result;
+        } elseif ($negativeIndicator === 'parentheses') {
+            $result = '('.$result.')';
+        }
+
+        return $result;
     }
 
     /**
