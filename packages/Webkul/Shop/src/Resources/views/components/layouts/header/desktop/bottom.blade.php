@@ -24,16 +24,16 @@
             </x-slot:toggle>
 
             <x-slot:content class="!p-0">
-                <div class="w-[520px] overflow-hidden rounded-3xl border border-white/40 bg-gradient-to-br from-white via-zinc-50 to-white/70 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur-lg transition-all duration-300" @click.stop>
-                    <div class="flex items-center justify-between border-b border-white/60 px-6 py-4">
+                <div class="w-[860px] max-w-[88vw] overflow-hidden rounded-3xl border border-white/40 bg-gradient-to-br from-white via-zinc-50 to-white/70 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur-lg transition-all duration-300" @click.stop>
+                    <div class="flex items-center justify-between border-b border-white/60 px-8 py-5">
                         <div>
                             <p class="text-sm font-semibold text-zinc-800">Explore categories</p>
                             <p class="text-xs text-zinc-500">Jump straight into what you love</p>
                         </div>
                     </div>
 
-                    <div class="max-h-[60vh] overflow-y-auto px-4 pb-5 pt-4">
-                        <v-collapsible-categories>
+                    <div class="h-[70vh] overflow-hidden px-5 pb-6 pt-5">
+                        <v-collapsible-categories class="flex h-full flex-col">
                             <div class="grid gap-3">
                                 <span class="shimmer h-6 w-28 rounded" role="presentation"></span>
                                 <span class="shimmer h-6 w-32 rounded" role="presentation"></span>
@@ -54,134 +54,120 @@
 @pushOnce('scripts')
     <!-- Collapsible Categories Template -->
     <script type="text/x-template" id="v-collapsible-categories-template">
-        <div>
+        <div class="flex h-full flex-col">
             <div v-if="isLoading" class="grid gap-2">
                 <span class="shimmer h-6 w-28 rounded" role="presentation"></span>
                 <span class="shimmer h-6 w-32 rounded" role="presentation"></span>
                 <span class="shimmer h-6 w-24 rounded" role="presentation"></span>
             </div>
 
-            <div v-else class="grid gap-3">
-                <div
-                    v-for="category in categories"
-                    :key="category.id"
-                    class="rounded-2xl border border-transparent bg-white/80 p-4 shadow-sm transition-all duration-200 hover:border-zinc-300 hover:bg-white"
-                    @mouseenter="openOnHover(category)"
-                    @mouseleave="closeOnHover(category)"
-                >
-                    <template v-if="category.children.length">
-                        <div class="flex items-center justify-between gap-3">
-                            <button
-                                type="button"
-                                @click="toggle(category)"
-                                class="text-left text-base font-semibold text-zinc-900 transition-colors duration-200 hover:text-zinc-700 focus-visible:outline-none"
-                                :aria-expanded="category.isOpen"
-                            >
-                                @{{ category.name }}
-                            </button>
+            <div v-else class="flex h-full gap-6 overflow-hidden max-lg:flex-col">
+                <div class="category-scroll flex w-[280px] flex-col gap-2 overflow-y-auto pr-2 max-lg:w-full max-lg:max-h-[40vh] max-lg:pr-0 max-lg:pb-2 lg:h-full" :style="{ scrollbarWidth: 'thin' }">
+                    <button
+                        v-for="category in categories"
+                        :key="category.id"
+                        type="button"
+                        class="flex items-center justify-between rounded-2xl border border-transparent bg-white/70 px-5 py-3.5 text-left text-sm font-semibold text-zinc-600 transition-all duration-200 hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/20"
+                        :class="{
+                            'border-zinc-900/30 bg-zinc-900/10 text-zinc-900 shadow-sm': category.id === activeCategoryId
+                        }"
+                        @mouseenter="setActiveCategory(category)"
+                        @focus="setActiveCategory(category)"
+                    >
+                        <span class="truncate">@{{ category.name }}</span>
 
-                            <button
-                                type="button"
-                                class="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/10 text-xl text-zinc-500 transition-all duration-200 hover:bg-zinc-900/15 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/30"
-                                @click.stop="toggle(category)"
-                                :aria-label="'Toggle ' + category.name"
-                                :aria-expanded="category.isOpen"
-                            >
-                                <span
-                                    class="transition-transform duration-200"
-                                    :class="{
-                                        'icon-arrow-down -rotate-180 text-zinc-900': category.isOpen,
-                                        'icon-arrow-right rotate-0 text-zinc-500': !category.isOpen
-                                    }"
-                                ></span>
-                            </button>
+                        <span
+                            class="icon-arrow-right text-base transition-transform duration-200"
+                            :class="{ '-rotate-45 text-zinc-900': category.id === activeCategoryId }"
+                        ></span>
+                    </button>
+                </div>
+
+                <div class="flex-1 flex flex-col overflow-hidden rounded-[32px] border border-zinc-200 bg-white/95 shadow-inner">
+                    <div v-if="activeCategory" class="flex h-full flex-col">
+                        <div class="flex items-start justify-between gap-3 border-b border-zinc-200 px-8 py-5">
+                            <div>
+                                <p class="text-xl font-semibold text-zinc-900">@{{ activeCategory.name }}</p>
+
+                                <p v-if="activeCategory.children.length" class="mt-1 text-xs text-zinc-500">
+                                    Explore featured collections and subcategories
+                                </p>
+
+                                <p v-else class="mt-1 text-xs text-zinc-500">@lang('shop::app.components.layouts.header.no-category-found')</p>
+                            </div>
+
+                            <div class="flex shrink-0 items-center gap-3">
+                                <span class="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-500">
+                                    @{{ activeCategory.children.length }} subcategories
+                                </span>
+
+                                <a
+                                    :href="activeCategory.url"
+                                    class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white"
+                                >
+                                    <span>View all</span>
+                                    <span class="icon-arrow-right text-sm"></span>
+                                </a>
+                            </div>
                         </div>
 
-                        <transition name="collapsible">
-                            <div v-if="category.isOpen" class="mt-3 space-y-3">
-                                <div class="flex justify-end">
-                                    <a :href="category.url" class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white">
-                                        <span>View all</span>
-                                        <span class="icon-arrow-right text-sm"></span>
+                        <div
+                            v-if="activeCategory.children.length"
+                            class="category-scroll flex-1 space-y-4 overflow-y-auto px-8 py-6 pr-5"
+                            :style="{ scrollbarWidth: 'thin' }"
+                        >
+                            <div
+                                v-for="second in activeCategory.children"
+                                :key="second.id"
+                                class="rounded-2xl border border-zinc-200 bg-white px-6 py-4 shadow-sm transition-all duration-200 hover:border-zinc-300 hover:shadow-lg"
+                            >
+                                <div class="flex items-start justify-between gap-3">
+                                    <a
+                                        :href="second.url"
+                                        class="text-base font-semibold text-zinc-900 transition-colors duration-200 hover:text-zinc-700"
+                                    >
+                                        @{{ second.name }}
+                                    </a>
+
+                                    <a
+                                        :href="second.url"
+                                        class="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-lg text-zinc-500 transition-all duration-200 hover:bg-zinc-900/10 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-600/30"
+                                        :aria-label="'View ' + second.name"
+                                    >
+                                        <span class="icon-arrow-right"></span>
                                     </a>
                                 </div>
 
                                 <div
-                                    v-for="second in category.children"
-                                    :key="second.id"
-                                    class="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-200 hover:border-zinc-300"
-                                    @mouseenter="openOnHover(second)"
-                                    @mouseleave="closeOnHover(second)"
+                                    v-if="second.children && second.children.length"
+                                    class="mt-4 space-y-1.5 text-sm text-zinc-600"
                                 >
-                                    <template v-if="second.children.length">
-                                        <div class="flex items-center justify-between gap-3">
-                                            <button
-                                                type="button"
-                                                @click="toggle(second)"
-                                                class="text-left text-sm font-semibold text-zinc-800 transition-colors duration-200 hover:text-zinc-600 focus-visible:outline-none"
-                                                :aria-expanded="second.isOpen"
-                                            >
-                                                @{{ second.name }}
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                class="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900/10 text-lg text-zinc-500 transition-all duration-200 hover:bg-zinc-900/15 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/20"
-                                                @click.stop="toggle(second)"
-                                                :aria-label="'Toggle ' + second.name"
-                                                :aria-expanded="second.isOpen"
-                                            >
-                                                <span
-                                                    class="transition-transform duration-200"
-                                                    :class="{
-                                                        'icon-arrow-down -rotate-180 text-zinc-900': second.isOpen,
-                                                        'icon-arrow-right rotate-0 text-zinc-500': !second.isOpen
-                                                    }"
-                                                ></span>
-                                            </button>
-                                        </div>
-
-                                        <transition name="collapsible">
-                                            <div v-if="second.isOpen" class="mt-2 space-y-1 ltr:pl-3 rtl:pr-3">
-                                                <div class="mb-1 flex justify-end">
-                                                    <a :href="second.url" class="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:text-zinc-900">
-                                                        <span>View all</span>
-                                                        <span class="icon-arrow-right text-xs"></span>
-                                                    </a>
-                                                </div>
-
-                                                <ul v-if="second.children.length" class="space-y-1 text-sm text-zinc-600">
-                                                    <li v-for="third in second.children" :key="third.id">
-                                                        <a :href="third.url" class="transition-colors duration-200 hover:text-zinc-900">@{{ third.name }}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </transition>
-                                    </template>
-
-                                    <template v-else>
-                                        <div class="flex items-center justify-between gap-3">
-                                            <span class="text-sm font-semibold text-zinc-700">@{{ second.name }}</span>
-                                            <a :href="second.url" class="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:text-zinc-900">
-                                                <span>View all</span>
-                                                <span class="icon-arrow-right text-xs"></span>
-                                            </a>
-                                        </div>
-                                    </template>
+                                    <a
+                                        v-for="third in second.children"
+                                        :key="third.id"
+                                        :href="third.url"
+                                        class="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-900"
+                                    >
+                                        <span aria-hidden="true" class="text-xs text-zinc-400">•</span>
+                                        <span class="truncate">@{{ third.name }}</span>
+                                    </a>
                                 </div>
-                            </div>
-                        </transition>
-                    </template>
 
-                    <template v-else>
-                        <div class="flex items-center justify-between gap-3">
-                            <span class="text-base font-semibold text-zinc-900">@{{ category.name }}</span>
-                            <a :href="category.url" class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white">
-                                <span>View all</span>
-                                <span class="icon-arrow-right text-sm"></span>
-                            </a>
+                                <p v-else class="mt-4 text-xs text-zinc-500">No additional subcategories</p>
+                            </div>
                         </div>
-                    </template>
+
+                        <div
+                            v-else
+                            class="flex flex-1 items-center justify-center px-8 py-12 text-sm text-zinc-500"
+                        >
+                            @lang('shop::app.components.layouts.header.no-category-found')
+                        </div>
+                    </div>
+
+                    <div class="flex h-full items-center justify-center px-8 py-12 text-sm text-zinc-500" v-else>
+                        Select a category to preview its subcategories
+                    </div>
                 </div>
             </div>
         </div>
@@ -195,14 +181,14 @@
                 return {
                     isLoading: true,
                     categories: [],
-                    hoverTimeouts: {},
+                    activeCategoryId: null,
                 };
             },
 
-            beforeDestroy() {
-                Object.values(this.hoverTimeouts).forEach(timeout => clearTimeout(timeout));
-
-                this.hoverTimeouts = {};
+            computed: {
+                activeCategory() {
+                    return this.categories.find(category => category.id === this.activeCategoryId) || null;
+                },
             },
 
             mounted() {
@@ -215,11 +201,11 @@
                         .then(response => {
                             const mapOpen = (node) => ({
                                 ...node,
-                                isOpen: false,
                                 children: (node.children || []).map(mapOpen),
                             });
 
                             this.categories = (response.data.data || []).map(mapOpen);
+                            this.activeCategoryId = this.categories.length ? this.categories[0].id : null;
                             this.isLoading = false;
                         })
                         .catch(error => {
@@ -228,48 +214,12 @@
                         });
                 },
 
-                toggle(node) {
-                    if (! (node.children && node.children.length)) {
+                setActiveCategory(category) {
+                    if (! category) {
                         return;
                     }
 
-                    this.clearHoverTimeout(node);
-
-                    node.isOpen = !node.isOpen;
-                },
-
-                openOnHover(node) {
-                    if (! (node.children && node.children.length)) {
-                        return;
-                    }
-
-                    this.clearHoverTimeout(node);
-
-                    node.isOpen = true;
-                },
-
-                closeOnHover(node) {
-                    if (! (node.children && node.children.length)) {
-                        return;
-                    }
-
-                    this.clearHoverTimeout(node);
-
-                    this.hoverTimeouts[node.id] = setTimeout(() => {
-                        node.isOpen = false;
-
-                        delete this.hoverTimeouts[node.id];
-                    }, 120);
-                },
-
-                clearHoverTimeout(node) {
-                    const timeout = this.hoverTimeouts[node.id];
-
-                    if (timeout) {
-                        clearTimeout(timeout);
-
-                        delete this.hoverTimeouts[node.id];
-                    }
+                    this.activeCategoryId = category.id;
                 },
             },
         });
@@ -278,24 +228,21 @@
 
 @pushOnce('styles')
     <style>
-        .collapsible-enter-active,
-        .collapsible-leave-active {
-            transition: all 0.25s ease;
-            overflow: hidden;
+        .category-scroll::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .collapsible-enter-from,
-        .collapsible-leave-to {
-            opacity: 0;
-            transform: translateY(-4px);
-            max-height: 0;
+        .category-scroll::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        .collapsible-enter-to,
-        .collapsible-leave-from {
-            opacity: 1;
-            transform: translateY(0);
-            max-height: 600px;
+        .category-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(63, 63, 70, 0.25);
+            border-radius: 9999px;
+        }
+
+        .category-scroll:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(63, 63, 70, 0.45);
         }
     </style>
 @endPushOnce
