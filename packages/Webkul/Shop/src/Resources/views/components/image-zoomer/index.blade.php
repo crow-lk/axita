@@ -18,7 +18,7 @@
         >
             <div
                 ref="parentContainer" 
-                class="fixed inset-0 z-10 flex transform flex-col gap-4 overflow-y-auto transition"
+                class="fixed inset-0 z-[1200] flex transform flex-col gap-4 overflow-y-auto transition"
                 v-show="isOpen"
             >
                 <!-- Close -->
