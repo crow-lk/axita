@@ -24,23 +24,13 @@
             </x-slot:toggle>
 
             <x-slot:content class="!p-0">
-                <div class="w-[860px] max-w-[88vw] overflow-hidden rounded-3xl border border-white/40 bg-gradient-to-br from-white via-zinc-50 to-white/70 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur-lg transition-all duration-300" @click.stop>
-                    <div class="flex items-center justify-between border-b border-white/60 px-8 py-5">
-                        <div>
-                            <p class="text-sm font-semibold text-zinc-800">Explore categories</p>
-                            <p class="text-xs text-zinc-500">Jump straight into what you love</p>
-                        </div>
+                <div class="w-[920px] max-w-[92vw] overflow-hidden rounded-3xl border border-white/50 bg-white shadow-[0_28px_60px_rgba(15,23,42,0.12)] backdrop-blur-md transition-all duration-200" @click.stop>
+                    <div class="border-b border-zinc-200 px-6 py-4">
+                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-zinc-500">All Departments</p>
+                        <p class="text-lg font-semibold text-zinc-800">Browse categories</p>
                     </div>
 
-                    <div class="h-[70vh] overflow-hidden px-5 pb-6 pt-5">
-                        <v-collapsible-categories class="flex h-full flex-col">
-                            <div class="grid gap-3">
-                                <span class="shimmer h-6 w-28 rounded" role="presentation"></span>
-                                <span class="shimmer h-6 w-32 rounded" role="presentation"></span>
-                                <span class="shimmer h-6 w-24 rounded" role="presentation"></span>
-                            </div>
-                        </v-collapsible-categories>
-                    </div>
+                    <v-collapsible-categories />
                 </div>
             </x-slot:content>
         </x-shop::dropdown>
@@ -54,121 +44,84 @@
 @pushOnce('scripts')
     <!-- Collapsible Categories Template -->
     <script type="text/x-template" id="v-collapsible-categories-template">
-        <div class="flex h-full flex-col">
-            <div v-if="isLoading" class="grid gap-2">
-                <span class="shimmer h-6 w-28 rounded" role="presentation"></span>
-                <span class="shimmer h-6 w-32 rounded" role="presentation"></span>
-                <span class="shimmer h-6 w-24 rounded" role="presentation"></span>
-            </div>
+        <div class="flex max-h-[70vh] divide-x divide-zinc-200">
+            <div class="category-scroll w-[260px] shrink-0 overflow-y-auto bg-zinc-50/80 px-4 py-4" :style="{ scrollbarWidth: 'thin' }">
+                <div v-if="isLoading" class="grid gap-2">
+                    <span class="shimmer h-6 w-28 rounded" role="presentation"></span>
+                    <span class="shimmer h-6 w-32 rounded" role="presentation"></span>
+                    <span class="shimmer h-6 w-24 rounded" role="presentation"></span>
+                </div>
 
-            <div v-else class="flex h-full gap-6 overflow-hidden max-lg:flex-col">
-                <div class="category-scroll flex w-[280px] flex-col gap-2 overflow-y-auto pr-2 max-lg:w-full max-lg:max-h-[40vh] max-lg:pr-0 max-lg:pb-2 lg:h-full" :style="{ scrollbarWidth: 'thin' }">
+                <template v-else-if="categories.length">
                     <button
                         v-for="category in categories"
                         :key="category.id"
                         type="button"
-                        class="flex items-center justify-between rounded-2xl border border-transparent bg-white/70 px-5 py-3.5 text-left text-sm font-semibold text-zinc-600 transition-all duration-200 hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/20"
-                        :class="{
-                            'border-zinc-900/30 bg-zinc-900/10 text-zinc-900 shadow-sm': category.id === activeCategoryId
-                        }"
+                        class="flex w-full items-center justify-between rounded-lg border border-transparent px-4 py-2 text-left text-sm font-semibold text-zinc-600 transition-all duration-150 hover:border-zinc-300 hover:bg-white hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-600/30"
+                        :class="{ '!border-zinc-300 !bg-white text-zinc-900 shadow-sm': category.id === activeCategoryId }"
                         @mouseenter="setActiveCategory(category)"
                         @focus="setActiveCategory(category)"
                     >
                         <span class="truncate">@{{ category.name }}</span>
-
-                        <span
-                            class="icon-arrow-right text-base transition-transform duration-200"
-                            :class="{ '-rotate-45 text-zinc-900': category.id === activeCategoryId }"
-                        ></span>
+                        <span class="icon-arrow-right text-xs text-zinc-400"></span>
                     </button>
+                </template>
+
+                <p v-else class="px-2 py-4 text-sm text-zinc-500">
+                    @lang('shop::app.components.layouts.header.no-category-found')
+                </p>
+            </div>
+
+            <div class="flex-1 overflow-y-auto bg-white px-8 py-6">
+                <div v-if="isLoading" class="grid gap-2">
+                    <span class="shimmer h-6 w-32 rounded" role="presentation"></span>
+                    <span class="shimmer h-6 w-24 rounded" role="presentation"></span>
+                    <span class="shimmer h-6 w-28 rounded" role="presentation"></span>
                 </div>
 
-                <div class="flex-1 flex flex-col overflow-hidden rounded-[32px] border border-zinc-200 bg-white/95 shadow-inner">
-                    <div v-if="activeCategory" class="flex h-full flex-col">
-                        <div class="flex items-start justify-between gap-3 border-b border-zinc-200 px-8 py-5">
-                            <div>
-                                <p class="text-xl font-semibold text-zinc-900">@{{ activeCategory.name }}</p>
-
-                                <p v-if="activeCategory.children.length" class="mt-1 text-xs text-zinc-500">
-                                    Explore featured collections and subcategories
-                                </p>
-
-                                <p v-else class="mt-1 text-xs text-zinc-500">@lang('shop::app.components.layouts.header.no-category-found')</p>
-                            </div>
-
-                            <div class="flex shrink-0 items-center gap-3">
-                                <span class="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-500">
-                                    @{{ activeCategory.children.length }} subcategories
-                                </span>
-
-                                <a
-                                    :href="activeCategory.url"
-                                    class="inline-flex items-center gap-2 rounded-full border border-zinc-900/20 bg-zinc-900/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-900 transition-all duration-200 hover:bg-zinc-900 hover:text-white"
-                                >
-                                    <span>View all</span>
-                                    <span class="icon-arrow-right text-sm"></span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div
-                            v-if="activeCategory.children.length"
-                            class="category-scroll flex-1 space-y-4 overflow-y-auto px-8 py-6 pr-5"
-                            :style="{ scrollbarWidth: 'thin' }"
-                        >
-                            <div
-                                v-for="second in activeCategory.children"
-                                :key="second.id"
-                                class="rounded-2xl border border-zinc-200 bg-white px-6 py-4 shadow-sm transition-all duration-200 hover:border-zinc-300 hover:shadow-lg"
+                <template v-else-if="activeCategory">
+                    <div v-if="activeCategory.children && activeCategory.children.length" class="flex gap-6">
+                        <div class="category-scroll w-[240px] shrink-0 overflow-y-auto border-r border-zinc-100 pr-4" :style="{ scrollbarWidth: 'thin' }">
+                            <a
+                                v-for="child in activeCategory.children"
+                                :key="child.id"
+                                :href="child.url"
+                                class="group flex w-full items-center justify-between rounded-lg border border-transparent px-4 py-2 text-left text-sm font-semibold text-zinc-600 transition-all duration-150 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-600/30"
+                                :class="{ '!border-zinc-300 !bg-zinc-50 text-zinc-900 shadow-sm': child.id === activeSubcategoryId }"
+                                @mouseenter="setActiveSubcategory(child)"
+                                @focus="setActiveSubcategory(child)"
                             >
-                                <div class="flex items-start justify-between gap-3">
-                                    <a
-                                        :href="second.url"
-                                        class="text-base font-semibold text-zinc-900 transition-colors duration-200 hover:text-zinc-700"
-                                    >
-                                        @{{ second.name }}
-                                    </a>
-
-                                    <a
-                                        :href="second.url"
-                                        class="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-lg text-zinc-500 transition-all duration-200 hover:bg-zinc-900/10 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-600/30"
-                                        :aria-label="'View ' + second.name"
-                                    >
-                                        <span class="icon-arrow-right"></span>
-                                    </a>
-                                </div>
-
-                                <div
-                                    v-if="second.children && second.children.length"
-                                    class="mt-4 space-y-1.5 text-sm text-zinc-600"
-                                >
-                                    <a
-                                        v-for="third in second.children"
-                                        :key="third.id"
-                                        :href="third.url"
-                                        class="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-900"
-                                    >
-                                        <span aria-hidden="true" class="text-xs text-zinc-400">•</span>
-                                        <span class="truncate">@{{ third.name }}</span>
-                                    </a>
-                                </div>
-
-                                <p v-else class="mt-4 text-xs text-zinc-500">No additional subcategories</p>
-                            </div>
+                                <span class="truncate">@{{ child.name }}</span>
+                                <span class="icon-arrow-right text-xs text-zinc-400 transition-transform duration-150 group-hover:translate-x-1"></span>
+                            </a>
                         </div>
 
-                        <div
-                            v-else
-                            class="flex flex-1 items-center justify-center px-8 py-12 text-sm text-zinc-500"
-                        >
-                            @lang('shop::app.components.layouts.header.no-category-found')
+                        <div class="flex-1 overflow-y-auto">
+                            <template v-if="activeSubcategory && activeSubcategory.children && activeSubcategory.children.length">
+                                <div class="grid gap-2">
+                                    <a
+                                        v-for="grand in activeSubcategory.children"
+                                        :key="grand.id"
+                                        :href="grand.url"
+                                        class="flex items-center justify-between rounded-lg border border-transparent px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
+                                    >
+                                        <span class="truncate">@{{ grand.name }}</span>
+                                        <span class="icon-arrow-right text-xs text-zinc-400"></span>
+                                    </a>
+                                </div>
+                            </template>
+
+                            <p v-else class="text-sm text-zinc-500">
+                                @lang('shop::app.components.layouts.header.no-category-found')
+                            </p>
                         </div>
                     </div>
 
-                    <div class="flex h-full items-center justify-center px-8 py-12 text-sm text-zinc-500" v-else>
-                        Select a category to preview its subcategories
-                    </div>
-                </div>
+                    <p v-else class="text-sm text-zinc-500">
+                        @lang('shop::app.components.layouts.header.no-category-found')
+                    </p>
+                </template>
+
             </div>
         </div>
     </script>
@@ -182,12 +135,21 @@
                     isLoading: true,
                     categories: [],
                     activeCategoryId: null,
+                    activeSubcategoryId: null,
                 };
             },
 
             computed: {
                 activeCategory() {
                     return this.categories.find(category => category.id === this.activeCategoryId) || null;
+                },
+
+                activeSubcategory() {
+                    if (! this.activeCategory) {
+                        return null;
+                    }
+
+                    return this.activeCategory.children.find(child => child.id === this.activeSubcategoryId) || null;
                 },
             },
 
@@ -206,6 +168,9 @@
 
                             this.categories = (response.data.data || []).map(mapOpen);
                             this.activeCategoryId = this.categories.length ? this.categories[0].id : null;
+                            this.activeSubcategoryId = this.activeCategory && this.activeCategory.children.length
+                                ? this.activeCategory.children[0].id
+                                : null;
                             this.isLoading = false;
                         })
                         .catch(error => {
@@ -220,6 +185,17 @@
                     }
 
                     this.activeCategoryId = category.id;
+                    this.activeSubcategoryId = category.children && category.children.length
+                        ? category.children[0].id
+                        : null;
+                },
+
+                setActiveSubcategory(subcategory) {
+                    if (! subcategory) {
+                        return;
+                    }
+
+                    this.activeSubcategoryId = subcategory.id;
                 },
             },
         });
