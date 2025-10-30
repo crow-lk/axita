@@ -59,10 +59,10 @@
 
             <div
                 ref="swiperContainer"
-                class="flex gap-8 pb-2.5 [&>*]:flex-[0] mt-10 mb-10 overflow-auto scroll-smooth scrollbar-hide max-md:gap-7 max-md:mt-5 max-sm:gap-4 max-md:pb-0 max-md:whitespace-nowrap max-sm:[&>*]:flex-[0_0_100%]"
+                class="products-carousel-track flex gap-8 pb-2.5 [&>*]:flex-[0] mt-10 mb-10 overflow-auto scroll-smooth scrollbar-hide max-md:gap-7 max-md:mt-5 max-sm:gap-4 max-md:pb-0 max-md:whitespace-nowrap"
             >
                 <x-shop::products.card
-                    class="min-w-[360px] max-xl:min-w-[320px] max-lg:min-w-[280px] max-md:h-fit max-md:min-w-[240px] max-sm:min-w-full max-sm:w-full max-sm:max-w-full"
+                    class="products-carousel-item min-w-[360px] max-xl:min-w-[320px] max-lg:min-w-[280px] max-md:h-fit max-md:min-w-[240px] max-sm:w-full max-sm:max-w-full"
                     v-for="product in products"
                 />
             </div>
@@ -154,4 +154,19 @@
             },
         });
     </script>
+@endPushOnce
+
+@pushOnce('styles')
+    <style>
+        @media (max-width: 640px) {
+            .products-carousel-track {
+                gap: 0.75rem !important;
+            }
+
+            .products-carousel-track .products-carousel-item {
+                flex: 0 0 calc(50% - 0.75rem) !important;
+                max-width: calc(50% - 0.75rem);
+            }
+        }
+    </style>
 @endPushOnce

@@ -12,7 +12,7 @@
     >
         <!-- Grid Card -->
         <div
-            class="group flex h-[650px] w-full max-w-[420px] flex-col rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-300 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:transition-all 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)] max-lg:max-w-[340px] max-md:max-w-[300px] max-sm:h-full max-sm:max-w-full max-sm:min-h-[540px] max-sm:rounded-[28px] max-sm:border-zinc-100 max-sm:p-4 max-sm:shadow-[0_18px_48px_rgba(15,23,42,0.08)]"
+            class="group flex h-[650px] w-full max-w-[420px] flex-col rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-300 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:transition-all 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)] max-lg:max-w-[340px] max-md:max-w-[300px] max-sm:h-auto max-sm:min-h-[320px] max-sm:rounded-xl max-sm:border-zinc-100 max-sm:p-2.5 max-sm:shadow-[0_10px_28px_rgba(15,23,42,0.08)]"
             v-if="mode != 'list'"
         >
             <div class="relative w-full aspect-square overflow-hidden max-md:rounded-xl max-sm:rounded-[22px]">
@@ -115,12 +115,12 @@
             </div>
 
             <!-- Product Information Section -->
-            <div class="relative grid max-w-[380px] flex-1 content-start gap-2 bg-white px-2.5 pt-2.5 pb-3 transition-transform duration-300 ease-out max-sm:w-full max-sm:max-w-full max-sm:gap-3 max-sm:px-0 max-sm:pt-3 max-sm:pb-5 max-sm:bg-transparent md:-mt-9 md:translate-y-9 md:gap-2.5 md:px-2.5 md:pt-2.5 md:pb-0 md:group-hover:-translate-y-0 md:group-hover:rounded-t-lg">
+            <div class="relative grid max-w-[380px] flex-1 content-start gap-2 bg-white px-2.5 pt-2.5 pb-3 transition-transform duration-300 ease-out max-sm:w-full max-sm:max-w-full max-sm:gap-2 max-sm:px-0 max-sm:pt-2.5 max-sm:pb-3 max-sm:bg-transparent md:-mt-9 md:translate-y-9 md:gap-2.5 md:px-2.5 md:pt-2.5 md:pb-0 md:group-hover:-translate-y-0 md:group-hover:rounded-t-lg">
 
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
                 <p
-                    class="text-left text-[17px] font-semibold text-zinc-900 break-words leading-7 max-h-14 max-md:mb-1.5 max-md:max-w-full max-md:whitespace-normal max-md:text-base max-md:leading-6 max-md:max-h-12 max-sm:text-base max-sm:leading-5 max-sm:max-h-10"
+                    class="text-left text-[17px] font-semibold text-zinc-900 break-words leading-7 max-h-14 max-md:mb-1.5 max-md:max-w-full max-md:whitespace-normal max-md:text-base max-md:leading-6 max-md:max-h-12 max-sm:text-sm max-sm:leading-5 max-sm:max-h-9"
                     :title="product.name"
                     style="display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;"
                 >
@@ -133,15 +133,47 @@
                 {!! view_render_event('bagisto.shop.components.products.card.price.before') !!}
 
                 <div
-                    class="flex flex-wrap items-baseline gap-2 text-lg font-semibold text-zinc-900 max-sm:text-lg max-sm:leading-7"
+                    class="flex flex-wrap items-baseline gap-2 text-lg font-semibold text-zinc-900 max-sm:text-sm max-sm:leading-5"
                     v-html="displayPriceHtml"
                 >
                 </div>
 
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
 
+                <div class="hidden w-full flex-col gap-1.5 rounded-lg border border-zinc-100 bg-white/80 p-2 text-[10px] text-gray-600 max-md:flex">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5">
+                            <img
+                                v-if="payzyLogo"
+                                :src="payzyLogo"
+                                alt="Payzy"
+                                class="h-4 w-auto max-w-[56px] object-contain"
+                            />
+                            <span v-else class="font-medium">Payzy (4x)</span>
+                            <span v-if="payzyLogo" class="font-medium text-[9px] text-gray-400">(4x)</span>
+                        </div>
+
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayzyInstallment()) }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 border-t border-zinc-100 pt-1">
+                        <div class="flex items-center gap-1.5">
+                            <img
+                                v-if="kokoLogo"
+                                :src="kokoLogo"
+                                alt="KOKO"
+                                class="h-4 w-auto max-w-[56px] object-contain"
+                            />
+                            <span v-else class="font-medium">KOKO (3x)</span>
+                            <span v-if="kokoLogo" class="font-medium text-[9px] text-gray-400">(3x)</span>
+                        </div>
+
+                        <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }}</span>
+                    </div>
+                </div>
+
                 <!-- Payment Method Pricing -->
-                <div class="mt-3 space-y-1.5 text-xs text-gray-600 max-sm:w-full max-sm:space-y-1 max-sm:text-[11px] max-sm:leading-4">
+                <div class="mt-2 space-y-1 text-xs text-gray-600 max-md:hidden">
                     <!-- Payzy with Logo -->
                     <div class="flex items-center justify-between border-b border-gray-100 pb-1">
                         <div class="flex items-center gap-1">
