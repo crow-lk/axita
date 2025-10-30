@@ -386,56 +386,10 @@
                                 <!-- Pricing -->
                                 {!! view_render_event('bagisto.shop.products.price.before', ['product' => $product]) !!}
 
-                                <div class="mt-6 space-y-4 rounded-3xl border border-zinc-100 bg-white/80 p-5 shadow-sm backdrop-blur-sm max-sm:mt-4 max-sm:rounded-2xl max-sm:p-4">
+                                <div class="mt-6 max-sm:mt-4">
                                     <div class="flex flex-wrap items-end gap-x-3 gap-y-2 text-3xl font-semibold text-zinc-900 max-sm:text-2xl [&_.final-price]:text-xl [&_.final-price]:font-medium [&_.final-price]:text-zinc-400 [&_.line-through]:text-zinc-400 [&_.line-through]:decoration-zinc-300">
                                         {!! $product->getTypeInstance()->getPriceHtml() !!}
                                     </div>
-
-                                    @if ($baseInstallmentAmount > 0)
-                                        <div class="grid gap-2 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 text-sm text-zinc-600 max-sm:gap-1.5 max-sm:p-3">
-                                            <div class="flex items-center justify-between gap-3 border-b border-zinc-200 pb-2">
-                                                <div class="flex items-center gap-2">
-                                                    @if ($payzyLogo)
-                                                        <img
-                                                            src="{{ $payzyLogo }}"
-                                                            alt="Payzy"
-                                                            class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
-                                                        />
-                                                        <span class="font-medium text-xs uppercase tracking-wide text-zinc-500">4x</span>
-                                                    @else
-                                                        <span class="font-medium text-zinc-700">Payzy (4x)</span>
-                                                    @endif
-                                                </div>
-
-                                                <span class="font-semibold text-zinc-900">
-                                                    {{ core()->formatPrice($payzyInstallment) }} <span class="text-xs font-medium text-zinc-500">/ month</span>
-                                                </span>
-                                            </div>
-
-                                            <div class="flex items-center justify-between gap-3">
-                                                <div class="flex items-center gap-2">
-                                                    @if ($kokoLogo)
-                                                        <img
-                                                            src="{{ $kokoLogo }}"
-                                                            alt="KOKO"
-                                                            class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
-                                                        />
-                                                        <span class="font-medium text-xs uppercase tracking-wide text-zinc-500">3x</span>
-                                                    @else
-                                                        <span class="font-medium text-zinc-700">KOKO (3x)</span>
-                                                    @endif
-                                                </div>
-
-                                                <span class="font-semibold text-zinc-900">
-                                                    {{ core()->formatPrice($kokoInstallment) }} <span class="text-xs font-medium text-zinc-500">/ month</span>
-                                                </span>
-                                            </div>
-
-                                            <p class="pt-1 text-xs text-zinc-400 max-sm:text-[11px]">
-                                                Includes estimated shipping & finance fees. Final amount may vary at checkout.
-                                            </p>
-                                        </div>
-                                    @endif
                                 </div>
 
                                 @if (\Webkul\Tax\Facades\Tax::isInclusiveTaxProductPrices())
@@ -538,14 +492,60 @@
                                             @click="is_buy_now=1;"
                                             ::disabled="isStoring.buyNow || isProductOutOfStock()"
                                         />
-                                    @endif
-
-                                    {!! view_render_event('bagisto.shop.products.view.buy_now.after', ['product' => $product]) !!}
                                 @endif
 
-                                {!! view_render_event('bagisto.shop.products.view.additional_actions.before', ['product' => $product]) !!}
+                                {!! view_render_event('bagisto.shop.products.view.buy_now.after', ['product' => $product]) !!}
+                            @endif
 
-                                <!-- Share Buttons -->
+                            @if ($baseInstallmentAmount > 0)
+                                <div class="mt-6 max-w-[470px] space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 text-sm text-zinc-600 max-sm:mt-4 max-sm:space-y-2 max-sm:p-3">
+                                    <div class="flex items-center justify-between gap-3 border-b border-zinc-200 pb-2">
+                                        <div class="flex items-center gap-2">
+                                            @if ($payzyLogo)
+                                                <img
+                                                    src="{{ $payzyLogo }}"
+                                                    alt="Payzy"
+                                                    class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
+                                                />
+                                                <span class="text-xs font-medium uppercase tracking-wide text-zinc-500">4x</span>
+                                            @else
+                                                <span class="font-medium text-zinc-700">Payzy (4x)</span>
+                                            @endif
+                                        </div>
+
+                                        <span class="font-semibold text-zinc-900">
+                                            {{ core()->formatPrice($payzyInstallment) }} <span class="text-xs font-medium text-zinc-500">/ month</span>
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div class="flex items-center gap-2">
+                                            @if ($kokoLogo)
+                                                <img
+                                                    src="{{ $kokoLogo }}"
+                                                    alt="KOKO"
+                                                    class="h-6 w-auto max-w-[90px] object-contain max-sm:h-5"
+                                                />
+                                                <span class="text-xs font-medium uppercase tracking-wide text-zinc-500">3x</span>
+                                            @else
+                                                <span class="font-medium text-zinc-700">KOKO (3x)</span>
+                                            @endif
+                                        </div>
+
+                                        <span class="font-semibold text-zinc-900">
+                                            {{ core()->formatPrice($kokoInstallment) }} <span class="text-xs font-medium text-zinc-500">/ month</span>
+                                        </span>
+                                    </div>
+
+                                    <p class="pt-1 text-xs text-zinc-400 max-sm:text-[11px]">
+                                        Includes estimated shipping & finance fees. Final amount may vary at checkout.
+                                    </p>
+                                </div>
+                            @endif
+
+                            {!! view_render_event('bagisto.shop.products.view.additional_actions.before', ['product' => $product]) !!}
+
+                            <!-- Share Buttons -->
                                 <div class="flex mt-10 gap-9 max-md:mt-4 max-md:flex-wrap max-sm:justify-center max-sm:gap-3">
                                     {!! view_render_event('bagisto.shop.products.view.compare.before', ['product' => $product]) !!}
 
