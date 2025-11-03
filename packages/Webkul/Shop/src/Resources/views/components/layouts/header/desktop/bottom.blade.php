@@ -47,7 +47,7 @@
         </a>
 
         <a
-            href="{{ route('shop.search.index', ['query' => 'featured']) }}"
+            href="{{ url('search?featured=1') }}"
             class="transition-colors duration-200 hover:text-[#e85805]"
         >
             Featured Picks
