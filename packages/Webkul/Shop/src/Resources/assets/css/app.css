@@ -20,6 +20,12 @@ img.lazy {
         color: #ffa500;
     }
 
+    .full-bleed {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+    }
+
     input {
         @apply outline-none;
     }

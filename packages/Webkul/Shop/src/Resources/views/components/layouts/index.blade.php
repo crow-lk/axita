@@ -104,18 +104,19 @@
 
             {!! view_render_event('bagisto.shop.layout.content.before') !!}
 
-            <!-- Page Content Blade Component -->
-            <main id="main" class="bg-white">
-                {{ $slot }}
-            </main>
+            <div class="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-0">
+                <!-- Page Content Blade Component -->
+                <main id="main" class="bg-white">
+                    {{ $slot }}
+                </main>
 
-            {!! view_render_event('bagisto.shop.layout.content.after') !!}
+                {!! view_render_event('bagisto.shop.layout.content.after') !!}
 
-
-            <!-- Page Services Blade Component -->
-            @if ($hasFeature)
-                <x-shop::layouts.services />
-            @endif
+                <!-- Page Services Blade Component -->
+                @if ($hasFeature)
+                    <x-shop::layouts.services />
+                @endif
+            </div>
 
             <!-- Page Footer Blade Component -->
             @if ($hasFooter)

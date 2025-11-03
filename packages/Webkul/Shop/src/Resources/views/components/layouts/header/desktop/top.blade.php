@@ -1,40 +1,40 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.top.before') !!}
 
 <!-- Top Bar -->
-<div class="w-full bg-gray-100 border-b border-gray-200">
-    <div class="grid grid-cols-3 items-center px-8 py-2 text-sm">
+<div class="full-bleed bg-gray-100 border-b border-gray-200">
+    <div class="mx-auto grid max-w-[1200px] grid-cols-3 items-center px-4 py-1.5 text-xs sm:px-6 sm:py-1 sm:text-sm">
         <!-- Left Column (empty to center the middle content) -->
         <div></div>
 
         <!-- Middle Column: Status Link -->
         <div class="text-center">
-            <a href="http://axita.winsoft.site/repair-status" class="font-semibold text-base text-gray-700 hover:text-[#e85805] transition-colors">
+            <a href="http://axita.winsoft.site/repair-status" class="font-normal text-sm text-gray-600 transition-colors hover:text-[#e85805] sm:text-base">
                 Check your service status from here.
             </a>
         </div>
 
         <!-- Right Column: Social Icons + Phone (single line) -->
-        <div class="flex items-center justify-end gap-4">
+        <div class="flex items-center justify-end gap-3">
             <div class="flex items-center gap-3">
-                <a href="https://www.facebook.com/axitacomputers" class="text-gray-600 hover:text-gray-800 transition-all duration-300" aria-label="Facebook">
-                    <i class="fab fa-facebook-f text-lg"></i>
+                <a href="https://www.facebook.com/axitacomputers" class="text-gray-500 transition-all duration-300 hover:text-gray-800" aria-label="Facebook">
+                    <i class="fab fa-facebook-f text-sm sm:text-base"></i>
                 </a>
-                <a href="https://www.tiktok.com/@axita.galle" class="text-gray-600 hover:text-gray-800 transition-all duration-300" aria-label="TikTok">
-                    <i class="fab fa-tiktok text-lg"></i>
+                <a href="https://www.tiktok.com/@axita.galle" class="text-gray-500 transition-all duration-300 hover:text-gray-800" aria-label="TikTok">
+                    <i class="fab fa-tiktok text-sm sm:text-base"></i>
                 </a>
-                <a href="https://www.instagram.com/axita_computer/" class="text-gray-600 hover:text-gray-800 transition-all duration-300" aria-label="Instagram">
-                    <i class="fab fa-instagram text-lg"></i>
+                <a href="https://www.instagram.com/axita_computer/" class="text-gray-500 transition-all duration-300 hover:text-gray-800" aria-label="Instagram">
+                    <i class="fab fa-instagram text-sm sm:text-base"></i>
                 </a>
             </div>
-            <a href="tel:+94771284323" class="text-base text-[#e85805] font-semibold hover:text-[#d14805]">+94 77 128 4323</a>
+            <a href="tel:+94771284323" class="text-sm font-semibold text-[#e85805] transition-colors hover:text-[#d14805] sm:text-base">+94 77 128 4323</a>
         </div>
     </div>
 </div>
 
 <!-- Main Header -->
-<div class="main-header bg-white border-b border-gray-200 w-full">
+<div class="main-header bg-white w-full">
     <!-- Top Row: Logo, Search Bar, Contact -->
-    <div class="flex items-center justify-between gap-6 px-8 py-1">
+    <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-4 py-1 sm:px-6">
         <!-- Left Section: Logo and Brand Info -->
         <div class="logo-section flex items-center gap-4 min-w-fit">
             <div class="text-left">

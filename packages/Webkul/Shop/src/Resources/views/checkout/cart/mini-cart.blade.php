@@ -20,7 +20,13 @@
                 <x-slot:toggle>
                     {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.toggle.before') !!}
 
-                    <span class="flex items-center gap-2">
+                    <div
+                        class="relative flex items-center gap-2"
+                        @mouseenter="handleSummaryMouseEnter"
+                        @mouseleave="handleSummaryMouseLeave"
+                        @focusin="handleSummaryMouseEnter"
+                        @focusout="handleSummaryFocusOut"
+                    >
                         <span class="relative">
                             <span
                                 class="icon-cart cursor-pointer text-2xl"
@@ -53,7 +59,89 @@
                         >
                             @{{ cart.formatted_grand_total }}
                         </span>
-                    </span>
+
+                        <div
+                            v-show="summaryOpen"
+                            class="absolute right-0 top-full z-50 w-72 translate-y-3 transform rounded-2xl border border-zinc-200 bg-white p-4 text-sm shadow-xl"
+                            @mouseenter="handleSummaryMouseEnter"
+                            @mouseleave="handleSummaryMouseLeave"
+                        >
+                            <div class="space-y-3">
+                                <template v-if="cart?.items?.length">
+                                    <div class="space-y-2">
+                                        <div
+                                            class="flex items-start gap-3"
+                                            v-for="item in cart.items.slice(0, 2)"
+                                            :key="`mini-cart-summary-${item.id}`"
+                                        >
+                                            <img
+                                                :src="item.base_image?.small_image_url || item.base_image?.medium_image_url || '{{ bagisto_asset('images/small-product-placeholder.webp') }}'"
+                                                class="h-12 w-12 flex-shrink-0 rounded-lg object-cover"
+                                                loading="lazy"
+                                                alt=""
+                                            />
+
+                                            <div class="min-w-0 space-y-1">
+                                                <p class="truncate text-sm font-medium text-zinc-800">
+                                                    @{{ item.name }}
+                                                </p>
+
+                                                <p class="text-xs text-zinc-500">
+                                                    Qty:
+                                                    <span class="font-medium text-zinc-700">@{{ item.quantity }}</span>
+                                                </p>
+
+                                                <p class="text-xs font-semibold text-zinc-700">
+                                                    @{{ item.formatted_total }}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-xs text-zinc-500" v-if="cart.items.length > 2">
+                                            + @{{ cart.items.length - 2 }} more item<span v-if="cart.items.length - 2 > 1">s</span>
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center justify-between text-xs font-medium text-zinc-600">
+                                        <span>@lang('shop::app.checkout.cart.mini-cart.subtotal')</span>
+
+                                        <span>@{{ cart.formatted_sub_total }}</span>
+                                    </div>
+
+                                    <div class="flex gap-3 text-xs font-semibold text-[#e85805]">
+                                        <a
+                                            href="{{ route('shop.checkout.cart.index') }}"
+                                            class="transition-colors duration-150 hover:text-[#cd4b05]"
+                                        >
+                                            @lang('shop::app.checkout.cart.mini-cart.view-cart')
+                                        </a>
+
+                                        <span aria-hidden="true" class="text-zinc-300">•</span>
+
+                                        <a
+                                            href="{{ route('shop.checkout.onepage.index') }}"
+                                            class="transition-colors duration-150 hover:text-[#cd4b05]"
+                                        >
+                                            @lang('shop::app.checkout.cart.mini-cart.continue-to-checkout')
+                                        </a>
+                                    </div>
+                                </template>
+
+                                <template v-else-if="cart">
+                                    <p class="text-sm text-zinc-500">
+                                        @lang('shop::app.checkout.cart.mini-cart.empty-cart')
+                                    </p>
+                                </template>
+
+                                <template v-else>
+                                    <div class="space-y-2">
+                                        <span class="shimmer block h-4 w-3/4 rounded" role="presentation"></span>
+                                        <span class="shimmer block h-10 w-full rounded-lg" role="presentation"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
 
                     {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.toggle.after') !!}
                 </x-slot>
@@ -378,7 +466,9 @@
                 return  {
                     cart: null,
 
-                    isLoading:false,
+                    isLoading: false,
+                    summaryOpen: false,
+                    summaryCloseTimer: null,
 
                     displayTax: {
                         prices: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_prices') }}",
@@ -400,13 +490,58 @@
                 });
             },
 
+            beforeUnmount() {
+                if (this.summaryCloseTimer) {
+                    clearTimeout(this.summaryCloseTimer);
+                }
+            },
+
             methods: {
+                setSummaryOpen(state) {
+                    this.summaryOpen = state;
+
+                    if (state && ! this.cart && ! this.isLoading) {
+                        this.getCart();
+                    }
+                },
+
+                handleSummaryFocusOut(event) {
+                    if (! event.currentTarget.contains(event.relatedTarget)) {
+                        this.handleSummaryMouseLeave();
+                    }
+                },
+
+                handleSummaryMouseEnter() {
+                    if (this.summaryCloseTimer) {
+                        clearTimeout(this.summaryCloseTimer);
+                        this.summaryCloseTimer = null;
+                    }
+
+                    this.setSummaryOpen(true);
+                },
+
+                handleSummaryMouseLeave() {
+                    if (this.summaryCloseTimer) {
+                        clearTimeout(this.summaryCloseTimer);
+                    }
+
+                    this.summaryCloseTimer = setTimeout(() => {
+                        this.setSummaryOpen(false);
+                        this.summaryCloseTimer = null;
+                    }, 120);
+                },
+
                 getCart() {
+                    this.isLoading = true;
+
                     this.$axios.get('{{ route('shop.api.checkout.cart.index') }}')
                         .then(response => {
                             this.cart = response.data.data;
                         })
-                        .catch(error => {});
+                        .catch(error => {})
+                        .finally(() => {
+                            this.isLoading = false;
+                        });
                 },
 
                 updateItem(quantity, item) {
