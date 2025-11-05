@@ -2,7 +2,7 @@
 
 <!-- Top Bar -->
 <div class="full-bleed bg-gray-100 border-b border-gray-200">
-    <div class="mx-auto grid max-w-[1200px] grid-cols-3 items-center px-4 py-1.5 text-xs sm:px-6 sm:py-1 sm:text-sm">
+    <div class="mx-auto grid max-w-[1300px] grid-cols-3 items-center px-4 py-1.5 text-xs sm:px-6 sm:py-1 sm:text-sm">
         <!-- Left Column (empty to center the middle content) -->
         <div></div>
 
@@ -34,7 +34,7 @@
 <!-- Main Header -->
 <div class="main-header bg-white w-full">
     <!-- Top Row: Logo, Search Bar, Contact -->
-    <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-4 py-1 sm:px-6">
+    <div class="mx-auto flex w-full max-w-[1300px] items-center justify-between gap-6 px-4 py-1 sm:px-6">
         <!-- Left Section: Logo and Brand Info -->
         <div class="logo-section flex items-center gap-4 min-w-fit">
             <div class="text-left">

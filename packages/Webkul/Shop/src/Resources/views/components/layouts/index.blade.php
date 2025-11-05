@@ -104,7 +104,7 @@
 
             {!! view_render_event('bagisto.shop.layout.content.before') !!}
 
-            <div class="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-0">
+            <div class="mx-auto w-full max-w-[1300px] px-4 sm:px-6 lg:px-0">
                 <!-- Page Content Blade Component -->
                 <main id="main" class="bg-white">
                     {{ $slot }}

@@ -1,6 +1,6 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.before') !!}
 
-<div class="relative mx-auto flex h-[56px] w-full max-w-[1200px] items-center px-4 sm:px-6 bg-transparent">
+<div class="relative mx-auto flex h-[56px] w-full max-w-[1300px] items-center px-4 sm:px-6 bg-transparent">
     <!-- Browse Categories (only) -->
     <div class="flex items-center gap-x-6 max-[1180px]:gap-x-4">
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
@@ -39,19 +39,20 @@
     </div>
 
     <nav class="ml-6 hidden items-center gap-6 text-sm font-medium text-zinc-600 lg:flex">
-        <a
-            href="{{ route('shop.search.index', ['query' => 'new arrivals']) }}"
-            class="transition-colors duration-200 hover:text-[#e85805]"
-        >
-            New Arrivals
-        </a>
+        @php
+            $categories = app('Webkul\Category\Repositories\CategoryRepository')
+                ->getVisibleCategoryTree(core()->getCurrentChannel()->root_category_id);
+            $maxItems = 6; // Limit to 6 categories to fit nicely
+        @endphp
 
-        <a
-            href="{{ url('search?featured=1') }}"
-            class="transition-colors duration-200 hover:text-[#e85805]"
-        >
-            Featured Picks
-        </a>
+        @foreach($categories->take($maxItems) as $category)
+            <a
+                href="{{ $category->url }}"
+                class="transition-colors duration-200 hover:text-[#e85805]"
+            >
+                {{ $category->name }}
+            </a>
+        @endforeach
 
     </nav>
 

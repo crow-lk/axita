@@ -26,6 +26,16 @@ img.lazy {
         margin-right: calc(50% - 50vw);
     }
 
+    .secondary-header {
+        display: none;
+    }
+
+    @media (min-width: 1024px) {
+        .secondary-header.secondary-header--visible {
+            display: block;
+        }
+    }
+
     input {
         @apply outline-none;
     }
