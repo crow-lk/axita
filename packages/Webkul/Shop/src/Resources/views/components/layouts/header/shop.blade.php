@@ -1,5 +1,5 @@
-{{-- Shop/Other Pages Header - Simple & Sticky --}}
-<header class="sticky top-0 z-50 bg-white shadow-md">
+{{-- Shop/Other Pages Header - Simple & Sticky (Desktop Only) --}}
+<header class="sticky top-0 z-50 bg-white shadow-md max-lg:hidden">
     <div class="mx-auto flex h-[88px] w-full max-w-[1300px] items-center justify-between px-4 sm:px-6">
         {{-- Left: Logo & Categories --}}
         <div class="flex items-center gap-x-5">
@@ -163,10 +163,12 @@
                 </button>
         </div>
     </div>
-
-    {{-- Mobile Menu Drawer --}}
-    <x-shop::layouts.header.mobile />
 </header>
+
+{{-- Mobile Header for Shop Pages --}}
+<div class="lg:hidden">
+    <x-shop::layouts.header.mobile />
+</div>
 
 {{-- Include the category dropdown component --}}
 @pushOnce('scripts')
