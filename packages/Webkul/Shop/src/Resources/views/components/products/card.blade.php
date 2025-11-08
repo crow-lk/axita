@@ -12,7 +12,7 @@
     >
         <!-- Grid Card -->
         <div
-            class="group flex h-[650px] w-full max-w-[420px] flex-col rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition-all duration-300 1180:relative 1180:grid 1180:content-start 1180:overflow-hidden 1180:transition-all 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)] max-lg:max-w-[340px] max-md:max-w-[300px] max-sm:h-auto max-sm:min-h-[320px] max-sm:rounded-xl max-sm:border-zinc-100 max-sm:p-2.5 max-sm:shadow-[0_10px_28px_rgba(15,23,42,0.08)]"
+            class="group flex w-full max-w-[320px] flex-col rounded-xl border border-zinc-200 bg-white p-2.5 shadow-sm transition-all duration-300 1180:relative 1180:overflow-hidden 1180:transition-all 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)] max-lg:max-w-[280px] max-md:max-w-[240px] max-sm:rounded-xl max-sm:border-zinc-100 max-sm:p-2 max-sm:shadow-[0_10px_28px_rgba(15,23,42,0.08)]"
             v-if="mode != 'list'"
         >
             <div class="relative w-full aspect-square overflow-hidden max-md:rounded-xl max-sm:rounded-[22px]">
@@ -28,8 +28,8 @@
                         ::src="product.base_image.medium_image_url"
                         ::key="product.id"
                         ::index="product.id"
-                        width="380"
-                        height="400"
+                        width="320"
+                        height="320"
                         ::alt="product.name"
                     />
                 </a>
@@ -115,12 +115,12 @@
             </div>
 
             <!-- Product Information Section -->
-            <div class="relative grid max-w-[380px] flex-1 content-start gap-2 bg-white px-2.5 pt-2.5 pb-3 transition-transform duration-300 ease-out max-sm:w-full max-sm:max-w-full max-sm:gap-2 max-sm:px-0 max-sm:pt-2.5 max-sm:pb-3 max-sm:bg-transparent md:-mt-9 md:translate-y-9 md:gap-2.5 md:px-2.5 md:pt-2.5 md:pb-0 md:group-hover:-translate-y-0 md:group-hover:rounded-t-lg">
+            <div class="relative grid flex-1 content-start gap-1.5 bg-white px-2 pt-2 pb-2.5 max-sm:w-full max-sm:gap-1.5 max-sm:px-0 max-sm:pt-2 max-sm:pb-2.5 max-sm:bg-transparent">
 
                 {!! view_render_event('bagisto.shop.components.products.card.name.before') !!}
 
                 <p
-                    class="text-left text-[17px] font-semibold text-zinc-900 break-words leading-7 max-h-14 max-md:mb-1.5 max-md:max-w-full max-md:whitespace-normal max-md:text-base max-md:leading-6 max-md:max-h-12 max-sm:text-sm max-sm:leading-5 max-sm:max-h-9"
+                    class="text-left text-[15px] font-semibold text-zinc-900 break-words leading-6 max-h-12 max-md:mb-1.5 max-md:max-w-full max-md:whitespace-normal max-md:text-sm max-md:leading-5 max-md:max-h-10 max-sm:text-sm max-sm:leading-5 max-sm:max-h-9"
                     :title="product.name"
                     style="display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;"
                 >
@@ -133,7 +133,7 @@
                 {!! view_render_event('bagisto.shop.components.products.card.price.before') !!}
 
                 <div
-                    class="flex flex-wrap items-baseline gap-2 text-lg font-semibold text-zinc-900 max-sm:text-sm max-sm:leading-5"
+                    class="flex flex-wrap items-baseline gap-2 text-base font-semibold text-zinc-900 max-sm:text-sm max-sm:leading-5"
                     v-html="displayPriceHtml"
                 >
                 </div>
@@ -173,7 +173,7 @@
                 </div>
 
                 <!-- Payment Method Pricing -->
-                <div class="mt-2 space-y-1 text-xs text-gray-600 max-md:hidden">
+                <div class="mt-1.5 space-y-1 text-xs text-gray-600 max-md:hidden">
                     <!-- Payzy with Logo -->
                     <div class="flex items-center justify-between border-b border-gray-100 pb-1">
                         <div class="flex items-center gap-1">
@@ -204,49 +204,49 @@
                         <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }} / month</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Product Actions Section -->
-                <div class="flex flex-col gap-2 pb-2.5 transition-all duration-300 ease-out transform action-items max-md:hidden group-hover:-translate-y-1 group-hover:scale-[1.01] max-sm:mt-3 max-sm:gap-1.5 max-sm:pb-0">
-                    @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
-                        {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
+            <!-- Product Actions Section - Positioned Absolutely at Bottom -->
+            <div class="absolute bottom-0 left-0 right-0 flex flex-col gap-1.5 p-2.5 pt-5 bg-gradient-to-t from-white via-white to-transparent transition-all duration-300 ease-out transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 max-md:relative max-md:translate-y-0 max-md:opacity-100 max-md:bg-none max-md:pt-1.5 max-sm:gap-1.5">
+                @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
+                    {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
 
-                        <!-- Buy Now Button -->
-                        <button
-                            class="primary-button w-full max-w-full p-2.5 text-sm font-medium max-sm:rounded-xl max-sm:p-2"
-                            :class="getAddToCartButtonClass()"
-                            :disabled="isProductOutOfStock() || isAddingToCart"
-                            @click="buyNow()"
-                        >
-                            <span>Buy Now</span>
-                        </button>
+                    <!-- Buy Now Button -->
+                    <button
+                        class="primary-button w-full max-w-full p-2 text-sm font-medium max-sm:rounded-xl max-sm:p-1.5"
+                        :class="getAddToCartButtonClass()"
+                        :disabled="isProductOutOfStock() || isAddingToCart"
+                        @click="buyNow()"
+                    >
+                        <span>Buy Now</span>
+                    </button>
 
-                        <!-- Add to Cart Button -->
-                        <button
-                            class="secondary-button w-full max-w-full p-2.5 text-sm font-medium max-sm:rounded-xl max-sm:p-2"
-                            :class="getAddToCartButtonClass()"
-                            :disabled="isProductOutOfStock() || isAddingToCart"
-                            @click="addToCart()"
-                        >
-                            <span v-text="getAddToCartButtonText()"></span>
-                        </button>
+                    <!-- Add to Cart Button -->
+                    <button
+                        class="secondary-button w-full max-w-full p-2 text-sm font-medium max-sm:rounded-xl max-sm:p-1.5"
+                        :class="getAddToCartButtonClass()"
+                        :disabled="isProductOutOfStock() || isAddingToCart"
+                        @click="addToCart()"
+                    >
+                        <span v-text="getAddToCartButtonText()"></span>
+                    </button>
 
-                        {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.after') !!}
-                    @endif
+                    {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.after') !!}
+                @endif
 
-                    <!-- Compare and Wishlist Icons Row -->
-                    <div class="flex items-center justify-between">
-                        {!! view_render_event('bagisto.shop.components.products.card.compare_option.before') !!}
+                <!-- Compare and Wishlist Icons Row -->
+                <div class="flex items-center justify-between">
+                    {!! view_render_event('bagisto.shop.components.products.card.compare_option.before') !!}
 
-                        <span class="hidden"></span>
+                    <span class="hidden"></span>
 
-                        {!! view_render_event('bagisto.shop.components.products.card.compare_option.after') !!}
+                    {!! view_render_event('bagisto.shop.components.products.card.compare_option.after') !!}
 
-                        {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.before') !!}
+                    {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.before') !!}
 
-                        <span class="hidden"></span>
+                    <span class="hidden"></span>
 
-                        {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.after') !!}
-                    </div>
+                    {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.after') !!}
                 </div>
             </div>
         </div>
