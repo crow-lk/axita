@@ -70,6 +70,15 @@
             href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
         >
 
+        <!-- FontAwesome Icons - Direct inclusion -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+            integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+
         @stack('styles')
 
         <style>
@@ -104,9 +113,12 @@
 
             {!! view_render_event('bagisto.shop.layout.content.before') !!}
 
-            <div class="mx-auto w-full max-w-[1300px] px-4 sm:px-6 lg:px-0">
+            <!-- Category Sidebar -->
+            <x-shop::layouts.sidebar.category-sidebar />
+
+            <div class="mx-auto w-full max-w-[1300px] px-4 sm:px-6 lg:px-8">
                 <!-- Page Content Blade Component -->
-                <main id="main" class="bg-white">
+                <main id="main" class="bg-white min-h-screen">
                     {{ $slot }}
                 </main>
 
