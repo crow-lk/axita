@@ -3,18 +3,6 @@
 <!-- Content Overlay for Sidebar Focus Effect -->
 <div id="sidebar-content-overlay" class="hidden md:block fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300" style="z-index: 25;"></div>
 
-<!-- Mobile Category Toggle Button (Top Bar) -->
-<div class="category-mobile-toggle md:hidden fixed top-20 left-0 right-0 bg-white border-b border-gray-200 z-50 px-4 py-3">
-    <button 
-        id="mobile-category-toggle-btn"
-        class="flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
-    >
-        <i class="fas fa-bars text-lg"></i>
-        <span>All Categories</span>
-        <i class="fas fa-chevron-right ml-auto transition-transform duration-300" id="mobile-chevron"></i>
-    </button>
-</div>
-
 <!-- Desktop Sidebar + Mobile Overlay -->
 <div id="category-sidebar-wrapper">
     <!-- Desktop Sidebar (Always Visible) -->
@@ -396,48 +384,7 @@
                 }
             }, 1000);
             
-            // Mobile sidebar toggle functionality
-            function initMobileSidebar() {
-                const toggleBtn = document.getElementById('mobile-category-toggle-btn');
-                const closeBtn = document.getElementById('mobile-sidebar-close-btn');
-                const overlay = document.getElementById('mobile-category-overlay');
-                const sidebar = document.getElementById('mobile-category-sidebar');
-                const chevron = document.getElementById('mobile-chevron');
-
-                function toggleSidebar() {
-                    if (!overlay || !sidebar || !chevron) return;
-                    
-                    if (overlay.classList.contains('opacity-0')) {
-                        // Open
-                        overlay.classList.remove('opacity-0', 'pointer-events-none');
-                        overlay.classList.add('opacity-100');
-                        sidebar.classList.remove('-translate-x-full');
-                        chevron.classList.add('rotate-180');
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        // Close
-                        overlay.classList.add('opacity-0', 'pointer-events-none');
-                        overlay.classList.remove('opacity-100');
-                        sidebar.classList.add('-translate-x-full');
-                        chevron.classList.remove('rotate-180');
-                        document.body.style.overflow = 'auto';
-                    }
-                }
-
-                // Add event listeners safely
-                if (toggleBtn) {
-                    toggleBtn.addEventListener('click', toggleSidebar);
-                }
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', toggleSidebar);
-                }
-                if (overlay) {
-                    overlay.addEventListener('click', toggleSidebar);
-                }
-            }
-
-            // Initialize mobile sidebar
-            initMobileSidebar();
+            // Mobile sidebar functionality removed
             
             // Initialize sidebar hover overlay effect
             initSidebarOverlay();
@@ -808,10 +755,7 @@
                         },
 
                         closeMobileSidebar() {
-                            const toggleBtn = document.getElementById('mobile-category-toggle-btn');
-                            if (toggleBtn) {
-                                toggleBtn.click();
-                            }
+                            // Mobile sidebar functionality removed
                         },
 
                         setActiveCategories() {
