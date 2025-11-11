@@ -1288,21 +1288,54 @@
             z-index: 9990 !important;
         }
 
-        /* Ensure main content has proper left margin to accommodate sidebar */
-        @media (min-width: 769px) {
+        /* Ensure main content has proper spacing to accommodate sidebar */
+        @media (min-width: 768px) {
+            /* Reset any existing body padding */
             body {
-                padding-left: 64px !important; /* 4rem for 16px sidebar width */
+                padding-left: 0 !important;
             }
             
-            /* Adjust main content containers */
-            .main-content, 
-            .container, 
-            .content-wrapper,
-            main,
-            #main,
-            .page-content {
-                margin-left: 0 !important; /* Reset margin since body has padding */
-                max-width: none !important;
+            /* Adjust main content containers - closer to sidebar for more content space */
+            #main-content {
+                margin-left: 32px !important; /* Reduced from 48px - closer to sidebar */
+                margin-right: 2rem !important; /* Strong right margin */
+                max-width: calc(100vw - 104px) !important; /* Adjusted for new left margin */
+                padding-left: 1rem !important; /* Left padding */
+                padding-right: 1rem !important; /* Right padding */
+                width: auto !important; /* Override any full-width settings */
+            }
+            
+            
+            /* Responsive padding adjustments for the specific class */
+            @media (min-width: 640px) {
+                #main-content {
+                    padding-left: 1.5rem !important; /* sm:px-6 */
+                    padding-right: 1.5rem !important; /* sm:px-6 */
+                    margin-right: 2.5rem !important; /* More right margin on small+ screens */
+                    max-width: calc(100vw - 112px) !important; /* Adjusted for reduced left margin */
+                }
+            }
+            
+            @media (min-width: 1024px) {
+                #main-content {
+                    padding-left: 2rem !important; /* lg:px-8 */
+                    padding-right: 2rem !important; /* lg:px-8 */
+                    margin-right: 3rem !important; /* Strong right margin on large screens */
+                    max-width: calc(100vw - 128px) !important; /* Adjusted for reduced left margin */
+                }
+            }
+                    padding-left: 2rem !important; /* lg:px-8 */
+                    padding-right: 2rem !important; /* lg:px-8 */
+                }
+            }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 767px) {
+            #main-content {
+                margin-left: 0 !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
             }
         }
 
