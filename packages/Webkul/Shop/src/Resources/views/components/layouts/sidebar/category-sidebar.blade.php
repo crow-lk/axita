@@ -1,88 +1,305 @@
-<!-- Category Sidebar Component -->
-@php
-    $categories = app('Webkul\Category\Repositories\CategoryRepository')
-        ->getVisibleCategoryTree(core()->getCurrentChannel()->root_category_id);
-    $maxItems = 6; // Limit to 6 categories to fit nicely in sidebar
-@endphp
+<!-- Enhanced Category Sidebar Component -->
 
-<div class="category-sidebar fixed left-0 top-40 bottom-20 w-12 bg-white border-r border-gray-200 shadow-lg z-40">
-    <v-category-sidebar 
-        :categories='@json($categories->take($maxItems)->values())'
-    ></v-category-sidebar>
+<!-- Mobile Category Toggle Button (Top Bar) -->
+<div class="category-mobile-toggle md:hidden fixed top-20 left-0 right-0 bg-white border-b border-gray-200 z-50 px-4 py-3">
+    <button 
+        id="mobile-category-toggle-btn"
+        class="flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+    >
+        <i class="fas fa-bars text-lg"></i>
+        <span>All Categories</span>
+        <i class="fas fa-chevron-right ml-auto transition-transform duration-300" id="mobile-chevron"></i>
+    </button>
+</div>
+
+<!-- Desktop Sidebar + Mobile Overlay -->
+<div id="category-sidebar-wrapper">
+    <!-- Desktop Sidebar (Always Visible) -->
+    <div class="category-sidebar hidden md:block fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 shadow-lg z-30 transition-all duration-300 hover:w-80 group">
+        <v-category-sidebar></v-category-sidebar>
+        
+        <!-- Fallback content (visible if Vue component fails) -->
+        <div class="fallback-sidebar w-16 group-hover:w-80 h-full bg-white py-2 flex flex-col border-r border-gray-200 transition-all duration-300 overflow-hidden">
+            <!-- Categories Header - Reduced top margin -->
+            <div class="flex items-center justify-center group-hover:justify-start group-hover:px-6 pb-2 border-b border-gray-200 mb-2 transition-all duration-300 mt-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-th-large text-white text-sm"></i>
+                </div>
+                <span class="ml-3 font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    All Categories
+                </span>
+            </div>
+
+            <!-- Categories List - Reduced spacing -->
+            <div class="flex-1 overflow-y-auto px-2 group-hover:px-4 transition-all duration-300">
+                <div class="space-y-0.5">
+                    <!-- Sample Categories -->
+                    <div class="relative">
+                        <a href="/categories/laptops" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-laptop text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Laptops & Computers
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/accessories" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-shopping-bag text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Accessories
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/monitors" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-tv text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Monitors & Displays
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/networking" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-wifi text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Networking
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay Sidebar -->
+    <div 
+        id="mobile-category-overlay" 
+        class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 opacity-0 pointer-events-none transition-opacity duration-300"
+    ></div>
+    
+    <div 
+        id="mobile-category-sidebar" 
+        class="md:hidden fixed top-0 left-0 h-full w-80 bg-white shadow-xl z-50 transform -translate-x-full transition-transform duration-300"
+    >
+        <!-- Mobile Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-orange-100">
+            <h2 class="text-lg font-bold text-orange-900">All Categories</h2>
+            <button 
+                id="mobile-sidebar-close-btn"
+                class="p-2 rounded-full hover:bg-orange-200 transition-colors"
+            >
+                <i class="fas fa-times text-orange-600 text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Sidebar Content -->
+        <div class="h-full overflow-y-auto pb-20">
+            <v-mobile-category-sidebar></v-mobile-category-sidebar>
+        </div>
+    </div>
 </div>
 
 @pushOnce('scripts')
+    <!-- Desktop Category Sidebar Template -->
     <script type="text/x-template" id="v-category-sidebar-template">
-        <div class="w-12 h-full bg-white py-3 flex flex-col border-r border-gray-200">
+        <div class="w-16 group-hover:w-80 h-full bg-white py-2 flex flex-col border-r border-gray-200 transition-all duration-300 overflow-hidden">
             
-            <!-- Categories Icon Header -->
-            <div class="flex justify-center pb-2 border-b border-gray-200 mb-2 px-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-[#e85805] to-[#d14805] rounded-lg flex items-center justify-center">
+            <!-- Categories Header - Moved to top -->
+            <div class="flex items-center justify-center group-hover:justify-start group-hover:px-6 pb-2 border-b border-gray-200 mb-2 transition-all duration-300 mt-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-th-large text-white text-sm"></i>
                 </div>
+                <span class="ml-3 font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    All Categories
+                </span>
             </div>
 
-            <!-- Categories List - Icons Only with Hover Dropdowns -->
-            <div class="flex-1 flex flex-col justify-between px-2 py-2">
-                <div class="flex flex-col justify-between h-full">
-                    <!-- Dynamic Category Icons - Distributed in remaining space -->
-                    <div class="flex flex-col justify-evenly flex-1 py-2">
+            <!-- Categories List - Reduced spacing -->
+            <div class="flex-1 overflow-y-auto px-2 group-hover:px-4 transition-all duration-300">
+                <!-- Loading State -->
+                <div v-if="isLoading" class="flex justify-center py-4">
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="h-6 w-6 animate-spin rounded-full border-2 border-orange-500 border-t-transparent"></div>
+                        <span class="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Categories - Reduced spacing -->
+                <div v-else class="space-y-0.5">
+                    <div 
+                        v-for="(category, index) in mainCategories" 
+                        :key="category.id"
+                        class="relative"
+                    >
+                        <!-- Main Category - Reduced padding -->
                         <div 
-                            v-for="(category, index) in categories" 
-                            :key="category.id" 
-                            class="relative group"
-                            @mouseenter="hoveredCategory = category.id"
-                            @mouseleave="hoveredCategory = null"
+                            class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200"
+                            :class="[
+                                category.isActive ? 'bg-orange-100 text-orange-700' : 'text-gray-700 hover:bg-gray-50',
+                                category.subcategories.length > 0 ? 'hover:bg-orange-50' : 'hover:bg-gray-50'
+                            ]"
+                            @click="toggleCategory(index)"
                         >
-                            <!-- Category Icon -->
-                            <a 
-                                :href="category.url"
-                                class="group flex items-center justify-center p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-[#e85805] transition-colors"
-                                :title="category.name"
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                                    <i :class="category.icon" class="text-lg" :class="category.isActive ? 'text-orange-600' : ''"></i>
+                                </div>
+                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap" v-text="category.name">
+                                </span>
+                            </div>
+                            <div 
+                                v-if="category.subcategories.length > 0" 
+                                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                             >
-                                <i :class="getCategoryIcon(category, index)" class="text-lg"></i>
+                                <i 
+                                    class="fas fa-chevron-down text-xs transition-transform duration-200" 
+                                    :class="{ 'transform rotate-180': category.expanded }"
+                                ></i>
+                            </div>
+                        </div>
+
+                        <!-- Subcategories (Desktop - Expanded) -->
+                        <div 
+                            v-if="category.subcategories.length > 0 && category.expanded" 
+                            class="ml-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 space-y-1 mt-1"
+                        >
+                            <a 
+                                v-for="(subcategory, subIndex) in category.subcategories" 
+                                :key="subIndex"
+                                :href="subcategory.url"
+                                class="block px-4 py-2 text-sm rounded-lg transition-colors duration-200"
+                                :class="subcategory.isActive ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:text-orange-600 hover:bg-orange-25'"
+                                v-text="subcategory.name"
+                            >
                             </a>
+                        </div>
+
+                        <!-- Desktop Hover Dropdown (when collapsed) -->
+                        <div 
+                            v-if="category.subcategories.length > 0 && !category.expanded" 
+                            class="absolute left-full top-0 ml-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl py-3 z-50 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 transform translate-x-2 group-hover:translate-x-0"
+                        >
+                            <!-- Dropdown Header -->
+                            <div class="px-4 py-2 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-orange-100">
+                                <h4 class="font-semibold text-orange-900 text-sm flex items-center">
+                                    <i :class="category.icon" class="text-orange-600 mr-2"></i>
+                                    <span v-text="category.name"></span>
+                                </h4>
+                            </div>
                             
-                            <!-- Hover Dropdown for Subcategories -->
-                            <div v-if="category.children && category.children.length > 0 && hoveredCategory === category.id" 
-                                 class="dropdown-menu absolute left-full top-0 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 min-w-[200px]"
-                                 @mouseenter="hoveredCategory = category.id"
-                                 @mouseleave="hoveredCategory = null">
-                                
-                                <!-- Dropdown Header -->
-                                <div class="px-3 py-2 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-orange-100">
-                                    <h4 class="font-semibold text-[#e85805] text-sm" v-text="category.name"></h4>
+                            <!-- Subcategories Grid -->
+                            <div class="py-2 max-h-80 overflow-y-auto">
+                                <div class="grid grid-cols-1 gap-1 px-2">
+                                    <a 
+                                        v-for="(subcategory, subIndex) in category.subcategories" 
+                                        :key="subIndex"
+                                        :href="subcategory.url"
+                                        class="flex items-center px-3 py-2 text-sm rounded-lg transition-colors duration-200"
+                                        :class="subcategory.isActive ? 'bg-orange-100 text-orange-700 font-medium' : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'"
+                                    >
+                                        <i class="fas fa-angle-right text-xs text-gray-400 mr-2"></i>
+                                        <span v-text="subcategory.name"></span>
+                                    </a>
                                 </div>
                                 
-                                <!-- Subcategories List -->
-                                <div class="py-1 max-h-64 overflow-y-auto">
-                                    <a 
-                                        v-for="child in category.children.slice(0, 8)" 
-                                        :key="child.id"
-                                        :href="child.url"
-                                        class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-[#e85805] transition-colors"
-                                    >
-                                        <span v-text="child.name"></span>
-                                    </a>
-                                    
-                                    <!-- View All Link -->
+                                <!-- View All Link -->
+                                <div class="border-t border-gray-100 mt-2 pt-2 px-2">
                                     <a 
                                         :href="category.url"
-                                        class="flex items-center px-3 py-2 text-sm text-[#e85805] hover:bg-orange-50 font-medium transition-colors"
+                                        class="flex items-center justify-center w-full px-3 py-2 text-sm text-orange-600 hover:bg-orange-50 font-medium rounded-lg transition-colors"
                                     >
-                                        <span>View All</span>
-                                        <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                        <span>View All <span v-text="category.name"></span></span>
+                                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- No Categories Message -->
-                        <template v-if="categories.length === 0">
-                            <div class="flex justify-center p-2">
-                                <i class="fas fa-exclamation-circle text-gray-400 text-lg" title="No categories found"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- Mobile Category Sidebar Template -->
+    <script type="text/x-template" id="v-mobile-category-sidebar-template">
+        <div class="py-4">
+            <!-- Loading State -->
+            <div v-if="isLoading" class="flex justify-center py-8">
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="h-6 w-6 animate-spin rounded-full border-2 border-orange-500 border-t-transparent"></div>
+                    <span class="text-sm text-gray-500">Loading categories...</span>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div v-else class="space-y-2">
+                <div 
+                    v-for="(category, index) in mainCategories" 
+                    :key="category.id"
+                    class="border-b border-gray-100 last:border-b-0"
+                >
+                    <!-- Main Category -->
+                    <div 
+                        class="flex items-center justify-between p-4 cursor-pointer transition-all duration-200"
+                        :class="category.isActive ? 'bg-orange-100 text-orange-700' : 'text-gray-700 hover:bg-gray-50'"
+                        @click="toggleCategory(index)"
+                    >
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                                <i :class="category.icon" class="text-white text-sm"></i>
                             </div>
-                        </template>
+                            <span class="ml-4 font-medium" v-text="category.name"></span>
+                        </div>
+                        <div v-if="category.subcategories.length > 0">
+                            <i 
+                                class="fas fa-chevron-down text-sm transition-transform duration-200" 
+                                :class="{ 'transform rotate-180': category.expanded }"
+                            ></i>
+                        </div>
+                    </div>
+
+                    <!-- Subcategories (Mobile - Accordion) -->
+                    <div 
+                        v-if="category.subcategories.length > 0 && category.expanded" 
+                        class="bg-gray-50 pb-2"
+                    >
+                        <a 
+                            v-for="(subcategory, subIndex) in category.subcategories" 
+                            :key="subIndex"
+                            :href="subcategory.url"
+                            class="flex items-center px-8 py-3 text-sm transition-colors duration-200"
+                            :class="subcategory.isActive ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:text-orange-600 hover:bg-white'"
+                            @click="closeMobileSidebar()"
+                        >
+                            <i class="fas fa-angle-right text-xs text-gray-400 mr-3"></i>
+                            <span v-text="subcategory.name"></span>
+                        </a>
+                        
+                        <!-- View All Link -->
+                        <a 
+                            :href="category.url"
+                            class="flex items-center justify-center mx-6 mt-2 px-4 py-2 text-sm text-orange-600 bg-white border border-orange-200 rounded-lg font-medium transition-colors hover:bg-orange-50"
+                            @click="closeMobileSidebar()"
+                        >
+                            <span>View All <span v-text="category.name"></span></span>
+                            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -90,547 +307,1107 @@
     </script>
 
     <script type="module">
-        app.component('v-category-sidebar', {
-            template: '#v-category-sidebar-template',
+        // Safe category sidebar initialization that won't conflict with main Vue app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Category sidebar: DOM loaded, initializing...');
             
-            props: ['categories'],
+            // Check if FontAwesome is loaded
+            setTimeout(() => {
+                const testIcon = document.querySelector('.fas');
+                if (testIcon && window.getComputedStyle(testIcon).fontFamily.includes('Font Awesome')) {
+                    console.log('Category sidebar: FontAwesome loaded successfully');
+                } else {
+                    console.log('Category sidebar: FontAwesome may not be loaded');
+                }
+            }, 1000);
+            
+            // Mobile sidebar toggle functionality
+            function initMobileSidebar() {
+                const toggleBtn = document.getElementById('mobile-category-toggle-btn');
+                const closeBtn = document.getElementById('mobile-sidebar-close-btn');
+                const overlay = document.getElementById('mobile-category-overlay');
+                const sidebar = document.getElementById('mobile-category-sidebar');
+                const chevron = document.getElementById('mobile-chevron');
 
-            data() {
-                return {
-                    hoveredCategory: null
-                };
-            },
-
-            mounted() {
-                console.log('Loaded categories from header:', this.categories.map(c => ({ name: c.name, url: c.url })));
-            },
-
-            methods: {
-                getCategoryIcon(category, index) {
-                    const categoryName = category.name ? category.name.toLowerCase() : '';
+                function toggleSidebar() {
+                    if (!overlay || !sidebar || !chevron) return;
                     
-                    // Enhanced icon mapping with more categories
-                    const iconMap = {
-                        // Electronics & Technology
-                        'electronics': 'fas fa-laptop',
-                        'computers': 'fas fa-desktop',
-                        'mobile': 'fas fa-mobile-alt',
-                        'phones': 'fas fa-mobile-alt',
-                        'tablets': 'fas fa-tablet-alt',
-                        'gaming': 'fas fa-gamepad',
-                        'cameras': 'fas fa-camera',
-                        'audio': 'fas fa-headphones',
-                        'headphones': 'fas fa-headphones',
-                        'speakers': 'fas fa-volume-up',
-                        'tech': 'fas fa-laptop',
-                        'digital': 'fas fa-laptop',
-                        'desktop': 'fas fa-tv',          // Added desktop -> TV mapping
-                        'monitor': 'fas fa-tv',          // Added monitor -> TV mapping
-                        'screen': 'fas fa-tv',           // Added screen -> TV mapping
-                        'display': 'fas fa-tv',          // Added display -> TV mapping
-                        'printer': 'fas fa-print',       // Added printer mapping
-                        'printers': 'fas fa-print',      // Added printers mapping
-                        'printing': 'fas fa-print',      // Added printing mapping
-                        
-                        // Fashion & Apparel
-                        'fashion': 'fas fa-tshirt',
-                        'clothing': 'fas fa-tshirt',
-                        'apparel': 'fas fa-tshirt',
-                        'shoes': 'fas fa-shoe-prints',
-                        'footwear': 'fas fa-shoe-prints',
-                        'accessories': 'fas fa-ring',
-                        'jewelry': 'fas fa-gem',
-                        'watches': 'fas fa-clock',
-                        'bags': 'fas fa-shopping-bag',
-                        'handbags': 'fas fa-shopping-bag',
-                        'wear': 'fas fa-tshirt',
-                        'dress': 'fas fa-tshirt',
-                        
-                        // Home & Living
-                        'home': 'fas fa-home',
-                        'furniture': 'fas fa-couch',
-                        'decor': 'fas fa-palette',
-                        'kitchen': 'fas fa-utensils',
-                        'appliances': 'fas fa-blender',
-                        'garden': 'fas fa-leaf',
-                        'tools': 'fas fa-tools',
-                        'lighting': 'fas fa-lightbulb',
-                        'house': 'fas fa-home',
-                        'living': 'fas fa-home',
-                        
-                        // Health & Beauty
-                        'health': 'fas fa-heartbeat',
-                        'beauty': 'fas fa-spa',
-                        'cosmetics': 'fas fa-paint-brush',
-                        'skincare': 'fas fa-hand-sparkles',
-                        'personal': 'fas fa-user',
-                        'wellness': 'fas fa-leaf',
-                        'fitness': 'fas fa-dumbbell',
-                        'care': 'fas fa-heart',
-                        
-                        // Sports & Recreation
-                        'sports': 'fas fa-running',
-                        'outdoor': 'fas fa-mountain',
-                        'recreation': 'fas fa-baseball-ball',
-                        'travel': 'fas fa-suitcase',
-                        'camping': 'fas fa-campground',
-                        'cycling': 'fas fa-bicycle',
-                        'gym': 'fas fa-dumbbell',
-                        'exercise': 'fas fa-dumbbell',
-                        
-                        // Books & Media
-                        'books': 'fas fa-book',
-                        'media': 'fas fa-compact-disc',
-                        'movies': 'fas fa-film',
-                        'music': 'fas fa-music',
-                        'education': 'fas fa-graduation-cap',
-                        'literature': 'fas fa-book',
-                        'magazine': 'fas fa-book',
-                        
-                        // Food & Beverages
-                        'food': 'fas fa-utensils',
-                        'beverages': 'fas fa-coffee',
-                        'grocery': 'fas fa-shopping-cart',
-                        'snacks': 'fas fa-cookie-bite',
-                        'restaurant': 'fas fa-utensils',
-                        'drink': 'fas fa-coffee',
-                        
-                        // Automotive
-                        'automotive': 'fas fa-car',
-                        'auto': 'fas fa-car',
-                        'parts': 'fas fa-cog',
-                        'car': 'fas fa-car',
-                        'vehicle': 'fas fa-car',
-                        'motor': 'fas fa-car',
-                        
-                        // Baby & Kids
-                        'baby': 'fas fa-baby',
-                        'kids': 'fas fa-child',
-                        'toys': 'fas fa-cube',
-                        'children': 'fas fa-child',
-                        'child': 'fas fa-child',
-                        'toy': 'fas fa-cube',
-                        
-                        // Office & Business
-                        'office': 'fas fa-briefcase',
-                        'business': 'fas fa-building',
-                        'stationery': 'fas fa-pen',
-                        'work': 'fas fa-briefcase',
-                        'professional': 'fas fa-briefcase'
-                    };
-                    
-                    // Try to find matching icon
-                    for (const [keyword, icon] of Object.entries(iconMap)) {
-                        if (categoryName.includes(keyword)) {
-                            return icon;
-                        }
+                    if (overlay.classList.contains('opacity-0')) {
+                        // Open
+                        overlay.classList.remove('opacity-0', 'pointer-events-none');
+                        overlay.classList.add('opacity-100');
+                        sidebar.classList.remove('-translate-x-full');
+                        chevron.classList.add('rotate-180');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        // Close
+                        overlay.classList.add('opacity-0', 'pointer-events-none');
+                        overlay.classList.remove('opacity-100');
+                        sidebar.classList.add('-translate-x-full');
+                        chevron.classList.remove('rotate-180');
+                        document.body.style.overflow = 'auto';
                     }
-                    
-                    // Default icons based on position if no match found
-                    const defaultIcons = [
-                        'fas fa-laptop',      // Electronics
-                        'fas fa-tv',          // Replaced tshirt with TV
-                        'fas fa-home',        // Home
-                        'fas fa-print',       // Replaced book with printer
-                        'fas fa-dumbbell',    // Sports
-                        'fas fa-heart'        // Health
-                    ];
-                    
-                    return defaultIcons[index] || 'fas fa-th-large';
+                }
+
+                // Add event listeners safely
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', toggleSidebar);
+                }
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', toggleSidebar);
+                }
+                if (overlay) {
+                    overlay.addEventListener('click', toggleSidebar);
                 }
             }
+
+            // Initialize mobile sidebar
+            initMobileSidebar();
+        });
+
+        // Wait for Vue app to be ready before registering components
+        window.addEventListener('load', function() {
+            console.log('Category sidebar: Window loaded, checking for Vue app...');
+            
+            // Check if Vue app exists
+            if (typeof app !== 'undefined') {
+                console.log('Category sidebar: Vue app found, registering components...');
+                
+                // Desktop Category Sidebar Component
+                app.component('v-category-sidebar', {
+                    template: '#v-category-sidebar-template',
+
+                    data() {
+                        console.log('Category sidebar: Desktop component data initialized');
+                        return {
+                            isLoading: true,
+                            categories: [],
+                            mainCategories: []
+                        };
+                    },
+
+                    mounted() {
+                        console.log('Category sidebar: Desktop component mounted');
+                        this.fetchCategories();
+                    },
+
+                    methods: {
+                        fetchCategories() {
+                            this.isLoading = true;
+                            console.log('Category sidebar: Fetching categories from API...');
+
+                            // Try to use axios if available, otherwise use fetch
+                            const makeRequest = () => {
+                                if (this.$axios) {
+                                    return this.$axios.get("{{ route('shop.api.categories.tree') }}")
+                                        .then(response => response.data);
+                                } else {
+                                    return fetch("{{ route('shop.api.categories.tree') }}")
+                                        .then(response => response.json());
+                                }
+                            };
+
+                            makeRequest()
+                                .then(data => {
+                                    console.log('Category sidebar: Categories fetched successfully', data);
+                                    this.categories = data.data || data;
+                                    this.processCategories();
+                                    this.setActiveCategories();
+                                    this.isLoading = false;
+                                })
+                                .catch(error => {
+                                    console.log('Category sidebar: Error fetching categories, using fallback', error);
+                                    this.useFallbackCategories();
+                                    this.isLoading = false;
+                                });
+                        },
+
+                        processCategories() {
+                            // Filter only main categories (parent categories) and limit to 8 for clean display
+                            this.mainCategories = this.categories
+                                .filter(category => !category.parent_id || category.parent_id === null)
+                                .slice(0, 8)
+                                .map(category => {
+                                    return {
+                                        ...category,
+                                        isActive: false,
+                                        expanded: false,
+                                        icon: this.getCategoryIcon(category),
+                                        url: this.getCategoryUrl(category),
+                                        subcategories: (category.children || []).map(child => ({
+                                            ...child,
+                                            isActive: false,
+                                            url: this.getCategoryUrl(child)
+                                        }))
+                                    };
+                                });
+                            
+                            console.log('Category sidebar: Processed categories', this.mainCategories);
+                        },
+
+                        getCategoryIcon(category) {
+                            const name = (category.name || '').toLowerCase();
+                            const slug = (category.slug || '').toLowerCase();
+                            const description = (category.description || '').toLowerCase();
+                            
+                            // Combine all text for better matching
+                            const searchText = `${name} ${slug} ${description}`;
+                            
+                            // Electronics & Technology
+                            if (this.matchesAny(searchText, ['laptop', 'computer', 'tech', 'electronic', 'mobile', 'phone', 'gadget', 'tablet', 'smart', 'digital', 'device'])) {
+                                return 'fas fa-laptop';
+                            }
+                            // Accessories
+                            else if (this.matchesAny(searchText, ['accessor', 'bag', 'case', 'stand', 'cable', 'charger', 'adapter', 'peripheral'])) {
+                                return 'fas fa-shopping-bag';
+                            }
+                            // Components & Hardware
+                            else if (this.matchesAny(searchText, ['component', 'hardware', 'ssd', 'hdd', 'ram', 'memory', 'motherboard', 'graphics', 'gpu', 'cpu', 'processor', 'power', 'supply'])) {
+                                return 'fas fa-microchip';
+                            }
+                            // Monitors & Displays
+                            else if (this.matchesAny(searchText, ['monitor', 'display', 'screen', 'tv', 'led', 'lcd', 'gaming monitor'])) {
+                                return 'fas fa-tv';
+                            }
+                            // Networking
+                            else if (this.matchesAny(searchText, ['network', 'router', 'wifi', 'ethernet', 'cable', 'internet', 'modem'])) {
+                                return 'fas fa-wifi';
+                            }
+                            // Printers & Office
+                            else if (this.matchesAny(searchText, ['printer', 'scanner', 'print', 'office', 'laser', 'ink'])) {
+                                return 'fas fa-print';
+                            }
+                            // Peripherals & Input
+                            else if (this.matchesAny(searchText, ['mouse', 'keyboard', 'webcam', 'speaker', 'headphone', 'microphone', 'usb', 'hub'])) {
+                                return 'fas fa-mouse';
+                            }
+                            // Software
+                            else if (this.matchesAny(searchText, ['software', 'program', 'app', 'operating', 'system', 'antivirus', 'office'])) {
+                                return 'fas fa-code';
+                            }
+                            // Gaming
+                            else if (this.matchesAny(searchText, ['gaming', 'game', 'console', 'controller'])) {
+                                return 'fas fa-gamepad';
+                            }
+                            // Storage
+                            else if (this.matchesAny(searchText, ['storage', 'drive', 'disk', 'backup'])) {
+                                return 'fas fa-hdd';
+                            }
+                            // Default category icon
+                            else {
+                                return 'fas fa-th-large';
+                            }
+                        },
+
+                        matchesAny(text, keywords) {
+                            return keywords.some(keyword => text.includes(keyword));
+                        },
+
+                        getCategoryUrl(category) {
+                            // Use Bagisto's category URL structure
+                            if (category.url && category.url !== '#' && category.url.length > 1) {
+                                return category.url;
+                            }
+                            
+                            // Build URL from slug
+                            if (category.slug) {
+                                return `{{ url('/') }}/${category.slug}`;
+                            }
+                            
+                            // Fallback to category ID
+                            return `{{ route('shop.search.index') }}?category_id=${category.id}`;
+                        },
+
+                        toggleCategory(index) {
+                            if (this.mainCategories[index]) {
+                                this.mainCategories[index].expanded = !this.mainCategories[index].expanded;
+                            }
+                        },
+
+                        setActiveCategories() {
+                            try {
+                                const currentPath = window.location.pathname;
+                                
+                                this.mainCategories.forEach(category => {
+                                    // Check if main category is active
+                                    category.isActive = currentPath.includes(category.slug) || 
+                                                      currentPath.includes(`category_id=${category.id}`);
+                                    
+                                    // Check subcategories
+                                    category.subcategories.forEach(subcategory => {
+                                        subcategory.isActive = currentPath.includes(subcategory.slug) || 
+                                                              currentPath.includes(`category_id=${subcategory.id}`);
+                                        if (subcategory.isActive) {
+                                            category.expanded = true; // Auto-expand if subcategory is active
+                                        }
+                                    });
+                                });
+                            } catch (error) {
+                                console.log('Error setting active categories:', error);
+                            }
+                        },
+
+                        useFallbackCategories() {
+                            // Fallback categories in case API fails
+                            this.mainCategories = [
+                                {
+                                    id: 'fallback-1',
+                                    name: 'Electronics',
+                                    icon: 'fas fa-laptop',
+                                    url: '/categories/electronics',
+                                    isActive: false,
+                                    expanded: false,
+                                    subcategories: []
+                                },
+                                {
+                                    id: 'fallback-2',
+                                    name: 'Accessories',
+                                    icon: 'fas fa-shopping-bag',
+                                    url: '/categories/accessories',
+                                    isActive: false,
+                                    expanded: false,
+                                    subcategories: []
+                                }
+                            ];
+                        }
+                    }
+                });
+
+                // Mobile Category Sidebar Component
+                app.component('v-mobile-category-sidebar', {
+                    template: '#v-mobile-category-sidebar-template',
+
+                    data() {
+                        return {
+                            isLoading: true,
+                            categories: [],
+                            mainCategories: []
+                        };
+                    },
+
+                    mounted() {
+                        this.fetchCategories();
+                    },
+
+                    methods: {
+                        fetchCategories() {
+                            this.isLoading = true;
+
+                            // Try to use axios if available, otherwise use fetch
+                            const makeRequest = () => {
+                                if (this.$axios) {
+                                    return this.$axios.get("{{ route('shop.api.categories.tree') }}")
+                                        .then(response => response.data);
+                                } else {
+                                    return fetch("{{ route('shop.api.categories.tree') }}")
+                                        .then(response => response.json());
+                                }
+                            };
+
+                            makeRequest()
+                                .then(data => {
+                                    this.categories = data.data || data;
+                                    this.processCategories();
+                                    this.setActiveCategories();
+                                    this.isLoading = false;
+                                })
+                                .catch(error => {
+                                    console.log('Mobile sidebar: Error fetching categories, using fallback', error);
+                                    this.useFallbackCategories();
+                                    this.isLoading = false;
+                                });
+                        },
+
+                        processCategories() {
+                            // Same processing logic as desktop
+                            this.mainCategories = this.categories
+                                .filter(category => !category.parent_id || category.parent_id === null)
+                                .slice(0, 8)
+                                .map(category => {
+                                    return {
+                                        ...category,
+                                        isActive: false,
+                                        expanded: false,
+                                        icon: this.getCategoryIcon(category),
+                                        url: this.getCategoryUrl(category),
+                                        subcategories: (category.children || []).map(child => ({
+                                            ...child,
+                                            isActive: false,
+                                            url: this.getCategoryUrl(child)
+                                        }))
+                                    };
+                                });
+                        },
+
+                        getCategoryIcon(category) {
+                            // Same icon logic as desktop
+                            const name = (category.name || '').toLowerCase();
+                            const slug = (category.slug || '').toLowerCase();
+                            const description = (category.description || '').toLowerCase();
+                            
+                            const searchText = `${name} ${slug} ${description}`;
+                            
+                            if (this.matchesAny(searchText, ['laptop', 'computer', 'tech', 'electronic'])) {
+                                return 'fas fa-laptop';
+                            } else if (this.matchesAny(searchText, ['accessor', 'bag', 'case', 'stand'])) {
+                                return 'fas fa-shopping-bag';
+                            } else if (this.matchesAny(searchText, ['component', 'hardware', 'ssd', 'ram'])) {
+                                return 'fas fa-microchip';
+                            } else if (this.matchesAny(searchText, ['monitor', 'display', 'screen', 'tv'])) {
+                                return 'fas fa-tv';
+                            } else if (this.matchesAny(searchText, ['network', 'router', 'wifi'])) {
+                                return 'fas fa-wifi';
+                            } else if (this.matchesAny(searchText, ['printer', 'scanner', 'print'])) {
+                                return 'fas fa-print';
+                            } else if (this.matchesAny(searchText, ['mouse', 'keyboard', 'webcam', 'speaker'])) {
+                                return 'fas fa-mouse';
+                            } else if (this.matchesAny(searchText, ['software', 'program', 'app'])) {
+                                return 'fas fa-code';
+                            } else {
+                                return 'fas fa-th-large';
+                            }
+                        },
+
+                        matchesAny(text, keywords) {
+                            return keywords.some(keyword => text.includes(keyword));
+                        },
+
+                        getCategoryUrl(category) {
+                            if (category.url && category.url !== '#' && category.url.length > 1) {
+                                return category.url;
+                            }
+                            
+                            if (category.slug) {
+                                return `{{ url('/') }}/${category.slug}`;
+                            }
+                            
+                            return `{{ route('shop.search.index') }}?category_id=${category.id}`;
+                        },
+
+                        toggleCategory(index) {
+                            if (this.mainCategories[index]) {
+                                this.mainCategories[index].expanded = !this.mainCategories[index].expanded;
+                            }
+                        },
+
+                        closeMobileSidebar() {
+                            const toggleBtn = document.getElementById('mobile-category-toggle-btn');
+                            if (toggleBtn) {
+                                toggleBtn.click();
+                            }
+                        },
+
+                        setActiveCategories() {
+                            try {
+                                const currentPath = window.location.pathname;
+                                
+                                this.mainCategories.forEach(category => {
+                                    category.isActive = currentPath.includes(category.slug) || 
+                                                      currentPath.includes(`category_id=${category.id}`);
+                                    
+                                    category.subcategories.forEach(subcategory => {
+                                        subcategory.isActive = currentPath.includes(subcategory.slug) || 
+                                                              currentPath.includes(`category_id=${subcategory.id}`);
+                                        if (subcategory.isActive) {
+                                            category.expanded = true;
+                                        }
+                                    });
+                                });
+                            } catch (error) {
+                                console.log('Mobile sidebar: Error setting active categories:', error);
+                            }
+                        },
+
+                        useFallbackCategories() {
+                            this.mainCategories = [
+                                {
+                                    id: 'fallback-1',
+                                    name: 'Electronics',
+                                    icon: 'fas fa-laptop',
+                                    url: '/categories/electronics',
+                                    isActive: false,
+                                    expanded: false,
+                                    subcategories: []
+                                },
+                                {
+                                    id: 'fallback-2',
+                                    name: 'Accessories',
+                                    icon: 'fas fa-shopping-bag',
+                                    url: '/categories/accessories',
+                                    isActive: false,
+                                    expanded: false,
+                                    subcategories: []
+                                }
+                            ];
+                        }
+                    }
+                });
+            } else {
+                console.log('Category sidebar: Vue app not found, using fallback');
+                // Initialize fallback sidebar without Vue
+                initFallbackSidebar();
+            }
+        });
+
+        // Fallback sidebar functionality when Vue is not available
+        function initFallbackSidebar() {
+            console.log('Category sidebar: Initializing fallback mode without Vue');
+            
+            setTimeout(() => {
+                // Fetch categories using plain JavaScript
+                fetch("{{ route('shop.api.categories.tree') }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Fallback sidebar: Categories fetched', data);
+                        const categories = data.data || data;
+                        populateFallbackSidebar(categories);
+                    })
+                    .catch(error => {
+                        console.log('Fallback sidebar: Error fetching categories', error);
+                        populateHardcodedCategories();
+                    });
+            }, 1000);
+        }
+
+        function populateFallbackSidebar(categories) {
+            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-1');
+            if (!fallbackContent) return;
+
+            // Clear existing content
+            fallbackContent.innerHTML = '';
+
+            // Filter main categories and limit to 8
+            const mainCategories = categories
+                .filter(category => !category.parent_id || category.parent_id === null)
+                .slice(0, 8);
+
+            mainCategories.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'relative';
+                
+                const categoryIcon = getCategoryIconFallback(category);
+                const categoryUrl = getCategoryUrlFallback(category);
+                
+                categoryDiv.innerHTML = `
+                    <a href="${categoryUrl}" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                                <i class="${categoryIcon} text-lg"></i>
+                            </div>
+                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                ${category.name}
+                            </span>
+                        </div>
+                    </a>
+                `;
+                
+                fallbackContent.appendChild(categoryDiv);
+            });
+        }
+
+        function populateHardcodedCategories() {
+            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-1');
+            if (!fallbackContent) return;
+
+            fallbackContent.innerHTML = `
+                <div class="relative">
+                    <a href="/categories/laptops" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-laptop text-lg"></i>
+                            </div>
+                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Laptops & Computers
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/accessories" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-shopping-bag text-lg"></i>
+                            </div>
+                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Accessories
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/monitors" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-tv text-lg"></i>
+                            </div>
+                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Monitors & Displays
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/networking" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-wifi text-lg"></i>
+                            </div>
+                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Networking
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            `;
+        }
+
+        function getCategoryIconFallback(category) {
+            const name = (category.name || '').toLowerCase();
+            const slug = (category.slug || '').toLowerCase();
+            const searchText = `${name} ${slug}`;
+            
+            if (searchText.includes('laptop') || searchText.includes('computer')) return 'fas fa-laptop';
+            if (searchText.includes('accessor') || searchText.includes('bag')) return 'fas fa-shopping-bag';
+            if (searchText.includes('monitor') || searchText.includes('display')) return 'fas fa-tv';
+            if (searchText.includes('network') || searchText.includes('wifi')) return 'fas fa-wifi';
+            if (searchText.includes('printer')) return 'fas fa-print';
+            if (searchText.includes('mouse') || searchText.includes('keyboard')) return 'fas fa-mouse';
+            return 'fas fa-th-large';
+        }
+
+        function getCategoryUrlFallback(category) {
+            if (category.url && category.url !== '#' && category.url.length > 1) {
+                return category.url;
+            }
+            if (category.slug) {
+                return `{{ url('/') }}/${category.slug}`;
+            }
+            return `{{ route('shop.search.index') }}?category_id=${category.id}`;
+        }
         });
     </script>
 @endPushOnce
 
 @pushOnce('styles')
-    <style>
+    <!-- Force styles to load in head for immediate application -->
+    <style type="text/css">
+        /* Enhanced Category Sidebar Styles - Beautiful Glass Effect */
         .category-sidebar {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            /* Modern glassmorphism effect */
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(255, 255, 255, 0.7) 50%, 
+                rgba(255, 255, 255, 0.95) 100%) !important;
+            
+            /* Apply blur effects */
+            backdrop-filter: blur(25px) saturate(150%) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(150%) !important;
+            
+            /* Enhanced borders and shadows */
+            border-right: 2px solid rgba(255, 255, 255, 0.8) !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.6) !important;
+            
+            /* Beautiful layered shadows for depth */
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 4px 16px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset -1px 0 0 rgba(255, 255, 255, 0.4),
+                inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
+            
+            height: 100vh !important;
+            z-index: 30 !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative !important;
         }
 
-        .category-sidebar .flex-1 {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
+        /* Enhanced hover effect */
+        .category-sidebar:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.8) 50%, 
+                rgba(255, 255, 255, 0.98) 100%) !important;
+            backdrop-filter: blur(30px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                0 6px 24px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset -1px 0 0 rgba(255, 255, 255, 0.6),
+                inset 1px 0 0 rgba(255, 255, 255, 0.8) !important;
         }
 
-        .category-sidebar .flex-1::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+        /* Add subtle light pattern overlay */
+        .category-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, 
+                    transparent 40%, 
+                    rgba(255, 255, 255, 0.2) 50%, 
+                    transparent 60%),
+                linear-gradient(-45deg, 
+                    transparent 40%, 
+                    rgba(255, 255, 255, 0.1) 50%, 
+                    transparent 60%);
+            background-size: 60px 60px, 40px 40px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
         }
 
-        /* Force FontAwesome icons to show - highest priority */
-        .category-sidebar i[class*="fa"] {
-            display: inline-block !important;
-            font-family: "Font Awesome 5 Free", "Font Awesome 5 Pro", "FontAwesome" !important;
+        /* Ensure content is above the pattern */
+        .category-sidebar > * {
+            position: relative !important;
+            z-index: 2 !important;
+        }
+        
+        /* Fallback sidebar styling */
+        .fallback-sidebar {
+            display: block;
+            /* Apply same glass effect to fallback */
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.7) 0%, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                rgba(255, 255, 255, 0.8) 100%);
+        }
+        
+        /* Hide fallback when Vue component is active */
+        .category-sidebar:has(v-category-sidebar:not(:empty)) .fallback-sidebar {
+            display: none;
+        }
+        
+        /* Ensure FontAwesome is loaded */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+        /* Add background texture to the body when sidebar is present */
+        body {
+            background-image: 
+                radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2px, transparent 0),
+                radial-gradient(circle at 75px 75px, rgba(0, 0, 0, 0.1) 2px, transparent 0);
+            background-size: 100px 100px, 100px 100px;
+            background-position: 0 0, 50px 50px;
+        }
+
+        /* Enhanced Category Sidebar Styles - Simplified for compatibility */
+        .category-sidebar {
+            /* Fallback solid background */
+            background: #ffffff;
+            
+            /* Modern glassmorphism effect (where supported) */
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(255, 255, 255, 0.7) 50%, 
+                rgba(255, 255, 255, 0.95) 100%);
+            
+            /* Apply blur effects */
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            
+            /* Enhanced borders and shadows */
+            border-right: 2px solid rgba(255, 255, 255, 0.8);
+            border-left: 1px solid rgba(255, 255, 255, 0.6);
+            
+            /* Multiple layered shadows for depth */
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 4px 16px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset -1px 0 0 rgba(255, 255, 255, 0.4),
+                inset 1px 0 0 rgba(255, 255, 255, 0.6);
+            
+            height: 100vh;
+            z-index: 30;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            
+            /* Force a subtle opacity to ensure transparency is visible */
+            opacity: 0.98;
+        }
+
+        /* Test styles to ensure CSS is loading */
+        .category-sidebar {
+            border-left: 4px solid #f97316 !important; /* Orange test border */
+        }
+
+        /* Add a subtle pattern overlay for more glass effect */
+        .category-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, 
+                    transparent 40%, 
+                    rgba(255, 255, 255, 0.3) 50%, 
+                    transparent 60%),
+                linear-gradient(-45deg, 
+                    transparent 40%, 
+                    rgba(255, 255, 255, 0.2) 50%, 
+                    transparent 60%);
+            background-size: 40px 40px, 60px 60px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        /* Ensure content is above the pattern */
+        .category-sidebar > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Ensure header stays above sidebar */
+        header, .header, nav {
+            z-index: 50 !important;
+        }
+
+        /* Mobile category toggle top bar */
+        .category-mobile-toggle {
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Custom scrollbar for sidebar */
+        .category-sidebar .overflow-y-auto::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .category-sidebar .overflow-y-auto::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 2px;
+        }
+
+        .category-sidebar .overflow-y-auto::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #f97316, #ea580c);
+            border-radius: 2px;
+        }
+
+        .category-sidebar .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #ea580c, #dc2626);
+        }
+
+        /* Force FontAwesome icons to show properly and be centered */
+        .category-sidebar i[class*="fa"],
+        #mobile-category-sidebar i[class*="fa"],
+        .category-mobile-toggle i[class*="fa"],
+        .fallback-sidebar i[class*="fa"] {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-family: "Font Awesome 5 Free", "FontAwesome" !important;
             font-weight: 900 !important;
             font-style: normal !important;
             line-height: 1 !important;
             speak: none !important;
             -webkit-font-smoothing: antialiased !important;
             -moz-osx-font-smoothing: grayscale !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            width: 100% !important;
+            height: 100% !important;
         }
 
-        /* Dropdown hover effects */
-        .dropdown-menu {
-            pointer-events: auto;
+        /* Ensure icon containers are properly centered */
+        .category-sidebar .w-8.h-8,
+        .category-sidebar .w-10.h-10,
+        #mobile-category-sidebar .w-10.h-10,
+        .fallback-sidebar .w-8.h-8,
+        .fallback-sidebar .w-10.h-10 {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+            position: relative !important;
+        }
+
+        /* Additional centering for specific fallback icons */
+        .fallback-sidebar i.fas {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important; /* Back to center for collapsed state */
+            transform: translate(-50%, -50%) !important;
+            margin: 0 !important;
+        }
+
+        /* Move all sidebar icons slightly to the left only when expanded */
+        .category-sidebar:hover i[class*="fa"],
+        .fallback-sidebar:hover i[class*="fa"] {
+            margin-left: -2px !important; /* Shift icons 2px to the left when expanded */
+        }
+
+        /* Default centering for collapsed state */
+        .category-sidebar i[class*="fa"],
+        .fallback-sidebar i[class*="fa"] {
+            margin-left: -1px !important; /* Slight left adjustment for collapsed state */
+        }
+
+        /* Adjust icon containers based on sidebar state */
+        .category-sidebar .w-8.h-8,
+        .fallback-sidebar .w-8.h-8 {
+            padding-left: 0px !important; /* No padding in collapsed state */
+        }
+
+        /* When sidebar is hovered/expanded, adjust container padding */
+        .category-sidebar:hover .w-8.h-8,
+        .fallback-sidebar:hover .w-8.h-8 {
+            padding-left: 1px !important; /* Slight left padding when expanded */
+        }
+
+        /* Special positioning for collapsed sidebar icons */
+        .category-sidebar:not(:hover) i[class*="fa"],
+        .fallback-sidebar:not(:hover) i[class*="fa"] {
+            position: relative !important;
+            left: -1px !important; /* Move icons 1px left in collapsed state */
+        }
+
+        /* Enhanced hover effects for desktop sidebar */
+        .category-sidebar:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.8) 0%, 
+                rgba(255, 255, 255, 0.4) 50%, 
+                rgba(255, 255, 255, 0.9) 100%);
+            backdrop-filter: blur(35px) saturate(200%);
+            -webkit-backdrop-filter: blur(35px) saturate(200%);
+            box-shadow: 
+                0 16px 48px rgba(0, 0, 0, 0.18),
+                0 4px 24px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset -1px 0 0 rgba(255, 255, 255, 0.6);
+            transform: translateZ(0);
+        }
+
+        /* Add reflection effect on hover */
+        .category-sidebar:hover::before {
+            background: 
+                linear-gradient(45deg, 
+                    transparent 20%, 
+                    rgba(255, 255, 255, 0.2) 50%, 
+                    transparent 80%),
+                linear-gradient(-45deg, 
+                    transparent 20%, 
+                    rgba(255, 255, 255, 0.1) 50%, 
+                    transparent 80%);
+            background-size: 80px 80px, 60px 60px;
+        }
+
+        /* Active category highlighting */
+        .category-active {
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+            border-left: 4px solid #f97316;
+        }
+
+        /* Smooth transitions */
+        .category-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Mobile sidebar animations */
+        @media (max-width: 768px) {
+            /* Ensure mobile sidebar is above everything */
+            #mobile-category-sidebar {
+                z-index: 9999 !important;
+                /* Glassmorphism for mobile sidebar */
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                background: rgba(255, 255, 255, 0.95);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            }
+            
+            #mobile-category-overlay {
+                z-index: 9998 !important;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+            }
+            
+            /* Mobile body lock when sidebar is open */
+            body.sidebar-open {
+                overflow: hidden !important;
+                position: fixed !important;
+                width: 100% !important;
+            }
+            
+            /* Mobile category button styling */
+            .category-mobile-toggle button:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Desktop hover dropdown positioning */
+        @media (min-width: 769px) {
+            .category-sidebar .group:hover .absolute {
+                display: block;
+                animation: slideInFromLeft 0.3s ease-out;
+                /* Glassmorphism for dropdowns */
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                background: rgba(255, 255, 255, 0.9) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Enhanced category item hover effects */
+        .category-sidebar .hover\\:bg-orange-50:hover,
+        .category-sidebar .hover\\:bg-gray-50:hover {
+            background: rgba(255, 247, 237, 0.4) !important;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 4px 16px rgba(249, 115, 22, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .category-sidebar .bg-orange-100 {
+            background: linear-gradient(135deg, 
+                rgba(255, 247, 237, 0.6) 0%, 
+                rgba(254, 215, 170, 0.4) 100%) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            box-shadow: 
+                0 4px 16px rgba(249, 115, 22, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        /* Add shimmer effect to icons */
+        .category-sidebar i[class*="fa"] {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-sidebar i[class*="fa"]::before {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-sidebar i[class*="fa"]::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            transition: left 0.6s ease-in-out;
+        }
+
+        .category-sidebar .hover\\:bg-orange-50:hover i[class*="fa"]::after,
+        .category-sidebar .hover\\:bg-gray-50:hover i[class*="fa"]::after {
+            left: 100%;
+        }
+
+        /* Bagisto integration - ensure it blends with existing theme */
+        .category-sidebar {
+            font-family: 'Poppins', sans-serif; /* Match Bagisto's font */
+        }
+
+        /* Responsive adjustments for product listing pages */
+        @media (min-width: 769px) {
+            /* Adjust main content margin when sidebar is present - more conservative */
+            #main-content {
+                margin-left: 4rem !important; /* Account for 16px (4rem) sidebar */
+                max-width: calc(100% - 4rem) !important;
+                transition: margin-left 0.3s ease;
+            }
+        }
+
+        /* Ensure proper z-indexing */
+        .category-sidebar {
+            z-index: 40;
+        }
+
+        /* Better mobile touch targets */
+        @media (max-width: 768px) {
+            #mobile-category-sidebar button,
+            #mobile-category-sidebar a {
+                min-height: 44px; /* iOS recommended touch target size */
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        /* Loading state styling */
+        .category-loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Enhanced focus states for accessibility */
+        .category-sidebar a:focus,
+        .category-sidebar button:focus,
+        #mobile-category-sidebar a:focus,
+        #mobile-category-sidebar button:focus {
+            outline: 2px solid #f97316;
+            outline-offset: 2px;
+        }
+
+        /* Custom orange color for better brand consistency */
+        .text-orange-custom {
+            color: #f97316;
+        }
+
+        .bg-orange-custom {
+            background-color: #f97316;
+        }
+
+        .border-orange-custom {
+            border-color: #f97316;
+        }
+
+        /* Gradient backgrounds for visual appeal */
+        .bg-gradient-orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .bg-gradient-orange-light {
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
         }
     </style>
-@endPushOnce
-
-@pushOnce('scripts')
-<script
-    type="text/x-template"
-    id="v-category-sidebar-template"
->
-    <!-- Compact Icon-Only Sidebar with Hover Dropdowns -->
-    <div class="w-12 h-full bg-white py-3 flex flex-col border-r border-gray-200">
-        
-        <!-- Categories Icon Header -->
-        <div class="flex justify-center pb-2 border-b border-gray-200 mb-2 px-2">
-            <div class="w-8 h-8 bg-gradient-to-br from-[#e85805] to-[#d14805] rounded-lg flex items-center justify-center">
-                <!-- Test both FontAwesome and HTML entity -->
-                <i class="fas fa-bars text-white text-sm"></i>
-                <span style="display:none;" class="text-white text-xs">≡</span>
-            </div>
-        </div>
-
-        <!-- Categories List - Icons Only with Hover Dropdowns -->
-        <div class="flex-1 flex flex-col justify-between px-2 py-2">
-            <!-- Loading State -->
-            <div v-if="isLoading" class="flex justify-center py-4">
-                <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#e85805] border-t-transparent"></div>
-            </div>
-            
-            <div v-else class="flex flex-col justify-between h-full">
-                <!-- All Products Icon - Always at top -->
-                <div class="flex flex-col space-y-2">
-                    <div class="relative group">
-                        <a 
-                            href="{{ route('shop.home.index') }}"
-                            class="group flex items-center justify-center p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-[#e85805] transition-colors"
-                            title="All Products"
-                        >
-                            <i class="fas fa-home text-lg"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Dynamic Category Icons - Distributed in remaining space -->
-                <div class="flex flex-col justify-evenly flex-1 py-2">
-                    <div 
-                        v-for="category in mainCategories" 
-                        :key="category.id" 
-                        class="relative group"
-                    >
-                        <!-- Category Icon -->
-                        <a 
-                            :href="getCategoryUrl(category)"
-                            class="group flex items-center justify-center p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-[#e85805] transition-colors"
-                            :title="category.name"
-                            :class="{ 'bg-orange-50 text-[#e85805]': isActive(category) }"
-                        >
-                            <!-- Dynamic FontAwesome category icons based on category name -->
-                            <i :class="getCategoryIcon(category)" class="text-lg"></i>
-                            
-                            <!-- Active indicator dot -->
-                            <span v-if="isActive(category)" 
-                                  class="absolute -top-1 -right-1 w-2 h-2 bg-[#e85805] rounded-full">
-                            </span>
-                        </a>
-                        
-                        <!-- Hover Dropdown for Subcategories -->
-                        <div v-if="category.children && category.children.length > 0" 
-                             class="dropdown-menu absolute left-full top-0 ml-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 transform translate-x-0 opacity-0 scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100 min-w-[200px]"
-                             style="pointer-events: none;"
-                             @mouseenter="$el.style.pointerEvents = 'auto'"
-                             @mouseleave="$el.style.pointerEvents = 'none'">
-                            
-                            <!-- Dropdown Header -->
-                            <div class="px-3 py-2 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-orange-100">
-                                <h4 class="font-semibold text-[#e85805] text-sm" v-text="category.name"></h4>
-                            </div>
-                            
-                            <!-- Subcategories List -->
-                            <div class="py-1 max-h-64 overflow-y-auto">
-                                <a 
-                                    v-for="child in category.children" 
-                                    :key="child.id"
-                                    :href="getCategoryUrl(child)"
-                                    class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-[#e85805] transition-colors"
-                                >
-                                    <span v-text="child.name"></span>
-                                </a>
-                                
-                                <!-- View All Link -->
-                                <a 
-                                    :href="getCategoryUrl(category)"
-                                    class="flex items-center px-3 py-2 text-sm text-[#e85805] hover:bg-orange-50 font-medium transition-colors"
-                                >
-                                    <span>View All</span>
-                                    <i class="fas fa-chevron-right ml-1 text-xs"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
-
-<script>
-    app.component('v-category-sidebar', {
-        template: '#v-category-sidebar-template',
-
-        data() {
-            return {
-                isLoading: false,
-                categories: [],
-                mainCategories: [], // Only top-level categories for sidebar
-            }
-        },
-
-        mounted() {
-            this.getCategories();
-        },
-
-        methods: {
-            getCategories() {
-                this.isLoading = true;
-
-                this.$axios.get("{{ route('shop.api.categories.tree') }}")
-                    .then(response => {
-                        this.categories = response.data.data;
-                        
-                        // Filter only main categories (parent categories) for sidebar
-                        // Limit to first 8 main categories to keep sidebar compact
-                        this.mainCategories = this.categories
-                            .filter(category => category.parent_id === null || !category.parent_id)
-                            .slice(0, 8);
-                        
-                        // Process categories to ensure they have proper URLs
-                        this.mainCategories = this.mainCategories.map(category => {
-                            // Construct proper category URL if not available
-                            if (!category.url || category.url === '#') {
-                                category.url = this.buildCategoryUrl(category);
-                            }
-                            
-                            // Process children URLs too
-                            if (category.children && category.children.length > 0) {
-                                category.children = category.children.map(child => {
-                                    if (!child.url || child.url === '#') {
-                                        child.url = this.buildCategoryUrl(child);
-                                    }
-                                    return child;
-                                });
-                            }
-                            
-                            return category;
-                        });
-                            
-                        this.isLoading = false;
-                        
-                        console.log('Loaded main categories:', this.mainCategories.map(c => ({
-                            name: c.name, 
-                            slug: c.slug, 
-                            url: c.url,
-                            id: c.id
-                        })));
-                    })
-                    .catch(error => {
-                        console.error('Error loading categories:', error);
-                        this.isLoading = false;
-                    });
-            },
-
-            buildCategoryUrl(category) {
-                // Build category URL based on available data
-                const baseUrl = window.location.origin;
-                
-                if (category.slug) {
-                    // Try different URL patterns that might work with Bagisto
-                    return `${baseUrl}/categories/${category.slug}`;
-                } else if (category.id) {
-                    return `{{ route('shop.home.index') }}?category_id=${category.id}`;
-                }
-                
-                return '{{ route('shop.home.index') }}';
-            },
-
-            isActive(category) {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('category') === category.slug;
-            },
-
-            getCategoryIcon(category) {
-                const name = category.name.toLowerCase();
-                const slug = category.slug ? category.slug.toLowerCase() : '';
-                const description = category.description ? category.description.toLowerCase() : '';
-                
-                // Combine all text for better matching
-                const searchText = `${name} ${slug} ${description}`;
-                
-                // Electronics & Technology
-                if (this.matchesAny(searchText, ['electronic', 'tech', 'computer', 'mobile', 'phone', 'gadget', 'laptop', 'tablet', 'smart', 'digital', 'device'])) {
-                    return 'fas fa-laptop';
-                }
-                // Clothing & Fashion
-                else if (this.matchesAny(searchText, ['cloth', 'fashion', 'apparel', 'wear', 'dress', 'shirt', 'pant', 'jean', 'style', 'outfit', 'garment'])) {
-                    return 'fas fa-tshirt';
-                }
-                // Books & Education
-                else if (this.matchesAny(searchText, ['book', 'education', 'learn', 'study', 'literature', 'novel', 'magazine', 'academic', 'school'])) {
-                    return 'fas fa-book';
-                }
-                // Food & Beverages
-                else if (this.matchesAny(searchText, ['food', 'drink', 'beverage', 'restaurant', 'cafe', 'grocery', 'snack', 'meal', 'kitchen', 'cooking'])) {
-                    return 'fas fa-utensils';
-                }
-                // Sports & Fitness
-                else if (this.matchesAny(searchText, ['sport', 'fitness', 'gym', 'exercise', 'outdoor', 'athletic', 'game', 'ball', 'run', 'workout'])) {
-                    return 'fas fa-dumbbell';
-                }
-                // Health & Beauty
-                else if (this.matchesAny(searchText, ['health', 'beauty', 'cosmetic', 'care', 'medical', 'wellness', 'skincare', 'makeup', 'personal'])) {
-                    return 'fas fa-heart';
-                }
-                // Home & Garden
-                else if (this.matchesAny(searchText, ['home', 'garden', 'furniture', 'decor', 'house', 'living', 'kitchen', 'bedroom', 'bathroom'])) {
-                    return 'fas fa-home';
-                }
-                // Automotive
-                else if (this.matchesAny(searchText, ['car', 'auto', 'vehicle', 'motor', 'bike', 'motorcycle', 'truck', 'transport', 'wheel'])) {
-                    return 'fas fa-car';
-                }
-                // Toys & Games
-                else if (this.matchesAny(searchText, ['toy', 'game', 'play', 'kid', 'children', 'baby', 'child', 'fun', 'entertainment'])) {
-                    return 'fas fa-gamepad';
-                }
-                // Jewelry & Accessories
-                else if (this.matchesAny(searchText, ['jewelry', 'jewellery', 'watch', 'accessory', 'ring', 'necklace', 'bracelet', 'earring'])) {
-                    return 'fas fa-gem';
-                }
-                // Music & Entertainment
-                else if (this.matchesAny(searchText, ['music', 'entertainment', 'audio', 'sound', 'instrument', 'headphone', 'speaker', 'media'])) {
-                    return 'fas fa-music';
-                }
-                // Travel & Luggage
-                else if (this.matchesAny(searchText, ['travel', 'luggage', 'bag', 'vacation', 'trip', 'suitcase', 'backpack', 'journey'])) {
-                    return 'fas fa-suitcase';
-                }
-                // Pet Supplies
-                else if (this.matchesAny(searchText, ['pet', 'animal', 'dog', 'cat', 'bird', 'fish', 'puppy', 'kitten'])) {
-                    return 'fas fa-paw';
-                }
-                // Office & Business
-                else if (this.matchesAny(searchText, ['office', 'business', 'work', 'professional', 'stationery', 'desk', 'corporate'])) {
-                    return 'fas fa-briefcase';
-                }
-                // Tools & Hardware
-                else if (this.matchesAny(searchText, ['tool', 'hardware', 'repair', 'construction', 'build', 'diy', 'equipment'])) {
-                    return 'fas fa-tools';
-                }
-                // Art & Craft
-                else if (this.matchesAny(searchText, ['art', 'craft', 'paint', 'draw', 'creative', 'design', 'handmade'])) {
-                    return 'fas fa-palette';
-                }
-                // Default category icon
-                else {
-                    return 'fas fa-th-large';
-                }
-            },
-
-            matchesAny(text, keywords) {
-                return keywords.some(keyword => text.includes(keyword));
-            },
-
-            getCategoryUrl(category) {
-                // First try to use the category URL if available
-                if (category.url && category.url !== '#' && category.url.length > 1) {
-                    return category.url;
-                }
-                
-                // Fallback to constructing URL with slug
-                if (category.slug) {
-                    // Try using Laravel route helper if available
-                    try {
-                        return `{{ route('shop.search.index') }}?category=${encodeURIComponent(category.slug)}`;
-                    } catch (e) {
-                        // Fallback to manual URL construction
-                        return `/categories/${encodeURIComponent(category.slug)}`;
-                    }
-                }
-                
-                // Final fallback to home with category filter
-                return `{{ route('shop.home.index') }}${category.id ? '?category_id=' + category.id : ''}`;
-            },
-
-            getCategoryEmoji(category) {
-                const name = category.name.toLowerCase();
-                
-                // Electronics & Technology
-                if (name.includes('electronic') || name.includes('tech') || name.includes('computer') || name.includes('mobile') || name.includes('gadget')) {
-                    return '💻';
-                }
-                // Clothing & Fashion
-                else if (name.includes('cloth') || name.includes('fashion') || name.includes('apparel') || name.includes('wear') || name.includes('dress')) {
-                    return '👕';
-                }
-                // Books & Education
-                else if (name.includes('book') || name.includes('education') || name.includes('learn') || name.includes('study')) {
-                    return '📚';
-                }
-                // Food & Beverages
-                else if (name.includes('food') || name.includes('drink') || name.includes('beverage') || name.includes('restaurant') || name.includes('cafe')) {
-                    return '🍽️';
-                }
-                // Sports & Fitness
-                else if (name.includes('sport') || name.includes('fitness') || name.includes('gym') || name.includes('exercise') || name.includes('outdoor')) {
-                    return '🏋️';
-                }
-                // Health & Beauty
-                else if (name.includes('health') || name.includes('beauty') || name.includes('cosmetic') || name.includes('care') || name.includes('medical')) {
-                    return '💄';
-                }
-                // Home & Garden
-                else if (name.includes('home') || name.includes('garden') || name.includes('furniture') || name.includes('decor') || name.includes('house')) {
-                    return '🏠';
-                }
-                // Automotive
-                else if (name.includes('car') || name.includes('auto') || name.includes('vehicle') || name.includes('motor') || name.includes('bike')) {
-                    return '🚗';
-                }
-                // Toys & Games
-                else if (name.includes('toy') || name.includes('game') || name.includes('play') || name.includes('kid') || name.includes('children')) {
-                    return '🎮';
-                }
-                // Jewelry & Accessories
-                else if (name.includes('jewelry') || name.includes('jewellery') || name.includes('watch') || name.includes('accessory') || name.includes('ring')) {
-                    return '💎';
-                }
-                // Music & Entertainment
-                else if (name.includes('music') || name.includes('entertainment') || name.includes('audio') || name.includes('sound') || name.includes('instrument')) {
-                    return '🎵';
-                }
-                // Travel & Luggage
-                else if (name.includes('travel') || name.includes('luggage') || name.includes('bag') || name.includes('vacation') || name.includes('trip')) {
-                    return '🧳';
-                }
-                // Pet Supplies
-                else if (name.includes('pet') || name.includes('animal') || name.includes('dog') || name.includes('cat') || name.includes('bird')) {
-                    return '🐾';
-                }
-                // Office & Business
-                else if (name.includes('office') || name.includes('business') || name.includes('work') || name.includes('professional') || name.includes('stationery')) {
-                    return '💼';
-                }
-                // Default category icon
-                else {
-                    return '📦';
-                }
-            }
-        }
-    });
-</script>
 @endPushOnce
