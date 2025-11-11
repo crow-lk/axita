@@ -18,7 +18,7 @@
 <!-- Desktop Sidebar + Mobile Overlay -->
 <div id="category-sidebar-wrapper">
     <!-- Desktop Sidebar (Always Visible) -->
-    <div class="category-sidebar hidden md:block fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 shadow-lg z-30 transition-all duration-300 hover:w-80 group">
+    <div class="category-sidebar hidden md:block fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 shadow-lg transition-all duration-300 hover:w-80 group" style="z-index: 9999 !important;">
         <v-category-sidebar></v-category-sidebar>
         
         <!-- Fallback content (visible if Vue component fails) -->
@@ -1117,9 +1117,10 @@
                 inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
             
             height: 100vh !important;
-            z-index: 35 !important;
+            z-index: 9999 !important;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            position: relative !important;
+            position: fixed !important;
+            top: 0 !important;
         }
 
         /* Content overlay for sidebar focus effect */
@@ -1128,12 +1129,12 @@
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
             background-color: rgba(0, 0, 0, 0.4) !important;
-            z-index: 25 !important;
+            z-index: 9998 !important;
         }
 
-        /* Ensure sidebar has higher z-index than overlay */
+        /* Ensure sidebar has highest z-index above all headers */
         .category-sidebar {
-            z-index: 35 !important;
+            z-index: 9999 !important;
         }
 
         /* Enhanced hover effect */
@@ -1282,9 +1283,27 @@
             z-index: 2;
         }
 
-        /* Ensure header stays above sidebar */
-        header, .header, nav {
-            z-index: 50 !important;
+        /* Ensure header stays below sidebar */
+        header, .header, nav, .navbar, .top-header, .secondary-header, .navigation {
+            z-index: 9990 !important;
+        }
+
+        /* Ensure main content has proper left margin to accommodate sidebar */
+        @media (min-width: 769px) {
+            body {
+                padding-left: 64px !important; /* 4rem for 16px sidebar width */
+            }
+            
+            /* Adjust main content containers */
+            .main-content, 
+            .container, 
+            .content-wrapper,
+            main,
+            #main,
+            .page-content {
+                margin-left: 0 !important; /* Reset margin since body has padding */
+                max-width: none !important;
+            }
         }
 
         /* Mobile category toggle top bar */
@@ -1554,17 +1573,12 @@
 
         /* Responsive adjustments for product listing pages */
         @media (min-width: 769px) {
-            /* Adjust main content margin when sidebar is present - more conservative */
-            #main-content {
-                margin-left: 4rem !important; /* Account for 16px (4rem) sidebar */
-                max-width: calc(100% - 4rem) !important;
-                transition: margin-left 0.3s ease;
-            }
+            /* Remove the main content margin adjustment since we're using body padding */
         }
 
-        /* Ensure proper z-indexing */
+        /* Ensure proper z-indexing - sidebar above all headers */
         .category-sidebar {
-            z-index: 40;
+            z-index: 9999 !important;
         }
 
         /* Better mobile touch targets */
