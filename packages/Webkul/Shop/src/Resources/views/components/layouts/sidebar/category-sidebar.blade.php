@@ -1,5 +1,8 @@
 <!-- Enhanced Category Sidebar Component -->
 
+<!-- Content Overlay for Sidebar Focus Effect -->
+<div id="sidebar-content-overlay" class="hidden md:block fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300" style="z-index: 25;"></div>
+
 <!-- Mobile Category Toggle Button (Top Bar) -->
 <div class="category-mobile-toggle md:hidden fixed top-20 left-0 right-0 bg-white border-b border-gray-200 z-50 px-4 py-3">
     <button 
@@ -25,7 +28,7 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-th-large text-white text-sm"></i>
                 </div>
-                <span class="ml-3 font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                <span class="ml-3 text-sm font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                     All Categories
                 </span>
             </div>
@@ -33,38 +36,62 @@
             <!-- Categories List - Reduced spacing -->
             <div class="flex-1 overflow-y-auto px-2 group-hover:px-4 transition-all duration-300">
                 <div class="space-y-0.5">
-                    <!-- Sample Categories -->
+                    <!-- Database Categories -->
                     <div class="relative">
                         <a href="/categories/laptops" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                     <i class="fas fa-laptop text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
                                 </div>
-                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                                    Laptops & Computers
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Laptops
                                 </span>
                             </div>
                         </a>
                     </div>
                     <div class="relative">
-                        <a href="/categories/accessories" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <a href="/categories/laptop-parts" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-cog text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Laptop Parts
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/laptop-accessories" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                     <i class="fas fa-shopping-bag text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
                                 </div>
-                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                                    Accessories
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Laptop Accessories
                                 </span>
                             </div>
                         </a>
                     </div>
                     <div class="relative">
-                        <a href="/categories/monitors" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <a href="/categories/computer-components" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-microchip text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Computer Components
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/monitors-displays" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                     <i class="fas fa-tv text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
                                 </div>
-                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                                     Monitors & Displays
                                 </span>
                             </div>
@@ -76,8 +103,56 @@
                                 <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                     <i class="fas fa-wifi text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
                                 </div>
-                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                                     Networking
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/printers-scanners" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-print text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Printers & Scanners
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/peripherals" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-mouse text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Peripherals
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/software" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-code text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Software
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <a href="/categories/mobile" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                    <i class="fas fa-mobile-alt text-lg text-center" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
+                                </div>
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                    Mobile
                                 </span>
                             </div>
                         </a>
@@ -125,7 +200,7 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-th-large text-white text-sm"></i>
                 </div>
-                <span class="ml-3 font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                <span class="ml-3 text-sm font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                     All Categories
                 </span>
             </div>
@@ -160,7 +235,7 @@
                                 <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
                                     <i :class="category.icon" class="text-lg" :class="category.isActive ? 'text-orange-600' : ''"></i>
                                 </div>
-                                <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap" v-text="category.name">
+                                <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap" v-text="category.name">
                                 </span>
                             </div>
                             <div 
@@ -183,7 +258,7 @@
                                 v-for="(subcategory, subIndex) in category.subcategories" 
                                 :key="subIndex"
                                 :href="subcategory.url"
-                                class="block px-4 py-2 text-sm rounded-lg transition-colors duration-200"
+                                class="block px-4 py-2 text-xs rounded-lg transition-colors duration-200"
                                 :class="subcategory.isActive ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:text-orange-600 hover:bg-orange-25'"
                                 v-text="subcategory.name"
                             >
@@ -363,7 +438,44 @@
 
             // Initialize mobile sidebar
             initMobileSidebar();
+            
+            // Initialize sidebar hover overlay effect
+            initSidebarOverlay();
         });
+
+        // Sidebar overlay effect for desktop
+        function initSidebarOverlay() {
+            const sidebar = document.querySelector('.category-sidebar');
+            const overlay = document.getElementById('sidebar-content-overlay');
+            
+            if (!sidebar || !overlay) {
+                console.log('Sidebar overlay: Elements not found', { sidebar: !!sidebar, overlay: !!overlay });
+                return;
+            }
+            
+            console.log('Sidebar overlay: Initialized successfully');
+            
+            // Show overlay when sidebar is hovered
+            sidebar.addEventListener('mouseenter', function() {
+                console.log('Sidebar overlay: Mouse enter - showing overlay');
+                overlay.style.opacity = '0.4';
+                overlay.style.pointerEvents = 'auto';
+            });
+            
+            // Hide overlay when sidebar hover ends
+            sidebar.addEventListener('mouseleave', function() {
+                console.log('Sidebar overlay: Mouse leave - hiding overlay');
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+            });
+            
+            // Also hide overlay if user clicks on it
+            overlay.addEventListener('click', function() {
+                console.log('Sidebar overlay: Click dismiss - hiding overlay');
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+            });
+        }
 
         // Wait for Vue app to be ready before registering components
         window.addEventListener('load', function() {
@@ -453,47 +565,47 @@
                             // Combine all text for better matching
                             const searchText = `${name} ${slug} ${description}`;
                             
-                            // Electronics & Technology
-                            if (this.matchesAny(searchText, ['laptop', 'computer', 'tech', 'electronic', 'mobile', 'phone', 'gadget', 'tablet', 'smart', 'digital', 'device'])) {
+                            // Exact category matches for your database categories
+                            if (name === 'laptops' || this.matchesAny(searchText, ['laptop', 'notebook'])) {
                                 return 'fas fa-laptop';
                             }
-                            // Accessories
-                            else if (this.matchesAny(searchText, ['accessor', 'bag', 'case', 'stand', 'cable', 'charger', 'adapter', 'peripheral'])) {
+                            // Laptop Parts
+                            else if (name === 'laptop parts' || this.matchesAny(searchText, ['laptop parts', 'laptop part', 'parts'])) {
+                                return 'fas fa-cog';
+                            }
+                            // Laptop Accessories
+                            else if (name === 'laptop accessories' || this.matchesAny(searchText, ['laptop accessories', 'laptop accessory'])) {
                                 return 'fas fa-shopping-bag';
                             }
-                            // Components & Hardware
-                            else if (this.matchesAny(searchText, ['component', 'hardware', 'ssd', 'hdd', 'ram', 'memory', 'motherboard', 'graphics', 'gpu', 'cpu', 'processor', 'power', 'supply'])) {
+                            // Computer Components
+                            else if (name === 'computer components' || this.matchesAny(searchText, ['computer components', 'component', 'hardware', 'ssd', 'hdd', 'ram', 'memory', 'motherboard', 'graphics', 'gpu', 'cpu', 'processor'])) {
                                 return 'fas fa-microchip';
                             }
                             // Monitors & Displays
-                            else if (this.matchesAny(searchText, ['monitor', 'display', 'screen', 'tv', 'led', 'lcd', 'gaming monitor'])) {
+                            else if (name === 'monitors & displays' || this.matchesAny(searchText, ['monitor', 'display', 'screen', 'tv', 'led', 'lcd'])) {
                                 return 'fas fa-tv';
                             }
                             // Networking
-                            else if (this.matchesAny(searchText, ['network', 'router', 'wifi', 'ethernet', 'cable', 'internet', 'modem'])) {
+                            else if (name === 'networking' || this.matchesAny(searchText, ['network', 'router', 'wifi', 'ethernet', 'cable', 'internet', 'modem'])) {
                                 return 'fas fa-wifi';
                             }
-                            // Printers & Office
-                            else if (this.matchesAny(searchText, ['printer', 'scanner', 'print', 'office', 'laser', 'ink'])) {
+                            // Printers & Scanners
+                            else if (name === 'printers & scanners' || this.matchesAny(searchText, ['printer', 'scanner', 'print', 'scan', 'laser', 'ink'])) {
                                 return 'fas fa-print';
                             }
-                            // Peripherals & Input
-                            else if (this.matchesAny(searchText, ['mouse', 'keyboard', 'webcam', 'speaker', 'headphone', 'microphone', 'usb', 'hub'])) {
+                            // Peripherals
+                            else if (name === 'peripherals' || this.matchesAny(searchText, ['peripheral', 'mouse', 'keyboard', 'webcam', 'speaker', 'headphone', 'microphone', 'usb', 'hub'])) {
                                 return 'fas fa-mouse';
                             }
                             // Software
-                            else if (this.matchesAny(searchText, ['software', 'program', 'app', 'operating', 'system', 'antivirus', 'office'])) {
+                            else if (name === 'software' || this.matchesAny(searchText, ['software', 'program', 'app', 'operating', 'system', 'antivirus', 'office'])) {
                                 return 'fas fa-code';
                             }
-                            // Gaming
-                            else if (this.matchesAny(searchText, ['gaming', 'game', 'console', 'controller'])) {
-                                return 'fas fa-gamepad';
+                            // Mobile
+                            else if (name === 'mobile' || this.matchesAny(searchText, ['mobile', 'phone', 'smartphone', 'cell', 'tablet'])) {
+                                return 'fas fa-mobile-alt';
                             }
-                            // Storage
-                            else if (this.matchesAny(searchText, ['storage', 'drive', 'disk', 'backup'])) {
-                                return 'fas fa-hdd';
-                            }
-                            // Default category icon
+                            // Default category icon for any other categories
                             else {
                                 return 'fas fa-th-large';
                             }
@@ -640,29 +752,34 @@
                         },
 
                         getCategoryIcon(category) {
-                            // Same icon logic as desktop
+                            // Same icon logic as desktop version
                             const name = (category.name || '').toLowerCase();
                             const slug = (category.slug || '').toLowerCase();
                             const description = (category.description || '').toLowerCase();
                             
                             const searchText = `${name} ${slug} ${description}`;
                             
-                            if (this.matchesAny(searchText, ['laptop', 'computer', 'tech', 'electronic'])) {
+                            // Exact category matches for your database categories
+                            if (name === 'laptops' || this.matchesAny(searchText, ['laptop', 'notebook'])) {
                                 return 'fas fa-laptop';
-                            } else if (this.matchesAny(searchText, ['accessor', 'bag', 'case', 'stand'])) {
+                            } else if (name === 'laptop parts' || this.matchesAny(searchText, ['laptop parts', 'laptop part', 'parts'])) {
+                                return 'fas fa-cog';
+                            } else if (name === 'laptop accessories' || this.matchesAny(searchText, ['laptop accessories', 'laptop accessory'])) {
                                 return 'fas fa-shopping-bag';
-                            } else if (this.matchesAny(searchText, ['component', 'hardware', 'ssd', 'ram'])) {
+                            } else if (name === 'computer components' || this.matchesAny(searchText, ['computer components', 'component', 'hardware'])) {
                                 return 'fas fa-microchip';
-                            } else if (this.matchesAny(searchText, ['monitor', 'display', 'screen', 'tv'])) {
+                            } else if (name === 'monitors & displays' || this.matchesAny(searchText, ['monitor', 'display', 'screen', 'tv'])) {
                                 return 'fas fa-tv';
-                            } else if (this.matchesAny(searchText, ['network', 'router', 'wifi'])) {
+                            } else if (name === 'networking' || this.matchesAny(searchText, ['network', 'router', 'wifi'])) {
                                 return 'fas fa-wifi';
-                            } else if (this.matchesAny(searchText, ['printer', 'scanner', 'print'])) {
+                            } else if (name === 'printers & scanners' || this.matchesAny(searchText, ['printer', 'scanner', 'print'])) {
                                 return 'fas fa-print';
-                            } else if (this.matchesAny(searchText, ['mouse', 'keyboard', 'webcam', 'speaker'])) {
+                            } else if (name === 'peripherals' || this.matchesAny(searchText, ['peripheral', 'mouse', 'keyboard', 'speaker'])) {
                                 return 'fas fa-mouse';
-                            } else if (this.matchesAny(searchText, ['software', 'program', 'app'])) {
+                            } else if (name === 'software' || this.matchesAny(searchText, ['software', 'program', 'app'])) {
                                 return 'fas fa-code';
+                            } else if (name === 'mobile' || this.matchesAny(searchText, ['mobile', 'phone', 'smartphone'])) {
+                                return 'fas fa-mobile-alt';
                             } else {
                                 return 'fas fa-th-large';
                             }
@@ -806,54 +923,126 @@
         }
 
         function populateHardcodedCategories() {
-            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-1');
+            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-0\\.5');
             if (!fallbackContent) return;
 
             fallbackContent.innerHTML = `
                 <div class="relative">
-                    <a href="/categories/laptops" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                    <a href="/categories/laptops" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                 <i class="fas fa-laptop text-lg"></i>
                             </div>
-                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                                Laptops & Computers
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Laptops
                             </span>
                         </div>
                     </a>
                 </div>
                 <div class="relative">
-                    <a href="/categories/accessories" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                    <a href="/categories/laptop-parts" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                <i class="fas fa-cog text-lg"></i>
+                            </div>
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Laptop Parts
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/laptop-accessories" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                 <i class="fas fa-shopping-bag text-lg"></i>
                             </div>
-                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                                Accessories
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Laptop Accessories
                             </span>
                         </div>
                     </a>
                 </div>
                 <div class="relative">
-                    <a href="/categories/monitors" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                    <a href="/categories/computer-components" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                <i class="fas fa-microchip text-lg"></i>
+                            </div>
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Computer Components
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/monitors-displays" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                 <i class="fas fa-tv text-lg"></i>
                             </div>
-                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                                 Monitors & Displays
                             </span>
                         </div>
                     </a>
                 </div>
                 <div class="relative">
-                    <a href="/categories/networking" class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                    <a href="/categories/networking" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
                                 <i class="fas fa-wifi text-lg"></i>
                             </div>
-                            <span class="ml-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                                 Networking
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/printers-scanners" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                <i class="fas fa-print text-lg"></i>
+                            </div>
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Printers & Scanners
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/peripherals" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                <i class="fas fa-mouse text-lg"></i>
+                            </div>
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Peripherals
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/software" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                <i class="fas fa-code text-lg"></i>
+                            </div>
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Software
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="relative">
+                    <a href="/categories/mobile" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-lg">
+                                <i class="fas fa-mobile-alt text-lg"></i>
+                            </div>
+                            <span class="ml-3 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                Mobile
                             </span>
                         </div>
                     </a>
@@ -866,12 +1055,23 @@
             const slug = (category.slug || '').toLowerCase();
             const searchText = `${name} ${slug}`;
             
-            if (searchText.includes('laptop') || searchText.includes('computer')) return 'fas fa-laptop';
+            // Exact matches for your database categories
+            if (name === 'laptops' || searchText.includes('laptop')) return 'fas fa-laptop';
+            if (name === 'laptop parts' || searchText.includes('laptop parts')) return 'fas fa-cog';
+            if (name === 'laptop accessories' || searchText.includes('laptop accessories')) return 'fas fa-shopping-bag';
+            if (name === 'computer components' || searchText.includes('computer components')) return 'fas fa-microchip';
+            if (name === 'monitors & displays' || searchText.includes('monitor') || searchText.includes('display')) return 'fas fa-tv';
+            if (name === 'networking' || searchText.includes('network')) return 'fas fa-wifi';
+            if (name === 'printers & scanners' || searchText.includes('printer') || searchText.includes('scanner')) return 'fas fa-print';
+            if (name === 'peripherals' || searchText.includes('peripheral')) return 'fas fa-mouse';
+            if (name === 'software' || searchText.includes('software')) return 'fas fa-code';
+            if (name === 'mobile' || searchText.includes('mobile')) return 'fas fa-mobile-alt';
+            
+            // Fallback patterns
             if (searchText.includes('accessor') || searchText.includes('bag')) return 'fas fa-shopping-bag';
-            if (searchText.includes('monitor') || searchText.includes('display')) return 'fas fa-tv';
-            if (searchText.includes('network') || searchText.includes('wifi')) return 'fas fa-wifi';
-            if (searchText.includes('printer')) return 'fas fa-print';
+            if (searchText.includes('component') || searchText.includes('hardware')) return 'fas fa-microchip';
             if (searchText.includes('mouse') || searchText.includes('keyboard')) return 'fas fa-mouse';
+            
             return 'fas fa-th-large';
         }
 
@@ -917,9 +1117,23 @@
                 inset 1px 0 0 rgba(255, 255, 255, 0.6) !important;
             
             height: 100vh !important;
-            z-index: 30 !important;
+            z-index: 35 !important;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
             position: relative !important;
+        }
+
+        /* Content overlay for sidebar focus effect */
+        #sidebar-content-overlay {
+            transition: opacity 0.3s ease-in-out !important;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            z-index: 25 !important;
+        }
+
+        /* Ensure sidebar has higher z-index than overlay */
+        .category-sidebar {
+            z-index: 35 !important;
         }
 
         /* Enhanced hover effect */
