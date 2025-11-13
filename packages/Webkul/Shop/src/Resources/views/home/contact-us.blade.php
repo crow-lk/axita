@@ -3,7 +3,7 @@
         Contact Us - Axita Computers
     </x-slot>
 
-    <div class="mx-auto max-w-6xl space-y-10 px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-[1350px] space-y-10 px-4 py-10 sm:px-6 lg:px-8">
         <!-- Hero -->
         <section class="rounded-3xl bg-slate-900 p-8 text-white shadow-xl sm:p-10 lg:p-12">
             <div class="flex flex-col gap-8 lg:flex-row lg:items-center">
@@ -40,12 +40,12 @@
                 </div>
 
                 <div class="flex flex-1 flex-wrap gap-4">
-                    @php
-                        $contactStats = [
-                            ['label' => 'Store hours', 'value' => 'Mon - Sat · 9AM to 6PM'],
-                            ['label' => 'Service queue', 'value' => 'Walk-in & courier pickups'],
-                            ['label' => 'Response time', 'value' => '< 60 mins'],
-                        ];
+        @php
+            $contactStats = [
+                ['label' => 'Store hours', 'value' => 'Mon–Sat · 9AM–7PM · Sun · 9AM–6PM'],
+                ['label' => 'Service queue', 'value' => 'Walk-in & courier pickups'],
+                ['label' => 'Response time', 'value' => '< 60 mins'],
+            ];
                     @endphp
 
                     @foreach ($contactStats as $stat)
@@ -61,20 +61,20 @@
         <!-- Contact channels -->
         @php
             $channels = [
-                [
-                    'title' => 'Call the service desk',
-                    'detail' => '+94 77 128 4323',
-                    'helper' => 'Mon – Sat, 9:00 AM to 6:00 PM',
-                    'cta' => 'Call now',
-                    'href' => 'tel:+94771284323',
-                    'color' => 'from-green-500 to-emerald-600',
+            [
+                'title' => 'Call the service desk',
+                'detail' => '+94 77 128 4323',
+                'helper' => 'Mon – Sat, 9:00 AM to 7:00 PM · Sun till 6:00 PM',
+                'cta' => 'Call now',
+                'href' => 'tel:+94771284323',
+                'color' => 'from-green-500 to-emerald-600',
                 ],
                 [
                     'title' => 'Email support & billing',
-                    'detail' => 'info@axitacomputers.com',
+                    'detail' => 'info@axita.lk',
                     'helper' => 'We reply within 24 hours with a ticket ID',
                     'cta' => 'Send email',
-                    'href' => 'mailto:info@axitacomputers.com',
+                    'href' => 'mailto:info@axita.lk',
                     'color' => 'from-blue-500 to-indigo-600',
                 ],
                 [
@@ -231,7 +231,7 @@
                         </div>
                         <div>
                             <p class="font-semibold text-slate-900">Email</p>
-                            <p>info@axitacomputers.com</p>
+                            <p>info@axita.lk</p>
                         </div>
                         <div>
                             <p class="font-semibold text-slate-900">Store & lab</p>
@@ -257,6 +257,8 @@
                         <div class="rounded-2xl border border-white bg-white p-4 shadow">
                             <p class="font-semibold text-slate-900">Store & lab hours</p>
                             <p>Monday – Saturday</p>
+                            <p>9:00 AM – 7:00 PM</p>
+                            <p class="mt-2">Sunday</p>
                             <p>9:00 AM – 6:00 PM</p>
                             <p class="text-xs text-slate-500">Closed on Poya days</p>
                         </div>
@@ -294,7 +296,7 @@
             <p class="text-xs font-semibold uppercase tracking-[0.5em] text-orange-500">Still unsure?</p>
             <h2 class="mt-4 text-3xl font-bold text-slate-900">Send us photos or invoices and we’ll recommend the next step</h2>
             <p class="mt-3 text-base text-slate-600">
-                Attach files to info@axitacomputers.com or WhatsApp +94 77 128 4323. We will review and share a quote or troubleshooting plan.
+                Attach files to info@axita.lk or WhatsApp +94 77 128 4323. We will review and share a quote or troubleshooting plan.
             </p>
             <div class="mt-6 flex flex-wrap justify-center gap-4">
                 <a
@@ -305,13 +307,14 @@
                     Use the contact form
                 </a>
                 <a
-                    href="mailto:info@axitacomputers.com?subject=Axita%20Support%20Request"
+                    href="mailto:info@axita.lk?subject=Axita%20Support%20Request"
                     class="inline-flex items-center rounded-full border border-orange-200 px-6 py-3 font-semibold text-orange-600 transition hover:bg-orange-50"
                 >
                     Email our team directly
                 </a>
             </div>
         </section>
+        </div>
     </div>
 
     @push('scripts')

@@ -347,7 +347,10 @@
             <!-- Category Sidebar -->
             <x-shop::layouts.sidebar.category-sidebar />
 
-            <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 md:ml-8 xl:ml-0 xl:mr-0 transition-all duration-300" id="main-content">
+            <div
+                id="main-content"
+                class="w-full max-w-[1350px] mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300"
+            >
                 <!-- Page Content Blade Component -->
                 <main id="main" class="bg-white min-h-screen pt-16 md:pt-0">
                     {{ $slot }}
