@@ -349,7 +349,7 @@
 
             <div
                 id="main-content"
-                class="w-full max-w-[1350px] mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300"
+                class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300"
             >
                 <!-- Page Content Blade Component -->
                 <main id="main" class="bg-white min-h-screen pt-16 md:pt-0">

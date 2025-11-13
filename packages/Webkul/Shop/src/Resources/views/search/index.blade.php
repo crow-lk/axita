@@ -23,7 +23,7 @@
         {{ $title }}
     </x-slot>
 
-    <div class="mx-auto mt-16 lg:mt-24 w-full max-w-[1350px] px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto mt-16 lg:mt-24 w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
         @if (request()->has('image-search'))
             @include('shop::search.images.results')
         @endif
@@ -47,7 +47,7 @@
             type="text/x-template"
             id="v-search-template"
         >
-            <div class="mx-auto mt-12 w-full max-w-[1350px] px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto mt-12 w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col gap-4 md:mt-10">
                     <!-- Product Listing Filters -->
                     <div class="flex gap-4 flex-wrap mb-8">
