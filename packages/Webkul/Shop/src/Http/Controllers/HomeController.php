@@ -60,6 +60,36 @@ class HomeController extends Controller
     }
 
     /**
+     * Loads the payment methods page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function paymentMethods()
+    {
+        return view('shop::home.payment-methods');
+    }
+
+    /**
+     * Loads the about us page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function aboutUs()
+    {
+        return view('shop::home.about-us');
+    }
+
+    /**
+     * Loads the services page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function services()
+    {
+        return view('shop::home.services');
+    }
+
+    /**
      * Summary of store.
      *
      * @return \Illuminate\Http\RedirectResponse

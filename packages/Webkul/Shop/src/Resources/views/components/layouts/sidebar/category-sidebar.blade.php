@@ -1268,8 +1268,26 @@
                     max-width: calc(100vw - 128px) !important; /* Adjusted for reduced left margin */
                 }
             }
-                    padding-left: 2rem !important; /* lg:px-8 */
-                    padding-right: 2rem !important; /* lg:px-8 */
+            
+            /* Large screens - center content better */
+            @media (min-width: 1280px) {
+                #main-content {
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                    max-width: 1200px !important;
+                    padding-left: 2rem !important;
+                    padding-right: 2rem !important;
+                }
+            }
+            
+            /* Extra large screens - more centered approach */
+            @media (min-width: 1536px) {
+                #main-content {
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                    max-width: 1400px !important;
+                    padding-left: 3rem !important;
+                    padding-right: 3rem !important;
                 }
             }
         }

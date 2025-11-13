@@ -39,21 +39,36 @@
     </div>
 
     <nav class="ml-6 hidden items-center gap-6 text-sm font-medium text-zinc-600 lg:flex">
-        @php
-            $categories = app('Webkul\Category\Repositories\CategoryRepository')
-                ->getVisibleCategoryTree(core()->getCurrentChannel()->root_category_id);
-            $maxItems = 6; // Limit to 6 categories to fit nicely
-        @endphp
-
-        @foreach($categories->take($maxItems) as $category)
-            <a
-                href="{{ $category->url }}"
-                class="transition-colors duration-200 hover:text-[#e85805]"
-            >
-                {{ $category->name }}
-            </a>
-        @endforeach
-
+        <a
+            href="/services"
+            class="transition-colors duration-200 hover:text-[#e85805]"
+        >
+            Services
+        </a>
+        <a
+            href="{{ route('shop.search.index', ['query' => 'deals']) }}"
+            class="transition-colors duration-200 hover:text-[#e85805]"
+        >
+            Best Deals
+        </a>
+        <a
+            href="{{ route('shop.home.payment_methods') }}"
+            class="transition-colors duration-200 hover:text-[#e85805]"
+        >
+            Payment Methods
+        </a>
+        <a
+            href="{{ route('shop.home.about_us') }}"
+            class="transition-colors duration-200 hover:text-[#e85805]"
+        >
+            About Us
+        </a>
+        <a
+            href="{{ route('shop.home.contact_us') }}"
+            class="transition-colors duration-200 hover:text-[#e85805]"
+        >
+            Contact Us
+        </a>
     </nav>
 
     <!-- Right side intentionally omitted (icons are in top bar) -->

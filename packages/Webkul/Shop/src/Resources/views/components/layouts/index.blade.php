@@ -347,7 +347,7 @@
             <!-- Category Sidebar -->
             <x-shop::layouts.sidebar.category-sidebar />
 
-            <div class="max-w-[1400px] px-4 sm:px-6 lg:px-8 md:ml-8 md:mr-8 lg:mr-12 transition-all duration-300" id="main-content">
+            <div class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 md:ml-8 xl:ml-0 xl:mr-0 transition-all duration-300" id="main-content">
                 <!-- Page Content Blade Component -->
                 <main id="main" class="bg-white min-h-screen pt-16 md:pt-0">
                     {{ $slot }}
@@ -367,7 +367,7 @@
             @endif
 
             <!-- Floating Action Buttons -->
-            <div class="floating-action-buttons fixed right-1 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-center gap-4">
+            <div class="floating-action-buttons fixed right-1 top-1/2 transform -translate-y-1/2 z-50 flex-col items-center gap-4 hidden md:flex">
                 <!-- Contact Group -->
                 <div class="contact-group flex flex-col gap-3">
                     <!-- WhatsApp Button -->

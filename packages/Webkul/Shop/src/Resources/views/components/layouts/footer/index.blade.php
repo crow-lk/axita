@@ -35,7 +35,7 @@
                     <ul class="mt-4 space-y-2">
                         <li>
                             <a
-                                href="{{ route('shop.cms.page', 'about-us') }}"
+                                href="{{ route('shop.home.about_us') }}"
                                 class="transition-colors duration-200 hover:text-white"
                             >
                                 About Us

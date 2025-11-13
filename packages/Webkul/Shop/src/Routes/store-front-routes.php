@@ -39,6 +39,18 @@ Route::group(['middleware' => ['locale', 'theme', 'currency']], function () {
         ->name('shop.home.contact_us.send_mail')
         ->middleware('cacheResponse');
 
+    Route::get('payment-methods', [HomeController::class, 'paymentMethods'])
+        ->name('shop.home.payment_methods')
+        ->middleware('cacheResponse');
+
+    Route::get('services', [HomeController::class, 'services'])
+        ->name('shop.home.services')
+        ->middleware('cacheResponse');
+
+    Route::get('about-us', [HomeController::class, 'aboutUs'])
+        ->name('shop.home.about_us')
+        ->middleware('cacheResponse');
+
     /**
      * Store front search.
      */
