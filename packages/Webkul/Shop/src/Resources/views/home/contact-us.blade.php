@@ -3,7 +3,7 @@
         Contact Us - Axita Computers
     </x-slot>
 
-    <div class="mx-auto w-full max-w-[1400px] space-y-10 px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-[1400px] space-y-10 px-4 py-10 sm:px-6 lg:px-8 max-sm:px-2">
         <!-- Hero -->
         <section class="rounded-3xl bg-slate-900 p-8 text-white shadow-xl sm:p-10 lg:p-12">
             <div class="flex flex-col gap-8 lg:flex-row lg:items-center">

@@ -140,35 +140,34 @@
 
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
 
-                <div class="hidden w-full flex-col gap-1.5 rounded-lg border border-zinc-100 bg-white/80 p-2 text-[10px] text-gray-600 max-md:flex">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-1.5">
+                <!-- Compact payment summary (hidden on md+) -->
+                <div class="w-full flex flex-col gap-2 rounded-lg border border-zinc-100 bg-white/80 p-2 text-[11px] text-gray-700 max-md:flex max-md:text-[12px] max-md:p-2.5 max-md:gap-2 md:hidden">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
                             <img
                                 v-if="payzyLogo"
                                 :src="payzyLogo"
                                 alt="Payzy"
-                                class="h-4 w-auto max-w-[56px] object-contain"
+                                class="h-4 w-auto max-w-[48px] object-contain max-md:h-5 max-md:max-w-[40px]"
                             />
-                            <span v-else class="font-medium">Payzy (4x)</span>
-                            <span v-if="payzyLogo" class="font-medium text-[9px] text-gray-400">(4x)</span>
+                            <span v-else class="font-medium truncate">Payzy (4x)</span>
+                            <span v-if="payzyLogo" class="font-medium text-[10px] text-gray-400">(4x)</span>
                         </div>
-
-                        <span class="font-semibold text-gray-800">@{{ formatPrice(getPayzyInstallment()) }}</span>
+                        <span class="font-semibold text-gray-800 whitespace-nowrap">@{{ formatPrice(getPayzyInstallment()) }}</span>
                     </div>
 
-                    <div class="flex items-center justify-between gap-2 border-t border-zinc-100 pt-1">
-                        <div class="flex items-center gap-1.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-100 pt-1 mt-1">
+                        <div class="flex items-center gap-2 min-w-0">
                             <img
                                 v-if="kokoLogo"
                                 :src="kokoLogo"
                                 alt="KOKO"
-                                class="h-4 w-auto max-w-[56px] object-contain"
+                                class="h-4 w-auto max-w-[48px] object-contain max-md:h-5 max-md:max-w-[40px]"
                             />
-                            <span v-else class="font-medium">KOKO (3x)</span>
-                            <span v-if="kokoLogo" class="font-medium text-[9px] text-gray-400">(3x)</span>
+                            <span v-else class="font-medium truncate">KOKO (3x)</span>
+                            <span v-if="kokoLogo" class="font-medium text-[10px] text-gray-400">(3x)</span>
                         </div>
-
-                        <span class="font-semibold text-gray-800">@{{ formatPrice(getKokoInstallment()) }}</span>
+                        <span class="font-semibold text-gray-800 whitespace-nowrap">@{{ formatPrice(getKokoInstallment()) }}</span>
                     </div>
                 </div>
 
@@ -381,8 +380,8 @@
                     </div>
                 </div>
 
-                <!-- Needs to implement that in future -->
-                <div class="flex hidden gap-4">
+                <!-- Needs to implement that in future (kept hidden for now) -->
+                <div class="hidden gap-4">
                     <span class="block h-[30px] w-[30px] rounded-full bg-[#B5DCB4]">
                     </span>
 

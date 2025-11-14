@@ -21,9 +21,9 @@
                 </span>
             </div>
 
-            <!-- Categories List - Reduced spacing -->
+            <!-- Categories List - Increased spacing -->
             <div class="flex-1 overflow-y-auto px-2 group-hover:px-4 transition-all duration-300">
-                <div class="space-y-0.5">
+                <div class="space-y-3">
                     <!-- Database Categories -->
                     <div class="relative">
                         <a href="/categories/laptops" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 text-gray-700 hover:bg-orange-50">
@@ -197,14 +197,14 @@
             <div class="flex-1 overflow-y-auto px-2 group-hover:px-4 transition-all duration-300">
                 <!-- Loading State -->
                 <div v-if="isLoading" class="flex justify-center py-4">
-                    <div class="flex flex-col items-center space-y-2">
+                    <div class="flex flex-col items-center space-y-3">
                         <div class="h-6 w-6 animate-spin rounded-full border-2 border-orange-500 border-t-transparent"></div>
                         <span class="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">Loading...</span>
                     </div>
                 </div>
 
-                <!-- Categories - Reduced spacing -->
-                <div v-else class="space-y-0.5">
+                <!-- Categories - Increased spacing -->
+                <div v-else class="space-y-3">
                     <div 
                         v-for="(category, index) in mainCategories" 
                         :key="category.id"
@@ -304,14 +304,14 @@
         <div class="py-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="flex justify-center py-8">
-                <div class="flex flex-col items-center space-y-2">
+                <div class="flex flex-col items-center space-y-3">
                     <div class="h-6 w-6 animate-spin rounded-full border-2 border-orange-500 border-t-transparent"></div>
                     <span class="text-sm text-gray-500">Loading categories...</span>
                 </div>
             </div>
 
             <!-- Categories -->
-            <div v-else class="space-y-2">
+            <div v-else class="space-y-3">
                 <div 
                     v-for="(category, index) in mainCategories" 
                     :key="category.id"
@@ -831,7 +831,7 @@
         }
 
         function populateFallbackSidebar(categories) {
-            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-1');
+            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-3');
             if (!fallbackContent) return;
 
             // Clear existing content
@@ -867,7 +867,7 @@
         }
 
         function populateHardcodedCategories() {
-            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-0\\.5');
+            const fallbackContent = document.querySelector('.fallback-sidebar .space-y-3');
             if (!fallbackContent) return;
 
             fallbackContent.innerHTML = `

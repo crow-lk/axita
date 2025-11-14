@@ -2,7 +2,7 @@
 
 <!-- Top Bar -->
 <div class="full-bleed bg-gray-100 border-b border-gray-200">
-    <div class="mx-auto grid max-w-[1300px] grid-cols-3 items-center px-4 py-1.5 text-xs sm:px-6 sm:py-1 sm:text-sm">
+    <div class="mx-auto grid w-full max-w-[1400px] grid-cols-1 sm:grid-cols-3 items-center px-1 py-2 text-xs sm:px-6 sm:py-1 sm:text-sm lg:px-8">
         <!-- Left Column (empty to center the middle content) -->
         <div></div>
 
@@ -15,7 +15,7 @@
 
         <!-- Right Column: Social Icons + Phone (single line) -->
         <div class="flex items-center justify-end gap-3">
-            <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-3">
                 <a href="https://www.facebook.com/axitacomputers" class="text-gray-500 transition-all duration-300 hover:text-gray-800" aria-label="Facebook">
                     <i class="fab fa-facebook-f text-sm sm:text-base"></i>
                 </a>
@@ -34,7 +34,7 @@
 <!-- Main Header -->
 <div class="main-header bg-white w-full">
     <!-- Top Row: Logo, Search Bar, Contact -->
-    <div class="mx-auto flex w-full max-w-[1300px] items-center justify-between gap-6 px-4 py-1 sm:px-6">
+    <div class="mx-auto flex w-full flex-col md:flex-row items-center justify-center gap-3 md:gap-6 px-1 py-2 sm:px-6 lg:px-8">
         <!-- Left Section: Logo and Brand Info -->
         <div class="logo-section flex items-center gap-4 min-w-fit">
             <div class="text-left">
@@ -44,8 +44,8 @@
                 >
                     <img
                         src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                        width="160"
-                        height="35"
+                        width="140"
+                        height="32"
                         alt="{{ config('app.name') }}"
                     >
                 </a>
@@ -56,14 +56,14 @@
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.top.search_bar.before') !!}
 
         <!-- Center Section: Search Bar -->
-        <div class="flex-grow max-w-2xl mx-6">
+        <div class="w-full md:flex-grow md:max-w-2xl md:mx-6 mt-3 md:mt-0">
             <v-search-autocomplete></v-search-autocomplete>
         </div>
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.top.search_bar.after') !!}
 
-        <!-- Right Section: Compare, Wishlist, Cart, User -->
-        <div class="flex items-center gap-x-8 min-w-fit">
+    <!-- Right Section: Compare, Wishlist, Cart, User -->
+    <div class="hidden md:flex items-center gap-x-8 min-w-fit">
             <!-- Compare -->
             @if(core()->getConfigData('catalog.products.settings.compare_option'))
                 <a
@@ -196,6 +196,20 @@
                     </x-slot>
                 @endauth
             </x-shop::dropdown>
+        </div>
+        
+        <!-- Mobile Controls: show cart and menu icon -->
+        <div class="flex md:hidden items-center gap-4 mt-2 w-full justify-between">
+            <div class="flex items-center gap-3">
+                @if(core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
+                    @include('shop::checkout.cart.mini-cart')
+                @endif
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="#" class="p-2 rounded-md bg-white border border-zinc-200 shadow-sm" aria-label="Menu">
+                    <i class="fas fa-bars text-lg"></i>
+                </a>
+            </div>
         </div>
     </div>
 

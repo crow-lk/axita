@@ -280,6 +280,34 @@
                     font-size: 0.75rem !important;
                 }
             }
+            
+            /* Mobile: Remove margins/paddings for category sidebar only */
+            @media (max-width: 768px) {
+                /* Target the sidebar wrapper and its main sidebar elements */
+                #category-sidebar-wrapper,
+                #category-sidebar-wrapper * {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+
+                .category-sidebar,
+                .fallback-sidebar,
+                #mobile-category-sidebar {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    left: 0 !important;
+                    position: static !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    background: transparent !important;
+                }
+
+                /* Ensure main content uses full width on mobile */
+                #main-content {
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                }
+            }
 
             /* Desktop positioning - very close to edge */
             @media (min-width: 769px) {
@@ -307,6 +335,31 @@
             @media (min-width: 1400px) {
                 .floating-action-buttons {
                     right: 0.5rem;
+                }
+            }
+
+            /* Hide the category sidebar on Nest Hub (1024x600) devices.
+               Use max-width so wider screens (eg. 1440px) still show the sidebar. */
+            @media (max-width: 1024px) and (max-height: 600px) {
+                .hide-on-nesthub {
+                    display: none !important;
+                }
+
+                /* Ensure main content expands when sidebar hidden on Nest Hub */
+                #main-content {
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                }
+            }
+
+            /* Show sidebar only on very large screens (>=1400px) */
+            .show-on-1400 {
+                display: none !important;
+            }
+
+            @media (min-width: 1400px) {
+                .show-on-1400 {
+                    display: block !important;
                 }
             }
 
@@ -344,12 +397,14 @@
 
             {!! view_render_event('bagisto.shop.layout.content.before') !!}
 
-            <!-- Category Sidebar -->
-            <x-shop::layouts.sidebar.category-sidebar />
+            <!-- Category Sidebar (visible only on very large screens: >=1400px) -->
+            <div class="show-on-1400 hide-on-nesthub">
+                <x-shop::layouts.sidebar.category-sidebar />
+            </div>
 
             <div
                 id="main-content"
-                class="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300"
+                class="w-full max-w-[1400px] mx-auto px-1 sm:px-6 lg:px-8 transition-all duration-300"
             >
                 <!-- Page Content Blade Component -->
                 <main id="main" class="bg-white min-h-screen pt-16 md:pt-0">

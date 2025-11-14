@@ -43,7 +43,7 @@
 
                 @php
                     $aboutStats = [
-                        ['label' => 'Year founded', 'value' => '2010'],
+                        ['label' => 'Year founded', 'value' => '2021'],
                         ['label' => 'Devices repaired each month', 'value' => '300+'],
                         ['label' => 'Corporate & school partners', 'value' => '120'],
                     ];
@@ -77,7 +77,7 @@
                     <p class="text-sm font-semibold uppercase tracking-[0.4em] text-slate-500">Milestones</p>
                     <ul class="mt-4 space-y-4 text-sm text-slate-700">
                         <li>
-                            <p class="font-semibold text-slate-900">2010 – Launch</p>
+                            <p class="font-semibold text-slate-900">2021 – Launch</p>
                             <p>Opened our first counter near Beligaha Junction focusing on computer repairs.</p>
                         </li>
                         <li>

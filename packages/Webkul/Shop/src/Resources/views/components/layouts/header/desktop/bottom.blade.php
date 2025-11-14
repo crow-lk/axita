@@ -1,6 +1,6 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.before') !!}
 
-<div class="relative mx-auto flex h-[56px] w-full max-w-[1300px] items-center px-4 sm:px-6 bg-transparent">
+<div class="relative mx-auto flex h-[56px] w-full max-w-[1400px] items-center justify-center px-1 sm:px-6 lg:px-8 bg-transparent">
     <!-- Browse Categories (only) -->
     <div class="flex items-center gap-x-6 max-[1180px]:gap-x-4">
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
@@ -16,10 +16,12 @@
             close-delay="180"
         >
             <x-slot:toggle>
-                <button class="group flex items-center gap-3 rounded-full bg-gradient-to-r from-black via-zinc-800 to-zinc-600 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-lg transition-all duration-200 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700/40">
-                    <span class="icon-hamburger text-xl transition-transform duration-200 group-hover:scale-110"></span>
+                <button
+                    class="group flex items-center gap-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-lg transition-all duration-200 hover:from-orange-600 hover:to-orange-700 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+                >
+                    <span class="icon-hamburger text-xl text-white transition-transform duration-200 group-hover:scale-110"></span>
                     <span>Browse Categories</span>
-                    <span class="icon-arrow-down text-base transition-transform duration-200 group-hover:-rotate-180"></span>
+                    <span class="icon-arrow-down text-base text-white transition-transform duration-200 group-hover:-rotate-180"></span>
                 </button>
             </x-slot:toggle>
 
@@ -38,7 +40,7 @@
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.category.after') !!}
     </div>
 
-    <nav class="ml-6 hidden items-center gap-6 text-sm font-medium text-zinc-600 lg:flex">
+    <nav class="ml-6 hidden items-center gap-12 text-sm font-medium text-zinc-600 lg:flex">
         <a
             href="/services"
             class="transition-colors duration-200 hover:text-[#e85805]"
