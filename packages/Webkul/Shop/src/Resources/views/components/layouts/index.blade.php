@@ -526,6 +526,7 @@
              * Show/hide scroll to top button based on scroll position
              */
             window.addEventListener('scroll', function() {
+                console.log("sscroll event triggered");
                 const scrollBtn = document.getElementById('scroll-to-top-btn');
                 if (scrollBtn) {
                     if (window.pageYOffset > 300) {
@@ -545,5 +546,65 @@
             {!! core()->getConfigData('general.content.custom_scripts.custom_javascript') !!}
         </script>
         <script src="https://widget.tagembed.com/embed.min.js" type="text/javascript"></script>
+
+        <!-- Header Scroll Script -->
+        <script>
+            console.log('🔧 Header scroll script executing');
+            
+            function initHeaderScroll() {
+                console.log('✓ initHeaderScroll called');
+                
+                const homeHeader = document.getElementById('home-header');
+                const shopHeaderSticky = document.getElementById('shop-header-sticky');
+                
+                console.log('✓ Found home-header:', !!homeHeader);
+                console.log('✓ Found shop-header-sticky:', !!shopHeaderSticky);
+                
+                if (!homeHeader || !shopHeaderSticky) {
+                    console.error('❌ One or both header elements not found');
+                    return;
+                }
+                
+                console.log('✓ Both headers exist - setting up scroll listener');
+                
+                const THRESHOLD = 500;
+                let lastState = null;
+                
+                function handleScroll() {
+                    const scrollY = window.scrollY;
+                    // Hide sticky navbar on mobile and tablet (screens smaller than 1280px)
+                    const isTabletOrSmaller = window.innerWidth < 1280;
+                    const shouldShowShop = scrollY > THRESHOLD && !isTabletOrSmaller;
+                    
+                    if (shouldShowShop !== lastState) {
+                        lastState = shouldShowShop;
+                        
+                        if (shouldShowShop) {
+                            homeHeader.style.display = 'none';
+                            shopHeaderSticky.style.display = 'block';
+                            console.log('↓ SWITCHED TO STICKY at scrollY:', scrollY);
+                        } else {
+                            homeHeader.style.display = 'block';
+                            shopHeaderSticky.style.display = 'none';
+                            console.log('↑ SWITCHED TO HOME at scrollY:', scrollY);
+                        }
+                    }
+                }
+                
+                window.addEventListener('scroll', handleScroll, false);
+                window.addEventListener('resize', handleScroll, false);
+                console.log('✓ Scroll event listener attached');
+                
+                // Set initial state
+                handleScroll();
+            }
+            
+            // This runs at the very end, after everything is loaded
+            console.log('⏳ Waiting for page load...');
+            window.addEventListener('load', function() {
+                console.log('✓ Page fully loaded - initializing headers');
+                initHeaderScroll();
+            });
+        </script>
     </body>
 </html>
