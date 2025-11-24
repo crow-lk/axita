@@ -63,18 +63,9 @@
                     <!-- Product Stock Badge with Quantity Info (Low Stock removed) -->
                     <p
                         class="absolute top-1.5 inline-block rounded-[44px] px-3 py-1 text-base font-semibold text-white max-sm:rounded-l-none max-sm:rounded-r-xl max-sm:px-2 max-sm:py-0.5 max-sm:text-sm ltr:left-1.5 max-sm:ltr:left-0 rtl:right-5 max-sm:rtl:right-0 origin-center"
-                        :style="product.quantity !== undefined ? (product.quantity <= 0 ? 'background-color:#dc2626' : 'background-color:#16a34a') : ((product.is_saleable !== undefined ? product.is_saleable : true) ? 'background-color:#16a34a' : 'background-color:#dc2626')"
+                        :style="getStockBadgeStyle()"
                     >
-                        <span>
-                            <template v-if="product.quantity !== undefined">
-                                <template v-if="product.quantity <= 0">@lang('shop::app.components.products.card.out-of-stock')</template>
-                                <template v-else>@lang('shop::app.components.products.card.in-stock')</template>
-                            </template>
-                            <template v-else>
-                                <template v-if="product.is_saleable !== undefined ? product.is_saleable : true">@lang('shop::app.components.products.card.in-stock')</template>
-                                <template v-else>@lang('shop::app.components.products.card.out-of-stock')</template>
-                            </template>
-                        </span>
+                        <span v-text="getStockBadgeText()"></span>
                     </p>
 
                     <div class="absolute top-3 flex flex-col items-center gap-2 transition-all duration-300 opacity-0 group-hover:opacity-100 max-lg:opacity-100 ltr:right-3 rtl:left-3">
@@ -549,6 +540,10 @@
                     }
                 },
                 getStockBadgeStyle() {
+                    if (this.isPreorder()) {
+                        return 'background-color:#2563eb';
+                    }
+
                     // Check if product has quantity information
                     if (this.product.quantity !== undefined) {
                         if (this.product.quantity <= 0) {
@@ -612,6 +607,10 @@
                 },
 
                 getStockBadgeText() {
+                    if (this.isPreorder()) {
+                        return '@lang('shop::app.components.products.card.pre-order')';
+                    }
+
                     // Check if product has quantity information
                     if (this.product.quantity !== undefined) {
                         if (this.product.quantity <= 0) {
@@ -632,12 +631,20 @@
                 },
 
                 isProductOutOfStock() {
+                    if (this.isPreorder()) {
+                        return false;
+                    }
+
                     // Check if product has quantity information and is out of stock
                     if (this.product.quantity !== undefined) {
                         return this.product.quantity <= 0;
                     }
                     // Fallback to is_saleable check
                     return !(this.product.is_saleable !== undefined ? this.product.is_saleable : true);
+                },
+
+                isPreorder() {
+                    return Boolean(this.product?.is_preorder ?? this.product?.preorder);
                 },
 
                 getAddToCartButtonClass() {

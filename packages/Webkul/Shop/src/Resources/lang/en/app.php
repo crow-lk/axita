@@ -519,6 +519,7 @@ return [
                 'review-description'     => 'Be the first to review this product',
                 'in-stock'               => 'In Stock',
                 'out-of-stock'           => 'Out of Stock',
+                'pre-order'              => 'Pre-Order',
             ],
 
             'carousel' => [

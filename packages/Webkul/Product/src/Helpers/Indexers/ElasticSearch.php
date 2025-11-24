@@ -308,6 +308,7 @@ class ElasticSearch extends AbstractIndexer
                     'visible_individually',
                     'new',
                     'featured',
+                    'preorder',
                     'url_key',
                     'short_description',
                     'description',

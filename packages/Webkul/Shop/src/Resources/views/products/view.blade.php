@@ -412,7 +412,12 @@
 
                                 <!-- Stock Status (Low Stock removed) -->
                                 <div class="flex items-center gap-2 mt-4">
-                                    @if($product->inventories->sum('qty') <= 0)
+                                    @if($product->preorder)
+                                        <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-800 bg-blue-100 rounded-full">
+                                            <span class="w-2 h-2 mr-2 bg-blue-500 rounded-full"></span>
+                                            @lang('shop::app.components.products.card.pre-order')
+                                        </span>
+                                    @elseif($product->inventories->sum('qty') <= 0)
                                         <span class="inline-flex items-center px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">
                                             <span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>
                                             @lang('shop::app.components.products.card.out-of-stock')
