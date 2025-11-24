@@ -548,13 +548,11 @@
                     if (this.product.quantity !== undefined) {
                         if (this.product.quantity <= 0) {
                             return 'background-color:#dc2626'; // Red for out of stock
-                        } else if (this.product.quantity <= 5) {
-                            return 'background-color:#f59e0b'; // Orange for low stock
-                        } else {
-                            return 'background-color:#16a34a'; // Green for in stock
                         }
+
+                        return 'background-color:#16a34a'; // Green for in stock
                     }
-                    
+
                     // Fallback to is_saleable check
                     return (this.product.is_saleable !== undefined ? this.product.is_saleable : true) 
                         ? 'background-color:#16a34a' 
@@ -615,13 +613,11 @@
                     if (this.product.quantity !== undefined) {
                         if (this.product.quantity <= 0) {
                             return '@lang('shop::app.components.products.card.out-of-stock')';
-                        } else if (this.product.quantity <= 5) {
-                            return `Low Stock (${this.product.quantity})`;
-                        } else {
-                            return '@lang('shop::app.components.products.card.in-stock')';
                         }
+
+                        return '@lang('shop::app.components.products.card.in-stock')';
                     }
-                    
+
                     // Fallback to is_saleable check
                     if (this.product.is_saleable !== undefined ? this.product.is_saleable : true) {
                         return '@lang('shop::app.components.products.card.in-stock')';
