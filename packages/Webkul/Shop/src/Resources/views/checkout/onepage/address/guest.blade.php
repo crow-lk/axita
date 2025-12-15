@@ -2,6 +2,7 @@
 
 <!-- Guest Address Vue Component -->
 <v-checkout-address-guest
+    ref="guestAddressComponent"
     :cart="cart"
     @processing="stepForward"
     @processed="stepProcessed"
@@ -21,7 +22,10 @@
             v-slot="{ meta, errors, handleSubmit }"
             as="div"
         >
-            <form @submit="handleSubmit($event, addAddress)">
+            <form
+                ref="guestAddressForm"
+                @submit="handleSubmit($event, addAddress)"
+            >
                 <!-- Guest Billing Address -->
                 <div class="mb-4">
                     {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.billing.before') !!}
@@ -64,14 +68,6 @@
                         </x-shop::form.control-group>
 
                         <!-- Proceed Button -->
-                        <div class="mt-6 flex justify-end">
-                            <x-shop::button
-                                class="primary-button rounded-2xl px-11 py-3 max-md:w-full max-md:max-w-full max-md:rounded-lg"
-                                :title="trans('shop::app.checkout.onepage.address.proceed')"
-                                ::loading="isStoring"
-                                ::disabled="isStoring"
-                            />
-                        </div>
                     </div>
 
                     {!! view_render_event('bagisto.shop.checkout.onepage.address.guest.billing.after') !!}
@@ -121,6 +117,10 @@
                     useBillingAddressForShipping: true,
 
                     isStoring: false,
+
+                    silentSubmit: false,
+
+                    pendingAddressPromise: null,
                 }
             },
 
@@ -131,33 +131,105 @@
             },
 
             methods: {
+                submitAddressForm(options = {}) {
+                    const { silent = false } = options;
+
+                    this.silentSubmit = silent;
+
+                    return new Promise((resolve, reject) => {
+                        this.pendingAddressPromise = { resolve, reject };
+
+                        this.triggerAddressFormSubmission();
+                    });
+                },
+
+                triggerAddressFormSubmission() {
+                    const form = this.$refs.guestAddressForm;
+
+                    if (! form) {
+                        if (this.pendingAddressPromise) {
+                            this.pendingAddressPromise.reject(new Error('Unable to locate the address form.'));
+
+                            this.pendingAddressPromise = null;
+                        }
+
+                        this.silentSubmit = false;
+
+                        return;
+                    }
+
+                    if (typeof form.requestSubmit === 'function') {
+                        form.requestSubmit();
+                    } else {
+                        form.dispatchEvent(new Event('submit', { cancelable: true }));
+                    }
+                },
+
                 addAddress(params, { setErrors }) {
                     this.isStoring = true;
 
                     params['billing']['use_for_shipping'] = this.useBillingAddressForShipping;
 
-                    this.moveToNextStep();
+                    if (! this.silentSubmit) {
+                        this.moveToNextStep();
+                    }
 
                     this.$axios.post('{{ route('shop.checkout.onepage.addresses.store') }}', params)
                         .then((response) => {
                             this.isStoring = false;
 
-                            if (response.data.data.redirect_url) {
-                                window.location.href = response.data.data.redirect_url;
-                            } else {
+                            const payload = response?.data?.data ?? {};
+
+                            if (payload.redirect_url) {
+                                if (this.pendingAddressPromise) {
+                                    this.pendingAddressPromise.resolve({
+                                        shippingMethods: null,
+                                        paymentMethods: null,
+                                    });
+
+                                    this.pendingAddressPromise = null;
+                                }
+
+                                this.silentSubmit = false;
+
+                                window.location.href = payload.redirect_url;
+
+                                return;
+                            }
+
+                            if (! this.silentSubmit) {
                                 if (this.cart.have_stockable_items) {
-                                    this.$emit('processed', response.data.data.shippingMethods);
+                                    this.$emit('processed', payload.shippingMethods);
                                 } else {
-                                    this.$emit('processed', response.data.data.payment_methods);
+                                    this.$emit('processed', payload.payment_methods);
                                 }
                             }
+
+                            if (this.pendingAddressPromise) {
+                                this.pendingAddressPromise.resolve({
+                                    shippingMethods: payload.shippingMethods ?? null,
+                                    paymentMethods: payload.payment_methods ?? null,
+                                });
+
+                                this.pendingAddressPromise = null;
+                            }
+
+                            this.silentSubmit = false;
                         })
                         .catch(error => {
                             this.isStoring = false;
 
-                            if (error.response.status == 422) {
+                            if (error.response?.status == 422) {
                                 setErrors(error.response.data.errors);
                             }
+
+                            if (this.pendingAddressPromise) {
+                                this.pendingAddressPromise.reject(error);
+
+                                this.pendingAddressPromise = null;
+                            }
+
+                            this.silentSubmit = false;
                         });
                 },
 

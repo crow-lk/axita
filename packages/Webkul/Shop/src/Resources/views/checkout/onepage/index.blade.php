@@ -209,7 +209,7 @@
                 },
 
                 mounted() {
-                    this.getCart();
+                    this.getCart().catch(() => {});
                 },
 
                 computed: {
@@ -266,7 +266,7 @@
                     },
 
                     getCart() {
-                        this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")
+                        return this.$axios.get("{{ route('shop.checkout.onepage.summary') }}")
                             .then(response => {
                                 const payload = response.data ?? {};
 
@@ -284,7 +284,11 @@
 
                                 this.scrollToCurrentStep();
                             })
-                            .catch(error => {});
+                            .catch(error => {
+                                console.error('Failed to fetch cart summary.', error);
+
+                                throw error;
+                            });
                     },
 
                     stepForward(step) {
@@ -312,13 +316,13 @@
                             this.paymentMethods = data;
                         }
 
-                        this.getCart();
+                        this.getCart().catch(() => {});
                     },
 
                     handleAutoSelectedShipping(paymentMethods) {
                         this.paymentMethods = paymentMethods ?? [];
 
-                        this.getCart();
+                        this.getCart().catch(() => {});
                     },
 
                     scrollToCurrentStep() {
@@ -344,49 +348,139 @@
                         });
                     },
 
-                    placeOrder() {
+                    async placeOrder() {
                         this.isPlacingOrder = true;
 
-                        console.log('=== PAYZY CHECKOUT: Place Order Started ===');
-                        console.log('Current Step:', this.currentStep);
-                        console.log('Selected Payment Method:', this.cart?.payment?.method);
-                        console.log('Cart Data:', this.cart);
-                        console.log('API Endpoint:', '{{ route('shop.checkout.onepage.orders.store') }}');
+                        try {
+                            await this.prepareCheckoutData();
 
-                        this.$axios.post('{{ route('shop.checkout.onepage.orders.store') }}')
-                            .then(response => {
-                                console.log('=== PAYZY CHECKOUT: Order Response Received ===');
-                                console.log('Response Status:', response.status);
-                                console.log('Response Data:', response.data);
+                            console.log('=== PAYZY CHECKOUT: Place Order Started ===');
+                            console.log('Current Step:', this.currentStep);
+                            console.log('Selected Payment Method:', this.cart?.payment?.method);
+                            console.log('Cart Data:', this.cart);
+                            console.log('API Endpoint:', '{{ route('shop.checkout.onepage.orders.store') }}');
+
+                            const response = await this.$axios.post('{{ route('shop.checkout.onepage.orders.store') }}');
+
+                            console.log('=== PAYZY CHECKOUT: Order Response Received ===');
+                            console.log('Response Status:', response.status);
+                            console.log('Response Data:', response.data);
+                            
+                            if (response.data.data.redirect) {
+                                console.log('=== PAYZY CHECKOUT: Redirect Required ===');
+                                console.log('Redirect URL:', response.data.data.redirect_url);
+                                console.log('Payment Method:', response.data.data.method || 'Unknown');
                                 
-                                if (response.data.data.redirect) {
-                                    console.log('=== PAYZY CHECKOUT: Redirect Required ===');
-                                    console.log('Redirect URL:', response.data.data.redirect_url);
-                                    console.log('Payment Method:', response.data.data.method || 'Unknown');
-                                    
-                                    // Log before redirect
-                                    console.log('Redirecting to PayZY payment gateway...');
-                                    
-                                    window.location.href = response.data.data.redirect_url;
-                                } else {
-                                    console.log('=== PAYZY CHECKOUT: No Redirect, Going to Success Page ===');
-                                    window.location.href = '{{ route('shop.checkout.onepage.success') }}';
-                                }
-
-                                this.isPlacingOrder = false;
-                            })
-                            .catch(error => {
-                                console.error('=== PAYZY CHECKOUT: Order Error ===');
-                                console.error('Error Status:', error.response?.status);
-                                console.error('Error Message:', error.response?.data?.message);
-                                console.error('Error Data:', error.response?.data);
-                                console.error('Full Error:', error);
+                                // Log before redirect
+                                console.log('Redirecting to PayZY payment gateway...');
                                 
-                                this.isPlacingOrder = false
+                                window.location.href = response.data.data.redirect_url;
+                            } else {
+                                console.log('=== PAYZY CHECKOUT: No Redirect, Going to Success Page ===');
+                                window.location.href = '{{ route('shop.checkout.onepage.success') }}';
+                            }
+                        } catch (error) {
+                            console.error('=== PAYZY CHECKOUT: Order Error ===');
+                            console.error('Error Status:', error?.response?.status);
+                            console.error('Error Message:', error?.response?.data?.message || error?.message);
+                            console.error('Error Data:', error?.response?.data);
+                            console.error('Full Error:', error);
 
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            });
-                    }
+                            const message = error?.response?.data?.message
+                                ?? error?.message
+                                ?? 'Unable to place the order. Please review the form and try again.';
+
+                            this.$emitter.emit('add-flash', { type: 'error', message });
+                        } finally {
+                            this.isPlacingOrder = false;
+                        }
+                    },
+
+                    async prepareCheckoutData() {
+                        if (! this.cart) {
+                            await this.getCart();
+                        }
+
+                        let shippingMethods = null;
+
+                        if (this.cart?.is_guest) {
+                            shippingMethods = await this.ensureGuestAddresses();
+                        }
+
+                        await this.ensureDefaultShippingMethod(shippingMethods);
+                    },
+
+                    async ensureGuestAddresses() {
+                        const guestComponent = this.$refs.guestAddressComponent;
+
+                        if (! guestComponent || typeof guestComponent.submitAddressForm !== 'function') {
+                            return null;
+                        }
+
+                        const result = await guestComponent.submitAddressForm({ silent: true });
+
+                        await this.getCart();
+
+                        return result?.shippingMethods ?? null;
+                    },
+
+                    async ensureDefaultShippingMethod(prefetchedMethods = null) {
+                        if (! this.cart?.have_stockable_items) {
+                            return;
+                        }
+
+                        if (this.cart.shipping_method) {
+                            return;
+                        }
+
+                        let availableMethods = prefetchedMethods;
+
+                        if (
+                            ! availableMethods
+                            || ! Object.keys(availableMethods).length
+                        ) {
+                            if (
+                                ! this.shippingMethods
+                                || ! Object.keys(this.shippingMethods).length
+                            ) {
+                                await this.getCart();
+                            }
+
+                            availableMethods = this.shippingMethods;
+                        }
+
+                        const defaultRate = this.pickFirstShippingRate(availableMethods);
+
+                        if (! defaultRate?.method) {
+                            throw new Error('Shipping method could not be determined. Please double-check the address information.');
+                        }
+
+                        await this.$axios.post("{{ route('shop.checkout.onepage.shipping_methods.store') }}", {
+                            shipping_method: defaultRate.method,
+                        });
+
+                        await this.getCart();
+                    },
+
+                    pickFirstShippingRate(methodGroups) {
+                        if (! methodGroups) {
+                            return null;
+                        }
+
+                        const groups = Array.isArray(methodGroups)
+                            ? methodGroups
+                            : Object.values(methodGroups);
+
+                        for (const group of groups) {
+                            const rates = group?.rates ?? [];
+
+                            if (rates.length) {
+                                return rates[0];
+                            }
+                        }
+
+                        return null;
+                    },
                 },
             });
         </script>
