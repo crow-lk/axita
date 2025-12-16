@@ -581,7 +581,7 @@
                 getPayzyInstallment() {
                     const basePrice = this.getBasePrice();
                     const shipping = this.getShippingCharge();
-                    const baseAmount = basePrice + shipping;
+                    const baseAmount = basePrice;
                     const totalWithCharge = baseAmount * 1.14; // 14% charge
                     return totalWithCharge / 4; // Divide into 4 installments
                 },
@@ -589,7 +589,7 @@
                 getKokoInstallment() {
                     const basePrice = this.getBasePrice();
                     const shipping = this.getShippingCharge();
-                    const baseAmount = basePrice + shipping;
+                    const baseAmount = basePrice;
                     const totalWithCharge = baseAmount * 1.12; // 12% charge
                     return totalWithCharge / 3; // Divide into 3 installments
                 },
