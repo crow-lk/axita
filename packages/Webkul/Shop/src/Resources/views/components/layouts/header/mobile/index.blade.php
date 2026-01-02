@@ -8,6 +8,19 @@
     $showWishlist = (bool) core()->getConfigData('customer.settings.wishlist.wishlist_option');
 @endphp
 
+<!-- Mobile Top Status Bar -->
+<div class="lg:hidden w-full bg-gray-100 border-b border-gray-200">
+    <div class="px-3 py-2 text-center">
+        <a
+            href="http://axita.winsoft.site/repair-status"
+            class="text-xs font-medium text-gray-600 transition-colors hover:text-[#e85805]"
+        >
+            Check your service status from here.
+        </a>
+    </div>
+</div>
+
+
 <div class="flex flex-wrap gap-4 px-4 pb-4 pt-6 shadow-sm lg:hidden">
     <!-- Top Row: Logo, Icons -->
     <div class="flex w-full items-center justify-between mb-2">
