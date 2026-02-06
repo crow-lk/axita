@@ -1,7 +1,7 @@
 {!! view_render_event('bagisto.shop.categories.view.filters.before') !!}
 
-<!-- Desktop Filters Navigation -->
-<div v-if="! isMobile">
+<!-- Filters Navigation -->
+<div>
     <!-- Filters Vue Component -->
     <v-filters
         @filter-applied="setFilters('filter', $event)"
