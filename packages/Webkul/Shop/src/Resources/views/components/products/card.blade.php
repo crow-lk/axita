@@ -12,7 +12,7 @@
     >
         <!-- Grid Card -->
         <div
-            class="group flex w-full max-w-[320px] flex-col rounded-xl border border-zinc-200 bg-white p-2.5 shadow-sm transition-all duration-300 1180:relative 1180:overflow-hidden 1180:transition-all 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)] max-lg:max-w-[280px] max-md:max-w-[240px] max-sm:rounded-xl max-sm:border-zinc-100 max-sm:p-2 max-sm:shadow-[0_10px_28px_rgba(15,23,42,0.08)]"
+            class="group relative flex w-full max-w-[320px] flex-col rounded-xl border border-zinc-200 bg-white p-2.5 shadow-sm transition-all duration-300 1180:overflow-hidden 1180:transition-all 1180:duration-300 1180:hover:shadow-[0_5px_10px_rgba(0,0,0,0.1)] max-lg:max-w-[280px] max-md:max-w-[240px] max-sm:rounded-xl max-sm:border-zinc-100 max-sm:p-2 max-sm:shadow-[0_10px_28px_rgba(15,23,42,0.08)]"
             v-if="mode != 'list'"
         >
             <div class="relative w-full aspect-square overflow-hidden max-md:rounded-xl max-sm:rounded-[22px]">
@@ -197,7 +197,7 @@
             </div>
 
             <!-- Product Actions Section - Positioned Absolutely at Bottom -->
-            <div class="absolute bottom-0 left-0 right-0 flex flex-col gap-1.5 p-2.5 pt-5 bg-gradient-to-t from-white via-white to-transparent transition-all duration-300 ease-out transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 max-md:relative max-md:translate-y-0 max-md:opacity-100 max-md:bg-none max-md:pt-1.5 max-sm:gap-1.5">
+            <div class="absolute bottom-0 left-0 right-0 flex flex-col gap-1.5 p-2.5 pt-5 bg-gradient-to-t from-white via-white to-transparent transition-all duration-300 ease-out transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 max-lg:pt-1.5 max-md:translate-y-0 max-md:relative max-md:opacity-100 max-md:bg-none max-md:pt-1.5 max-sm:gap-1.5">
                 @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
                     {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
 
