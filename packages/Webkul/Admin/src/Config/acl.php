@@ -771,6 +771,26 @@ return [
         'route' => 'admin.settings.themes.delete',
         'sort'  => 3,
     ], [
+        'key'   => 'settings.popup_banners',
+        'name'  => 'admin::app.popup-banners.index.title',
+        'route' => 'admin.popup-banners.index',
+        'sort'  => 9,
+    ], [
+        'key'   => 'settings.popup_banners.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.popup-banners.create',
+        'sort'  => 1,
+    ], [
+        'key'   => 'settings.popup_banners.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.popup-banners.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'settings.popup_banners.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.popup-banners.delete',
+        'sort'  => 3,
+    ], [
         'key'   => 'settings.taxes',
         'name'  => 'admin::app.acl.taxes',
         'route' => 'admin.settings.taxes.categories.index',

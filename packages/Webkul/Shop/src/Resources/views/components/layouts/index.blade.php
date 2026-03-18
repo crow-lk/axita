@@ -498,6 +498,20 @@
 
         {!! view_render_event('bagisto.shop.layout.body.after') !!}
 
+        <!-- Popup Banner -->
+        @php
+            $popupBanner = null;
+            try {
+                $popupBanner = \Webkul\Core\Models\PopupBanner::where('is_active', true)->orderBy('sort_order')->first();
+            } catch (\Exception $e) {
+                // Table might not exist yet, ignore
+            }
+        @endphp
+
+        @if ($popupBanner)
+            <x-shop::popup-banner :banner="$popupBanner" />
+        @endif
+
         @stack('scripts')
 
         {!! view_render_event('bagisto.shop.layout.vue-app-mount.before') !!}

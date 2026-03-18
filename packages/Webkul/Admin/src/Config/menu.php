@@ -307,6 +307,12 @@ return [
         'sort'       => 8,
         'icon'       => '',
     ], [
+        'key'        => 'settings.popup_banners',
+        'name'       => 'admin::app.popup-banners.index.title',
+        'route'      => 'admin.popup-banners.index',
+        'sort'       => 9,
+        'icon'       => '',
+    ], [
         'key'        => 'settings.taxes',
         'name'       => 'admin::app.components.layouts.sidebar.taxes',
         'route'      => 'admin.settings.taxes.categories.index',

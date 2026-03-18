@@ -4519,4 +4519,60 @@ return [
             'tracking-number'            => 'Tracking Number : :tracking_number',
         ],
     ],
+
+    /* -------------------------------------------------------------------------- */
+    /*                                 Popup Banners                               */
+    /* -------------------------------------------------------------------------- */
+
+    'popup-banners' => [
+        'index' => [
+            'title'         => 'Popup Banners',
+            'create-btn'     => 'Create Popup Banner',
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Title',
+                'image'         => 'Image',
+                'link'          => 'Link',
+                'status'        => 'Status',
+                'sort-order'    => 'Sort Order',
+                'created-at'    => 'Created At',
+                'edit'          => 'Edit',
+                'delete'        => 'Delete',
+                'delete-confirm' => 'Are you sure you want to delete this item?',
+            ],
+        ],
+        'create' => [
+            'title'               => 'Create Popup Banner',
+            'back-btn'            => 'Back',
+            'save-btn'            => 'Save Popup Banner',
+            'general-information'  => 'General Information',
+            'title-field'         => 'Title',
+            'title-placeholder'   => 'Enter banner title',
+            'image'               => 'Banner Image',
+            'image-size'          => 'Recommended size: :width x :height pixels',
+            'link'                => 'Link URL',
+            'link-placeholder'    => 'Enter link URL (optional)',
+            'status'              => 'Status',
+            'is-active'           => 'Active',
+            'sort-order'          => 'Sort Order',
+        ],
+        'edit' => [
+            'title'               => 'Edit Popup Banner',
+            'back-btn'            => 'Back',
+            'save-btn'            => 'Save Popup Banner',
+            'general-information'  => 'General Information',
+            'title-field'         => 'Title',
+            'title-placeholder'   => 'Enter banner title',
+            'image'               => 'Banner Image',
+            'image-size'          => 'Recommended size: :width x :height pixels',
+            'link'                => 'Link URL',
+            'link-placeholder'    => 'Enter link URL (optional)',
+            'status'              => 'Status',
+            'is-active'           => 'Active',
+            'sort-order'          => 'Sort Order',
+        ],
+        'create-success'   => 'Popup banner created successfully.',
+        'update-success'   => 'Popup banner updated successfully.',
+        'delete-success'   => 'Popup banner deleted successfully.',
+    ],
 ];

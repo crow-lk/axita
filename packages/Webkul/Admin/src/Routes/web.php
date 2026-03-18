@@ -31,6 +31,11 @@ require 'marketing-routes.php';
 require 'cms-routes.php';
 
 /**
+ * Popup Banner routes.
+ */
+require 'popup-banner-routes.php';
+
+/**
  * Reporting routes.
  */
 require 'reporting-routes.php';

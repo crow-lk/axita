@@ -91,6 +91,12 @@ class CoreServiceProvider extends ServiceProvider
         $this->registerCommands();
 
         $this->registerBladeCompiler();
+
+        // Bind PopupBanner contract to model
+        $this->app->bind(
+            \Webkul\Core\Contracts\PopupBanner::class,
+            \Webkul\Core\Models\PopupBanner::class
+        );
     }
 
     /**
